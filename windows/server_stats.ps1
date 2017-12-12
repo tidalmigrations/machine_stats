@@ -1,22 +1,4 @@
-Function ServerStats { 
-  param([Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)] $servername,
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=1)] $cred )
-
-  <#
-  .SYNOPSIS
-  The function captures performance measurement data from the given computer 
-  .DESCRIPTION
-  The function determines the operating system, RAM and Disk allocation and usage from the given server.
-  It returns an object which is intended to be converted to JSON and sent to the Tidal Migrations API.
-  .EXAMPLE
-  $array_of_computers << ServerStats("servername", $cred)
-  .PARAMETER servername
-  The hostname of the server to Invoke-Command on
-  .PARAMETER cred
-  The credential object to use to authenticate
-  #>
-
-  Invoke-Command -ComputerName "eqaofs02a" -Credential $cred -ScriptBlock {
+$ServerStats = {
     $CPUInfo = Get-WmiObject Win32_Processor 
     $OSInfo = Get-WmiObject Win32_OperatingSystem  
 
