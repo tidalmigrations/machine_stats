@@ -13,6 +13,8 @@ $ServerStats = {
     # The data will be shown in a table as MB, rounded to the nearest second decimal. 
     $OSTotalVirtualMemory = [math]::round($OSInfo.TotalVirtualMemorySize / 1MB, 2) 
     $OSTotalVisibleMemory = [math]::round(($OSInfo.TotalVisibleMemorySize  / 1MB), 2) 
+    $OSFreeVisibleMemory = [math]::round(($OSInfo.FreePhysicalMemory  / 1MB), 2) 
+    $OSUsedMemory = $OSTotalVisibleMemory - $OSFreeVisibleMemory
     $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory | Measure-Object -Property capacity -Sum | % {[math]::round(($_.sum / 1GB),2)} 
     $Disk = Get-WMIObject Win32_LogicalDisk
     $Total_FreeSpaceGB = 0
@@ -29,8 +31,9 @@ $ServerStats = {
     $server_info = New-Object PSObject 
     $custom_fields = New-Object PSObject 
 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "ram_allocated_gb" -value $OSTotalVisibleMemory
     Add-Member -inputObject $server_info -memberType NoteProperty -name "host_name" -value $cpu.SystemName 
+    Add-Member -inputObject $server_info -memberType NoteProperty -name "ram_allocated_gb" -value $PhysicalMemory 
+    Add-Member -inputObject $server_info -memberType NoteProperty -name "ram_used_gb" -value $OSUsedMemory 
     Add-Member -inputObject $server_info -memberType NoteProperty -name "storage_allocated_gb" -value $Total_DriveSpaceGB 
     Add-Member -inputObject $server_info -memberType NoteProperty -name "storage_used_gb" -value $Total_UsedDriveSpaceGB 
     Add-Member -inputObject $server_info -memberType NoteProperty -name "cpu_count" -value ($cpu.NumberOfCores * $cpu_count)
@@ -39,12 +42,12 @@ $ServerStats = {
     Add-Member -inputObject $server_info -memberType NoteProperty -name "cpu_name" -value $cpu.Name 
 
     # Custom fields:
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "TotalPhysical_Memory_GB" -value $PhysicalMemory 
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_Description" -value $cpu.Description 
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_Manufacturer" -value $cpu.Manufacturer 
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_L2CacheSize" -value $cpu.L2CacheSize 
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_L3CacheSize" -value $cpu.L3CacheSize 
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_SocketDesignation" -value $cpu.SocketDesignation 
+    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "TotalVisible_Memory_GB" -value $OSTotalVisibleMemory
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "TotalVirtual_Memory_GB" -value $OSTotalVirtualMemory 
 
     Add-Member -inputObject $server_info -memberType NoteProperty -name "custom_fields" -value $custom_fields 
