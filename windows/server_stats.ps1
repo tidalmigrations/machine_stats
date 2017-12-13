@@ -10,12 +10,13 @@ $ServerStats = {
     $Disk = Get-WMIObject Win32_LogicalDisk
     $Total_FreeSpaceGB = 0
     $Total_DriveSpaceGB = 0
-    ForEach ($drive in $disk) {
+    ForEach ($drive in $Disk) {
       $FreeSpace = [System.Math]::Round((($drive.FreeSpace) / 1GB))
       $TotalSize = [System.Math]::Round((($drive.size) / 1GB))
       $Total_FreeSpaceGB += $FreeSpace
       $Total_DriveSpaceGB += $TotalSize
     }
+    $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
 
     # Create an object to return, convert this to JSON or CSV as you need:
     $infoObject = New-Object PSObject 
