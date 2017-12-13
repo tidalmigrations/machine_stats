@@ -14,6 +14,7 @@ $server_list | ForEach-Object {
   $server_stats += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats
 }
 
-$results = @{ "servers": $server_list; }
+$results = @{ "servers" = $server_stats; }
+$date = Get-Date -format yyyy_MM_dd
 $results | ConvertTo-Json -depth 99 | Out-File "./$date-server_stats.json" -Encoding utf8 -Force
 
