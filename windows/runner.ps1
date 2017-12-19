@@ -51,14 +51,47 @@ Write-Output "$num_servers Servers read from servers.txt"
 
 # Collected server statistics go here:
 $server_stats = @()
+$jobs = @()
 
 $server_list | ForEach-Object {
-  $server_stats += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats
+  $jobs += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats -AsJob
 }
+
+Do {
+  $TotProgress = 0
+  ForEach ($job in $jobs) {   
+    Try {
+      $Prog = ($job | Get-Job).ChildJobs[0].Progress.StatusDescription[-1]
+      If ($Prog -is [char]) {   
+        $Prog = 0
+      }
+      $TotProgress += $Prog
+    }
+    Catch {
+      Start-Sleep -Milliseconds 500
+      Break
+    }
+  }
+  Write-Progress -Id 1 -Activity "Watching Background Jobs" -Status "Waiting for background jobs to complete: $TotProgress of $num_servers" -PercentComplete (($TotProgress / $num_servers) * 100)
+  Start-Sleep -Seconds 3
+} Until (($jobs | Get-Job | Where-Object {(($_.State -eq “Running”) -or ($_.state -eq “NotStarted”))}).count -eq 0)
+  
+$jobs | Receive-Job | ForEach-Object {
+  $server_stats += $_
+} 
+
+$num_results = $server_stats.Count
+Write-Output "$num_results results received out of $num_servers servers."
+
 
 # Write results to file:
 $results = @{ "servers" = $server_stats; }
 $date = Get-Date -format yyyy_MM_dd
-$results | ConvertTo-Json -depth 99 | Out-File "./$date-server_stats.json" -Encoding utf8 -Force
+$outfile = "./$date-server_stats.json"
+$results | ConvertTo-Json -depth 99 | Out-File $outfile -Encoding utf8 -Force
 
+Write-Output "Wrote to $outfile"
+
+# Cleanup:
+$jobs | Remove-Job
 
