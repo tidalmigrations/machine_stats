@@ -42,12 +42,12 @@ Write-Output "About to execute inventory gathering as user: $env_user"
 
 # Get server inventory:
 $server_list = Get-Content ".\servers.txt"
-$num_servers = $server_list.Count
-Write-Output "$num_servers Servers read from servers.txt" 
-
 
 # NB: For initial testing, you may want to haardcode a few:
-# $server_list = @("server_1", "server_2")
+# $server_list = @($env:COMPUTERNAME, $env:COMPUTERNAME, $env:COMPUTERNAME )
+
+$num_servers = $server_list.Count
+Write-Output "$num_servers Servers read from servers.txt" 
 
 # Collected server statistics go here:
 $server_stats = @()
