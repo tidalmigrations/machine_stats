@@ -1,7 +1,7 @@
 # AD Windows Machine Stats
 A simple and effective way to gather machine statistics (RAM, Storage, CPU) 
 from a Windows Server environment.  Uses WinRM to Invoke-Command across 
-your servers, creating a JSON file to securely send to your Tidal Migrations 
+your servers, creating a JSON file to securely send to your [Tidal Migrations](https://tidalmigrations.com/) 
 instance using the [tidal command](https://tidalmigrations.com/tidal-tools/).
 
 ## Windows
