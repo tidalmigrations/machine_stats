@@ -4,6 +4,7 @@
 
 1. Install `virtualenv` and [activate virtual environment](https://virtualenv.pypa.io/en/latest/userguide/)
 2. `pip install -r requirements.txt`
+3. [Add your SSH key to `ssh-agent`](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent)
 
 ## Usage
 
