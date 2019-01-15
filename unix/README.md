@@ -19,3 +19,18 @@ freebsd.example.com ansible_python_interpreter=/usr/local/bin/python
 ```
 $ ./runner | tidal sync servers
 ```
+
+## Generating `hosts` file with [Ansible Tower integration script](https://github.com/tidalmigrations/ansible-tower-integration)
+
+If you already use Tidal Migrations Ansible Tower integration script you can use its output to generate the `hosts` file for `machine_stats`.
+
+### Requirements
+
+* [`jq`](https://stedolan.github.io/jq/)
+
+### Usage
+
+```
+cd ansible-tower-integration
+./tidal_inventory.py | jq -r '.servers.hosts[]' > path/to/hosts
+```
