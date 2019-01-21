@@ -34,3 +34,18 @@ If you already use Tidal Migrations Ansible Tower integration script you can use
 cd ansible-tower-integration
 ./tidal_inventory.py | jq -r '.servers.hosts[]' > path/to/hosts
 ```
+
+## Generating `hosts` file with [Tidal Tools](https://get.tidal.sh/)
+
+If you already use Tidal Tools you can use one of its commands — `tidal export servers` — to generate the `hosts` fiile for `machine_stats`.
+
+### Requirements
+
+* [Tidal Tools](https://get.tidal.sh/)
+* [`jq`](https://stedolan.github.io/jq/)
+
+### Usage
+
+```
+tidal export servers | jq -r '.[].fqdn' > path/to/hosts
+```
