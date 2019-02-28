@@ -12,7 +12,7 @@ Supports Windows, Linux and *nix platforms.
 
 - [Overview](#Overview)
 - [Windows](#Windows)
-- [*nix](#*nix)
+- [*nix](#*NIX)
   - [Generating ansible hosts file](#Generating-a-hosts-file-from-Tidal-Migrations)
 
 
