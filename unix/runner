@@ -64,6 +64,7 @@ class ResultCallback(CallbackBase):
         TOTAL_RESULTS['servers'].append({
             'host_name': facts['ansible_hostname'],
             'fqdn': facts['ansible_fqdn'],
+            'ip_addresses': facts['ansible_all_ipv4_addresses'] + facts['ansible_all_ipv6_addresses'],
             'ram_allocated_gb': ram_allocated_gb(facts),
             'ram_used_gb': ram_used_gb(facts),
             'storage_allocated_gb': storage_allocated_gb(facts),
