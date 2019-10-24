@@ -1,8 +1,8 @@
 # Machine Stats
-A simple and effective way to gather machine statistics (RAM, Storage, CPU) 
-from a server environment as a first layer of a [Tidal Migrations discovery process](https://guides.tidalmg.com/discovery-techniques.html).  
+A simple and effective way to gather machine statistics (RAM, Storage, CPU)
+from a server environment as a first layer of a [Tidal Migrations discovery process](https://guides.tidalmg.com/discovery-techniques.html).
 
-Supports Windows, Linux and *nix platforms. 
+Supports Windows, Linux and *nix platforms.
 
 > _NB: For other platforms or custom integrations, see [the guides here](https://guides.tidalmg.com/sync-servers.html)._
 
@@ -63,9 +63,9 @@ The script `runner.ps1` should be customized for each environment.
 
 
 
-## *NIX 
+## *NIX
 
-Machine Stats for Linux/Unix leverages [Ansible](https://www.ansible.com/) to gather facts in a cross-platform way. 
+Machine Stats for Linux/Unix leverages [Ansible](https://www.ansible.com/) to gather facts in a cross-platform way.
 
 See [/unix/](unix/) for scripts:
 
