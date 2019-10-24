@@ -60,8 +60,28 @@ The script `runner.ps1` should be customized for each environment.
 > _For a simple guide to do this via GPO, see [here](https://support.auvik.com/hc/en-us/articles/204424994-How-to-enable-WinRM-with-domain-controller-Group-Policy-for-WMI-monitoring)._
 
 
+### Data captured
 
+For Windows, by default, the following metrics are captured from the resources and sent and stored in Tidal Migrations:
 
+```
+Host Name
+RAM Allocated (GB)
+RAM Used (GB)
+Storage Allocated (GB)
+Storage Used (GB)
+CPU Count
+Operating System
+Operating System Version
+CPU name
+CPU Description
+CPU Manufacturer
+CPU L2 CacheSize
+CPU L3 CacheSize
+CPU Socket Designation
+Total Visible Memory (GB)
+Total Virtual Memory (GB)
+```
 
 ## *NIX
 
@@ -69,6 +89,23 @@ Machine Stats for Linux/Unix leverages [Ansible](https://www.ansible.com/) to ga
 
 See [/unix/](unix/) for scripts:
 
+### Data captured
+
+For *nix based systems, by default, the following metrics are captured from the resources and sent and stored in Tidal Migrations:
+
+```
+Host Name
+FQDN
+IP Addresses
+RAM Allocated (GB)
+RAM Used (GB)
+Storage Allocated (GB)
+Storage Used (GB)
+CPU Count
+Operating System
+Operating System Version
+CPU name
+```
 
 ### Requirements
 
