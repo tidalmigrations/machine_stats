@@ -95,3 +95,5 @@ Write-Output "Wrote to $outfile"
 # Cleanup:
 $jobs | Remove-Job
 
+# Sync with Tidal:
+tidal sync servers $outfile 2>&1
