@@ -1,10 +1,10 @@
-### 
+###
 # runner.ps1
 #
 # To use, simply:
-#  1. set your USERNAME below 
+#  1. set your USERNAME below
 #
-#  2. run the save_password.ps1 script to securely store your credential in 
+#  2. run the save_password.ps1 script to securely store your credential in
 #     SecuredText.txt
 #
 #  3. Save a list of server hostnames in servers.txt
@@ -27,19 +27,13 @@ if(![System.IO.File]::Exists($securePwdFile)){
   exit 1
 } else {
   Write-Output "Reading credential from $securePwdFile"
-} 
+}
 
-$dos2unix = "$PWD\dos2unix.exe"
-if(![System.IO.File]::Exists($dos2unix)){
-  Write-Error "$dos2unix does not exist. Be sure to have the dos2unix.exe utility downloaded and available from this directory."
-  Write-Error "dos2unix can be downloaded here: https://sourceforge.net/projects/dos2unix/"
-  exit 1
-} 
 
 $secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secPwd
 
-$env_user = Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $cred -ScriptBlock { $env:USERNAME } 
+$env_user = Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Output "About to execute inventory gathering as user: $env_user"
 
 
@@ -53,7 +47,7 @@ $server_list = Get-Content ".\servers.txt"
 # $server_list = @($env:COMPUTERNAME, $env:COMPUTERNAME, $env:COMPUTERNAME )
 
 $num_servers = $server_list.Count
-Write-Output "$num_servers Servers read from servers.txt" 
+Write-Output "$num_servers Servers read from servers.txt"
 
 # Collected server statistics go here:
 $server_stats = @()
@@ -65,10 +59,10 @@ $server_list | ForEach-Object {
 
 Do {
   $TotProgress = 0
-  ForEach ($job in $jobs) {   
+  ForEach ($job in $jobs) {
     Try {
       $Prog = ($job | Get-Job).ChildJobs[0].Progress.StatusDescription[-1]
-      If ($Prog -is [char]) {   
+      If ($Prog -is [char]) {
         $Prog = 0
       }
       $TotProgress += $Prog
@@ -81,10 +75,10 @@ Do {
   Write-Progress -Id 1 -Activity "Watching Background Jobs" -Status "Waiting for background jobs to complete: $TotProgress of $num_servers" -PercentComplete (($TotProgress / $num_servers) * 100)
   Start-Sleep -Seconds 3
 } Until (($jobs | Get-Job | Where-Object {(($_.State -eq “Running”) -or ($_.state -eq “NotStarted”))}).count -eq 0)
-  
+
 $jobs | Receive-Job | ForEach-Object {
   $server_stats += $_
-} 
+}
 
 $num_results = $server_stats.Count
 Write-Output "$num_results results received out of $num_servers servers."
@@ -101,9 +95,5 @@ Write-Output "Wrote to $outfile"
 # Cleanup:
 $jobs | Remove-Job
 
-# remove BOM from JSON file (the 90's called, they want their file encoding back!)
-.\dos2unix.exe -r $outfile 2>&1
-
 # Sync with Tidal:
-tidal sync servers $outfile 2>&1 
-
+tidal sync servers $outfile 2>&1
