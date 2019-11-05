@@ -59,6 +59,23 @@ The script `runner.ps1` should be customized for each environment.
 > _NB: You do need WinRM enabled across your environment for this._
 > _For a simple guide to do this via GPO, see [here](https://support.auvik.com/hc/en-us/articles/204424994-How-to-enable-WinRM-with-domain-controller-Group-Policy-for-WMI-monitoring)._
 
+### Usage
+
+1) Provide the needed Windows username to access to VMs.
+
+2) Ensure you are logged in to Tidal Migrations, via:
+```
+$ tidal login
+```
+
+3) Invoke the runner:
+```
+$ ./runner.ps1
+```
+
+You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
+
+https://your_domain.tidalmg.com/#/servers
 
 ### Data captured
 
