@@ -74,7 +74,7 @@ Do {
   }
   Write-Progress -Id 1 -Activity "Watching Background Jobs" -Status "Waiting for background jobs to complete: $TotProgress of $num_servers" -PercentComplete (($TotProgress / $num_servers) * 100)
   Start-Sleep -Seconds 3
-} Until (($jobs | Get-Job | Where-Object {(($_.State -eq “Running”) -or ($_.state -eq “NotStarted”))}).count -eq 0)
+} Until (($jobs | Get-Job | Where-Object {(($_.State -eq "Running") -or ($_.state -eq "NotStarted"))}).count -eq 0)
 
 $jobs | Receive-Job | ForEach-Object {
   $server_stats += $_
