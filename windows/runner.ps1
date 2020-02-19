@@ -2,21 +2,21 @@
 # runner.ps1
 #
 # To use, simply:
-#  1. set your USERNAME below
+#  1. Set your username below (line 19), use a username that has login access to the hosts you are scanning.
 #
-#  2. run the save_password.ps1 script to securely store your credential in
+#  2. Run the save_password.ps1 script to securely store your credential in
 #     SecuredText.txt
 #
 #  3. Save a list of server hostnames in servers.txt
 #
-#  4. Run this script in a Scheduled Task
+#  4. Run this script in a Scheduled Task (or invoke directly from the command line)
 #
 #
 #  For questions or support, send mail to:
 #
 #    support@tidalmigrations.com
 #
-$username = "INSERT_USERNAME"
+$username = "INSERT_WINDOWS_USERNAME"
 
 ################################################################
 # Do not modify below this line:

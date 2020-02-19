@@ -68,7 +68,11 @@ The script `runner.ps1` should be customized for each environment.
 $ tidal login
 ```
 
-3) Invoke the runner:
+3) Ensure you have a file `servers.txt` that have a list of all the hostnames you want to scan.
+
+You can easily export these with the 'Export' from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
+
+4) Invoke the runner:
 ```
 $ ./runner.ps1
 ```
@@ -143,10 +147,6 @@ freebsd.example.com ansible_python_interpreter=/usr/local/bin/python
 ```
 $ ./runner | tidal sync servers
 ```
-
-
-
-
 
 ## Generating a `hosts` file from Tidal Migrations
 
