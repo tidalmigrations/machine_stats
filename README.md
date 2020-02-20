@@ -95,14 +95,21 @@ CPU Count
 Operating System
 Operating System Version
 CPU name
-CPU Description
-CPU Manufacturer
-CPU L2 CacheSize
-CPU L3 CacheSize
-CPU Socket Designation
-Total Visible Memory (GB)
-Total Virtual Memory (GB)
 ```
+
+It is also configured to capture the following values, however in order to see them in Tidal Migrations you must add the following as custom fields for servers. You can do that at a URL that looks like, https://your_domain.tidalmg.com/#/admin/servers
+
+```
+CPU_Description
+CPU_Manufacturer
+CPU_L2CacheSize
+CPU_L3CacheSize
+CPU_SocketDesignation
+TotalVisible_Memory_GB
+TotalVirtual_Memory_GB
+```
+
+*Note: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in `windows/server_stats.ps1`*
 
 ## *NIX
 
