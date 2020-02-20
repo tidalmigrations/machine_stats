@@ -61,20 +61,25 @@ The script `runner.ps1` should be customized for each environment.
 
 ### Usage
 
-1) Provide the needed Windows username to access to VMs.
+1) Provide the needed Windows username to access to VMs, (line 19 in the `windows/runner.ps1.` file)
 
 2) Ensure you are logged in to Tidal Migrations, via:
 ```
-$ tidal login
+tidal login
 ```
 
 3) Ensure you have a file `servers.txt` that have a list of all the hostnames you want to scan.
 
 You can easily export these with the 'Export' from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
 
-4) Invoke the runner:
+4) Securely provide the password for the user account:
 ```
-$ ./runner.ps1
+./windows/save_password.ps1`
+```
+
+5) Invoke the runner:
+```
+./windows/runner.ps1
 ```
 
 You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
