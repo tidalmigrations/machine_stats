@@ -1,6 +1,6 @@
 # Machine Stats
 A simple and effective way to gather machine statistics (RAM, Storage, CPU)
-from a server environment as a first layer of a [Tidal Migrations discovery process](https://guides.tidalmg.com/discovery-techniques.html).
+from a server environment as a first layer of a [Tidal Migrations discovery process](https://guides.tidalmg.com).
 
 Supports Windows, Linux and *nix platforms.
 
@@ -48,7 +48,7 @@ As your cloud migration will likely take place over many months or years, it's i
 
 Machine Stats for Windows uses WinRM to `Invoke-Command` across your servers, creating a JSON file to securely send to your [Tidal Migrations](https://tidalmigrations.com/) instance using the [tidal command](https://tidalmigrations.com/tidal-tools/).
 
-See [/windows/](windows/) for scripts:
+See [windows/](windows/) for scripts:
 
 The script `runner.ps1` should be customized for each environment.
 
@@ -61,7 +61,7 @@ The script `runner.ps1` should be customized for each environment.
 
 ### Usage
 
-1) Provide the needed Windows username to access to VMs, (line 19 in the `windows/runner.ps1.` file)
+1) Provide the needed Windows username to access to VMs, (line 19 in the [windows/runner.ps1.](windows/runner.ps1) file)
 
 2) Ensure you are logged in to Tidal Migrations, via:
 ```
@@ -114,7 +114,7 @@ TotalVisible_Memory_GB
 TotalVirtual_Memory_GB
 ```
 
-*NB: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in `windows/server_stats.ps1`*
+*NB: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in [windows/server_stats.ps1](windows/server_stats.ps1)*
 
 ## *NIX
 
