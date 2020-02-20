@@ -68,9 +68,9 @@ The script `runner.ps1` should be customized for each environment.
 tidal login
 ```
 
-3) Ensure you have a file `servers.txt` that have a list of all the hostnames you want to scan.
+3) Ensure you have a file `windows/servers.txt` that has a list of all the hostnames you want to scan. The hosts will need to be accessible via your network connection from the machine that you run this from.
 
-You can easily export these with the 'Export' from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
+You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
 
 4) Securely provide the password for the user account:
 ```
@@ -114,7 +114,7 @@ TotalVisible_Memory_GB
 TotalVirtual_Memory_GB
 ```
 
-*Note: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in `windows/server_stats.ps1`*
+*NB: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in `windows/server_stats.ps1`*
 
 ## *NIX
 
@@ -160,15 +160,15 @@ freebsd.example.com ansible_python_interpreter=/usr/local/bin/python
 $ ./runner | tidal sync servers
 ```
 
-## Generating a `hosts` file from Tidal Migrations
+### Generating a `hosts` file from Tidal Migrations
 
 Pro-Tip: If you already use Tidal Migrations [Ansible Tower integration script](https://github.com/tidalmigrations/ansible-tower-integration) you can use its output to generate the `hosts` file for `machine_stats`.
 
-### Requirements
+#### Requirements
 
 * [`jq`](https://stedolan.github.io/jq/)
 
-### Usage
+#### Usage
 
 ```
 cd ansible-tower-integration
