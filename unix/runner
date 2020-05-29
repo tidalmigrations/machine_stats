@@ -105,7 +105,7 @@ try:
         stdout_callback=RESULTS_CALLBACK
     )
     TQM.run(PLAY)
-    print json.dumps(TOTAL_RESULTS, indent=4)
+    print(json.dumps(TOTAL_RESULTS, indent=4))
 finally:
     if TQM is not None:
         TQM.cleanup()
