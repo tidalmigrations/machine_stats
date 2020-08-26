@@ -142,9 +142,11 @@ CPU name
 
 ### Requirements
 
-1. Install `virtualenv` and [activate virtual environment](https://virtualenv.pypa.io/en/latest/userguide/)
-2. `pip install -r requirements.txt`
-3. [Add your SSH key to `ssh-agent`](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent) or have your SSH identity file available.
+1. [Install pip](https://pip.pypa.io/en/stable/installing/)
+2. (Optional) [Install virtualenv](https://virtualenv.pypa.io/en/latest/installation.html) and [activate virtual environment](https://virtualenv.pypa.io/en/latest/user_guide.html) (In MacOS, you can use `virtualenv` to specifically use `python2` or `python3`)
+3. `cd unix`
+4. `pip install -r requirements.txt`
+5. [Add your SSH key to `ssh-agent`](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent) or have your SSH identity file available.
 
 ### Usage
 
