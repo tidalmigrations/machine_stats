@@ -198,3 +198,9 @@ Pro-Tip: If you already use Tidal Migrations [Ansible Tower integration script](
 cd ansible-tower-integration
 ./tidal_inventory.py | jq -r '.servers.hosts[]' > path/to/hosts
 ```
+
+### Known issues
+
+- `not supported between instances of 'NoneType' and 'int'`
+
+Patch the file (relative to the `unix` directory) `lib/python3.8/site-packages/ansible/plugins/connection/ssh.py`. See what to modify in this commit <https://github.com/tidalmigrations/ansible/commit/5931f71de727c2b109c0e3595e8b7fa53cf80a5c>.
