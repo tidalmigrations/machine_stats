@@ -148,6 +148,10 @@ CPU name
 4. `pip install -r requirements.txt`
 5. [Add your SSH key to `ssh-agent`](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent) or have your SSH identity file available.
 
+### Known versions to work
+
+- RHEL7, py2.7 and Ansible 2.7.16
+
 ### Usage
 
 1. Create a `hosts` file in the current directory.
