@@ -78,6 +78,7 @@ class ResultCallback(CallbackBase):
         self.host_ok = {}
         self.host_unreachable = {}
         self.host_failed = {}
+        self.host_no_mounts = {}
 
     def v2_runner_on_unreachable(self, result):
         host = result._host
@@ -88,9 +89,14 @@ class ResultCallback(CallbackBase):
         self.host_failed[host.get_name()] = result
 
     def v2_runner_on_ok(self, result):
-        host = result._host
-        self.host_ok[host.get_name()] = result
         facts = result._result['ansible_facts']
+        host = result._host
+
+        if 'ansible_mounts' not in facts:
+            self.host_no_mounts[host.get_name()] = result
+
+        self.host_ok[host.get_name()] = result
+
         TOTAL_RESULTS['servers'].append({
             'host_name': facts['ansible_hostname'],
             'fqdn': facts['ansible_fqdn'],
@@ -139,18 +145,21 @@ try:
 finally:
 
     results_callback = RESULTS_CALLBACK
-    eprint("UP ***********")
+    eprint("UP *********************************")
     for host, result in results_callback.host_ok.items():
         eprint('{0}'.format(host))
 
-    eprint("FAILED *******")
+    eprint("FAILED *****************************")
     for host, result in results_callback.host_failed.items():
         eprint('{0} >>> {1}'.format(host, result._result['msg']))
-        # print('{0} >>> {1}'.format(host, result._result)) # use this to deep dive errors
 
-    eprint("DOWN *********")
+    eprint("DOWN *******************************")
     for host, result in results_callback.host_unreachable.items():
         eprint('{0} >>> {1}'.format(host, result._result['msg']))
+
+    eprint("NO ANSIBLE_MOUNTS IN FACTS *********")
+    for host, result in results_callback.host_no_mounts.items():
+        eprint('{0}'.format(host))
 
     if TQM is not None:
         TQM.cleanup()
