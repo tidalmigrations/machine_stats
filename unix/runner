@@ -5,8 +5,10 @@ Script to prepare JSON output for tidal sync servers from the list of hosts
 """
 
 from __future__ import division
+from __future__ import print_function
 
 import json
+import sys
 
 from collections import defaultdict, namedtuple
 
@@ -18,6 +20,10 @@ from ansible.plugins.callback import CallbackBase
 from ansible.vars.manager import VariableManager
 
 TOTAL_RESULTS = {'servers': []}
+
+def eprint(*args, **kwargs):
+    """Print to stderr"""
+    print(*args, file=sys.stderr, **kwargs)
 
 def ram_allocated_gb(facts):
     """Return total memory allocation in GB"""
@@ -32,10 +38,14 @@ def _size(key, mounts):
 
 def storage_allocated_gb(facts):
     """Return total storage allocation in GB"""
+    if 'ansible_mounts' not in facts:
+        return 0
     return _size('size_total', facts['ansible_mounts']) / 1024**3
 
 def storage_used_gb(facts):
     """Return used storage in GB"""
+    if 'ansible_mounts' not in facts:
+        return 0
     return (_size('size_total', facts['ansible_mounts']) -
             _size('size_available', facts['ansible_mounts'])) / 1024**3
 
@@ -56,11 +66,31 @@ def cpu_name(proc):
     return 'Unknown'
 
 class ResultCallback(CallbackBase):
-    """A sample callback plugin used for performing an action as results come
-    in"""
-    def v2_runner_on_ok(self, result):
-        facts = result._result['ansible_facts']
+    """A sample callback plugin used for performing an action as results come in
+    
+    If you want to collect all results into a single object for processing at
+    the end of the execution, look into utilizing the ``json`` callback plugin
+    or writing your own custom callback plugin.
+    """
 
+    def __init__(self, *args, **kwargs):
+        super(ResultCallback, self).__init__(*args, **kwargs)
+        self.host_ok = {}
+        self.host_unreachable = {}
+        self.host_failed = {}
+
+    def v2_runner_on_unreachable(self, result):
+        host = result._host
+        self.host_unreachable[host.get_name()] = result
+
+    def v2_runner_on_failed(self, result, *args, **kwargs):
+        host = result._host
+        self.host_failed[host.get_name()] = result
+
+    def v2_runner_on_ok(self, result):
+        host = result._host
+        self.host_ok[host.get_name()] = result
+        facts = result._result['ansible_facts']
         TOTAL_RESULTS['servers'].append({
             'host_name': facts['ansible_hostname'],
             'fqdn': facts['ansible_fqdn'],
@@ -107,5 +137,20 @@ try:
     TQM.run(PLAY)
     print(json.dumps(TOTAL_RESULTS, indent=4))
 finally:
+
+    results_callback = RESULTS_CALLBACK
+    eprint("UP ***********")
+    for host, result in results_callback.host_ok.items():
+        eprint('{0}'.format(host))
+
+    eprint("FAILED *******")
+    for host, result in results_callback.host_failed.items():
+        eprint('{0} >>> {1}'.format(host, result._result['msg']))
+        # print('{0} >>> {1}'.format(host, result._result)) # use this to deep dive errors
+
+    eprint("DOWN *********")
+    for host, result in results_callback.host_unreachable.items():
+        eprint('{0} >>> {1}'.format(host, result._result['msg']))
+
     if TQM is not None:
         TQM.cleanup()
