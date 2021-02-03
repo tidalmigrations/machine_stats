@@ -1,8 +1,6 @@
-# Machine Stats for Unix-like systems-like systems
+# Machine Stats for Unix-like systems
 
 Machine Stats for Linux/Unix leverages [Ansible](https://www.ansible.com/) to gather facts in a cross-platform way.
-
-See [/unix/](unix/) for scripts:
 
 ## Data captured
 

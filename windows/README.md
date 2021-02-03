@@ -2,8 +2,6 @@
 
 Machine Stats for Windows uses WinRM to `Invoke-Command` across your servers, creating a JSON file to securely send to your [Tidal Migrations](https://tidalmigrations.com/) instance using the [tidal command](https://tidalmigrations.com/tidal-tools/).
 
-See [windows/](windows/) for scripts:
-
 The script `runner.ps1` should be customized for each environment.
 
 1) Specifiy your username and a list of hostnames (either from reading a file, hard coded, or querying a directory).
