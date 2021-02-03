@@ -22,9 +22,118 @@ CPU name
 
 ## Requirements
 
-1. Install `virtualenv` and [activate virtual environment](https://virtualenv.pypa.io/en/latest/user_guide.html)
-2. `pip install -r requirements.txt`
-3. [Add your SSH key to `ssh-agent`](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent) or have your SSH identity file available.
+1. **Git**
+
+    ```
+    # Debian/Ubuntu
+    sudo apt-get update
+    sudo apt-get install git
+
+    # Fedora
+    sudo dnf -y update
+    sudo dnf -y install git
+
+    # RHEL/CentOS
+    sudo yum update
+    sudo yum install git
+
+    # macOS (Xcode)
+    xcode-select --install
+
+    # masOS (brew)
+    brew install git
+    ```
+
+    Or follow the installation instrugtions on [Git's web
+    site](https://git-scm.com/downloads)
+
+2. **`virtualenv`**
+
+    ```
+    # Debian/Ubuntu
+    sudo apt-get update
+    sudo apt-get install virtualenv
+
+    # Fedora
+    sudo dnf -y update
+    sudo dnf -y install python-virtualenv
+
+    # RHEL/CentOS
+    sudo yum update
+    sudo yum install python-virtualenv
+
+    # macOS
+    # TODO: add macOS installation instructions
+    ```
+
+    Or follow the installation instructions on [`virtualenv` web
+    site](https://virtualenv.pypa.io/en/latest/installation.html)
+
+## Installation
+
+We are going to install Machine Stats for Unix-like systems in user's `$HOME`
+directory and not system-wide, so the installation won't affect system
+libraries and packages.
+
+First of all, let's obtain the sources of Machine Stats.
+
+Open your terminal emulator and change the current working directory to your
+`$HOME` directory by running this simple command:
+
+```
+cd 
+```
+
+Let's fetch the sources from our Git repository:
+
+```
+git clone https://github.com/tidalmigrations/machine_stats.git
+```
+
+All of the code should be downloaded into a `machine_stats` directory, let's
+change into that directory:
+
+```
+cd machine_stats
+```
+
+This directory contains scripts for both Window version and the version for
+Unix-like systems, we need the latter, so let's switch to the appropriate
+directory:
+
+```
+cd unix
+```
+
+To install Machine Stats into an isolated environment we are going to use a
+tool to create such environments, called [`virtualenv`]. If you haven't
+already, install the tool using the information from the
+[Requirements](#Requirements) section.
+
+Let's create the virtual environment:
+
+```
+virtualenv venv
+```
+
+This will create a Python virtual environment under path `venv`.
+
+Now we need to activate the environment:
+
+```
+source venv/bin/activate
+```
+
+Now, when we have a Python virtual environment created and activated, let's
+install packages which are needed for Machine Stats to run properly by
+executing the following command:
+
+```
+pip install -r requirements.txt
+```
+
+Congratulations! You have successfully installed Machine Stats for Unix-like
+systems! Let's start actually using it!
 
 ## Usage
 
