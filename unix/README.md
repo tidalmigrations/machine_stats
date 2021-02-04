@@ -100,7 +100,7 @@ cd machine_stats
 ```
 
 This directory contains scripts for both Window version and the version for
-Unix-like systems, we need the latter, so let's switch to the appropriate
+Unix-like systems. We need the latter, so let's switch to the appropriate
 directory:
 
 ```
