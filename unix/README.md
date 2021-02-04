@@ -63,9 +63,6 @@ CPU name
     # RHEL/CentOS
     sudo yum update
     sudo yum install python-virtualenv
-
-    # macOS
-    # TODO: add macOS installation instructions
     ```
 
     Or follow the installation instructions on [`virtualenv` web
