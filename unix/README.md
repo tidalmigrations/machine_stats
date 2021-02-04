@@ -46,7 +46,7 @@ CPU name
     brew install git
     ```
 
-    Or follow the installation instrugtions on [Git's web
+    Or follow the installation instructions on [Git's web
     site](https://git-scm.com/downloads)
 
 2. **`virtualenv`**
