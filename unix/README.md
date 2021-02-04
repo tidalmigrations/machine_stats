@@ -40,7 +40,7 @@ CPU name
     # macOS (Xcode)
     xcode-select --install
 
-    # masOS (brew)
+    # macOS (brew)
     brew install git
     ```
 
