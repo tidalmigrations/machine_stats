@@ -71,7 +71,7 @@ CPU name
 ## Installation
 
 We are going to install Machine Stats for Unix-like systems in user's `$HOME`
-directory and not system-wide, so the installation won't affect system
+directory instead of system-wide, so the installation won't affect system
 libraries and packages.
 
 First of all, let's obtain the sources of Machine Stats.
