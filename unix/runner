@@ -10,8 +10,6 @@ from __future__ import print_function
 import json
 import sys
 
-from collections import defaultdict, namedtuple
-
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.module_utils.common.collections import ImmutableDict
 from ansible.inventory.manager import InventoryManager
