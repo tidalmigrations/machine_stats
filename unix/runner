@@ -13,11 +13,13 @@ import sys
 from collections import defaultdict, namedtuple
 
 from ansible.executor.task_queue_manager import TaskQueueManager
+from ansible.module_utils.common.collections import ImmutableDict
 from ansible.inventory.manager import InventoryManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
 from ansible.vars.manager import VariableManager
+from ansible import context
 
 TOTAL_RESULTS = {'servers': [], 'errors': []}
 
@@ -128,13 +130,9 @@ class ResultCallback(CallbackBase):
             'cpu_name': cpu_name(facts['ansible_processor'])
         })
 
-Options = namedtuple('Options', ['connection', 'module_path', 'forks',
-                                 'become', 'become_method', 'become_user',
-                                 'check', 'diff'])
-OPTIONS = Options(connection='smart', module_path=['/to/mymodules'], forks=10,
-                  become=None, become_method=None, become_user=None,
-                  check=False, diff=False)
-
+# Since the API is constructed for CLI it expects certain options to always be set in the context object
+context.CLIARGS = ImmutableDict(connection='smart', module_path=['/to/mymodules', '/usr/share/ansible'], forks=10, become=None,
+                                become_method=None, become_user=None, check=False, diff=False, verbosity=0)
 LOADER = DataLoader()
 PASSWORDS = dict(vault_pass='secret')
 RESULTS_CALLBACK = ResultCallback()
@@ -153,7 +151,6 @@ try:
         inventory=INVENTORY,
         variable_manager=VARIABLE_MANAGER,
         loader=LOADER,
-        options=OPTIONS,
         passwords=PASSWORDS,
         stdout_callback=RESULTS_CALLBACK
     )
