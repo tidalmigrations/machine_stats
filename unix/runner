@@ -156,8 +156,6 @@ def main():
         tqm.run(play)
         print(json.dumps(total_results, indent=4))
     finally:
-
-        results_callback = results_callback
         eprint("UP *********************************")
         for host, result in results_callback.host_ok.items():
             eprint('{0}'.format(host))
