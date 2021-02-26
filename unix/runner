@@ -130,50 +130,55 @@ class ResultCallback(CallbackBase):
             'cpu_name': cpu_name(facts['ansible_processor'])
         })
 
-# Since the API is constructed for CLI it expects certain options to always be set in the context object
-context.CLIARGS = ImmutableDict(connection='smart', module_path=['/to/mymodules', '/usr/share/ansible'], forks=10, become=None,
-                                become_method=None, become_user=None, check=False, diff=False, verbosity=0)
-LOADER = DataLoader()
-PASSWORDS = dict(vault_pass='secret')
-RESULTS_CALLBACK = ResultCallback()
-INVENTORY = InventoryManager(loader=LOADER, sources='hosts')
-VARIABLE_MANAGER = VariableManager(loader=LOADER, inventory=INVENTORY)
-PLAY_SOURCE = dict(
-    name='Ansible Play',
-    hosts='all',
-    gather_facts='yes'
-)
-PLAY = Play().load(PLAY_SOURCE, variable_manager=VARIABLE_MANAGER,
-                   loader=LOADER)
-TQM = None
-try:
-    TQM = TaskQueueManager(
-        inventory=INVENTORY,
-        variable_manager=VARIABLE_MANAGER,
-        loader=LOADER,
-        passwords=PASSWORDS,
-        stdout_callback=RESULTS_CALLBACK
+def main():
+    # Since the API is constructed for CLI it expects certain options to always be set in the context object
+    context.CLIARGS = ImmutableDict(connection='smart', module_path=['/to/mymodules', '/usr/share/ansible'], forks=10, become=None,
+                                    become_method=None, become_user=None, check=False, diff=False, verbosity=0)
+    LOADER = DataLoader()
+    PASSWORDS = dict(vault_pass='secret')
+    RESULTS_CALLBACK = ResultCallback()
+    INVENTORY = InventoryManager(loader=LOADER, sources='hosts')
+    VARIABLE_MANAGER = VariableManager(loader=LOADER, inventory=INVENTORY)
+    PLAY_SOURCE = dict(
+        name='Ansible Play',
+        hosts='all',
+        gather_facts='yes'
     )
-    TQM.run(PLAY)
-    print(json.dumps(TOTAL_RESULTS, indent=4))
-finally:
+    PLAY = Play().load(PLAY_SOURCE, variable_manager=VARIABLE_MANAGER,
+                       loader=LOADER)
+    TQM = None
+    try:
+        TQM = TaskQueueManager(
+            inventory=INVENTORY,
+            variable_manager=VARIABLE_MANAGER,
+            loader=LOADER,
+            passwords=PASSWORDS,
+            stdout_callback=RESULTS_CALLBACK
+        )
+        TQM.run(PLAY)
+        print(json.dumps(TOTAL_RESULTS, indent=4))
+    finally:
 
-    results_callback = RESULTS_CALLBACK
-    eprint("UP *********************************")
-    for host, result in results_callback.host_ok.items():
-        eprint('{0}'.format(host))
+        results_callback = RESULTS_CALLBACK
+        eprint("UP *********************************")
+        for host, result in results_callback.host_ok.items():
+            eprint('{0}'.format(host))
 
-    eprint("FAILED *****************************")
-    for host, result in results_callback.host_failed.items():
-        eprint('{0} >>> {1}'.format(host, result._result['msg']))
+        eprint("FAILED *****************************")
+        for host, result in results_callback.host_failed.items():
+            eprint('{0} >>> {1}'.format(host, result._result['msg']))
 
-    eprint("DOWN *******************************")
-    for host, result in results_callback.host_unreachable.items():
-        eprint('{0} >>> {1}'.format(host, result._result['msg']))
+        eprint("DOWN *******************************")
+        for host, result in results_callback.host_unreachable.items():
+            eprint('{0} >>> {1}'.format(host, result._result['msg']))
 
-    eprint("NO ANSIBLE_MOUNTS IN FACTS *********")
-    for host, result in results_callback.host_no_mounts.items():
-        eprint('{0}'.format(host))
+        eprint("NO ANSIBLE_MOUNTS IN FACTS *********")
+        for host, result in results_callback.host_no_mounts.items():
+            eprint('{0}'.format(host))
 
-    if TQM is not None:
-        TQM.cleanup()
+        if TQM is not None:
+            TQM.cleanup()
+
+
+if __name__ == '__main__':
+    main()
