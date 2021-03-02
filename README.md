@@ -28,7 +28,7 @@ plan data replication time, or other migration metrics on an app-by-app basis.
 │                            │                           ║                                       ║
 │  CPU, RAM, Storage etc.    │                           ║  - Single Source of Truth             ║
 │                            │   `tidal sync servers`    ║  - Server, Database, and              ║
-│                            │──────────────────────────▶║    Application Inventory              ║
+│                            │──────────────────────────>║    Application Inventory              ║
 │                            │                           ║                                       ║
 │                            │                           ║                                       ║
 └────────────────────────────┘                           ╚═══════════════════════════════════════╝
