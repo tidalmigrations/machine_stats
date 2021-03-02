@@ -30,7 +30,7 @@ When taking an _application-centric_ approach to cloud migration, getting the re
 │                            │                           ║                                       ║
 │  CPU, RAM, Storage etc.    │                           ║  - Single Source of Truth             ║
 │                            │   `tidal sync servers`    ║  - Server, Database, and              ║
-│                            │──────────────────────────▶║    Application Inventory              ║
+│                            │─────────────────────────▶║    Application Inventory              ║
 │                            │                           ║                                       ║
 │                            │                           ║                                       ║
 └────────────────────────────┘                           ╚═══════════════════════════════════════╝
