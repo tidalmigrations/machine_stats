@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Script to prepare JSON output for tidal sync servers from the list of hosts
 """
