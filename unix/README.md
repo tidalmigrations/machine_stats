@@ -47,24 +47,29 @@ CPU name
     Or follow the installation instructions on [Git's web
     site](https://git-scm.com/downloads)
 
-2. **`virtualenv`**
+2. **`pipenv`**
 
     ```
-    # Debian/Ubuntu
+    # Debian 10+/Ubuntu 20.04+
     sudo apt-get update
-    sudo apt-get install virtualenv
+    sudo apt-get install pipenv
 
-    # Fedora
+    # Fedora 32+
     sudo dnf -y update
-    sudo dnf -y install python-virtualenv
+    sudo dnf -y install pipenv
 
-    # RHEL/CentOS
-    sudo yum update
-    sudo yum install python-virtualenv
+    # RHEL 7
+    sudo yum install rh-python38
+    scl enable rh-python38 bash
+    python3.8 -m pip install --user pipenv
+
+    # RHEL 8
+    sudo yum install python3
+    python3 -m pip install --user pipenv
     ```
 
-    Or follow the installation instructions on [`virtualenv` web
-    site](https://virtualenv.pypa.io/en/latest/installation.html)
+    Or follow the installation instructions on [`pipenv` web
+    site](https://pipenv.pypa.io/en/latest/install/#installing-pipenv)
 
 ## Installation
 
@@ -102,31 +107,11 @@ directory:
 cd unix
 ```
 
-To install Machine Stats into an isolated environment we are going to use a
-tool to create such environments, called [`virtualenv`]. If you haven't
-already, install the tool using the information from the
-[Requirements](#Requirements) section.
-
-Let's create the virtual environment:
-
-```
-virtualenv venv
-```
-
-This will create a Python virtual environment under path `venv`.
-
-Now we need to activate the environment:
-
-```
-source venv/bin/activate
-```
-
-Now, when we have a Python virtual environment created and activated, let's
-install packages which are needed for Machine Stats to run properly by
+Let's install packages which are needed for Machine Stats to run properly by
 executing the following command:
 
 ```
-pip install -r requirements.txt
+pipenv install
 ```
 
 Congratulations! You have successfully installed Machine Stats for Unix-like
@@ -145,9 +130,9 @@ my-user@example.com ansible_ssh_private_key_file=path/to/key-file.pem
 ```
 freebsd.example.com ansible_python_interpreter=/usr/local/bin/python
 ```
-6. Execute `runner` and pipe its output to Tidal Tools:
+6. Execute `pipenv run stats` and pipe its output to Tidal Tools:
 ```
-$ ./runner | tidal sync servers
+$ pipenv run stats | tidal sync servers
 ```
 
 ### Getting information about RHEL 5 hosts
@@ -181,4 +166,26 @@ Pro-Tip: If you already use Tidal Migrations [Ansible Tower integration script](
 ```
 cd ansible-tower-integration
 ./tidal_inventory.py | jq -r '.servers.hosts[]' > path/to/hosts
+```
+
+## Troubleshooting
+
+## How to permanently enable the Python 3.8 software collection on RHEL 7
+
+You should always enable the Python software collection before using `pipenv`
+with the following command:
+
+```
+scl enable rh-python38 bash
+```
+
+To permanently add Python 3 to your `$PATH`, you can add an `scl_source`
+command to the “dot files” for your specific user. The benefit of this approach
+is that the collection is already enabled at every login.
+
+Using your preferred text editor, add the following line to your `~/.bashrc`:
+
+```
+# Add RHSCL Python 3 to my login environment
+source scl_source enable rh-python38
 ```

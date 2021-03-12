@@ -1,0 +1,12 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+ansible = "<2.10"
+
+[dev-packages]
+
+[scripts]
+stats = "python main.py"
