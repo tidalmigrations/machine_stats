@@ -57,6 +57,15 @@ CPU name
     # Fedora 32+
     sudo dnf -y update
     sudo dnf -y install pipenv
+
+    # RHEL 7
+    sudo yum install rh-python38
+    scl enable rh-python38 bash
+    python3.8 -m pip install --user pipenv
+
+    # RHEL 8
+    sudo yum install python3
+    python3 -m pip install --user pipenv
     ```
 
     Or follow the installation instructions on [`pipenv` web
