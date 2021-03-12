@@ -167,3 +167,25 @@ Pro-Tip: If you already use Tidal Migrations [Ansible Tower integration script](
 cd ansible-tower-integration
 ./tidal_inventory.py | jq -r '.servers.hosts[]' > path/to/hosts
 ```
+
+## Troubleshooting
+
+## How to permanently enable the Python 3.8 software collection on RHEL 7
+
+You should always enable the Python software collection before using `pipenv`
+with the following command:
+
+```
+scl enable rh-python38 bash
+```
+
+To permanently add Python 3 to your `$PATH`, you can add an `scl_source`
+command to the “dot files” for your specific user. The benefit of this approach
+is that the collection is already enabled at every login.
+
+Using your preferred text editor, add the following line to your `~/.bashrc`:
+
+```
+# Add RHSCL Python 3 to my login environment
+source scl_source enable rh-python38
+```
