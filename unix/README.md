@@ -50,13 +50,14 @@ CPU name
 2. **`pipenv`**
 
     ```
-    # Debian/Ubuntu
+    # Debian 10+/Ubuntu 20.04+
     sudo apt-get update
     sudo apt-get install pipenv
 
-    # Fedora
+    # Fedora 32+
     sudo dnf -y update
     sudo dnf -y install pipenv
+    ```
 
     Or follow the installation instructions on [`pipenv` web
     site](https://pipenv.pypa.io/en/latest/install/#installing-pipenv)
