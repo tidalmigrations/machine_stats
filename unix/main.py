@@ -5,6 +5,7 @@ Script to prepare JSON output for tidal sync servers from the list of hosts
 from __future__ import division
 from __future__ import print_function
 
+import argparse
 import json
 import sys
 import shutil
@@ -136,6 +137,17 @@ class ResultCallback(CallbackBase):
 
 
 def main():
+    parser = argparse.ArgumentParser(prog="pipenv run stats")
+    parser.add_argument(
+        "hosts",
+        metavar="FILE",
+        type=argparse.FileType("r"),
+        help="hosts file",
+        nargs="*",
+        default=[open("hosts")],
+    )
+    args = parser.parse_args()
+    sources = list(map(lambda f: f.name, args.hosts))
     # Since the API is constructed for CLI it expects certain options to always
     # be set in the context object
     context.CLIARGS = ImmutableDict(
@@ -160,7 +172,7 @@ def main():
 
     # Create inventory, use path to host config file as source or hosts in a
     # comma separated string
-    inventory = InventoryManager(loader=loader, sources="hosts")
+    inventory = InventoryManager(loader=loader, sources=sources)
 
     # Variable manager takes care of merging all the different sources to give
     # you a unified view of variables available in each context
