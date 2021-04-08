@@ -20,6 +20,7 @@ setup(
     entry_points={
         "console_scripts": [
             "machine_stats=machine_stats:main",
+            "machine-stats=machine_stats:main",
         ]
     },
 )
