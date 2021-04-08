@@ -5,8 +5,17 @@ name = "pypi"
 
 [packages]
 ansible = "<2.10"
+machine_stats = {editable = true, path = "."}
 
 [dev-packages]
+black = "==20.8b1"
+flake8 = "*"
+isort = "*"
+pylint = "*"
+setuptools = "*"
+twine = "*"
+wheel = "*"
+build = "*"
 
 [scripts]
-stats = "python main.py"
+stats = "machine_stats"
