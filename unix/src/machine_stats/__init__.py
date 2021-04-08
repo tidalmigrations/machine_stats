@@ -266,11 +266,17 @@ def main():
         "hosts",
         metavar="FILE",
         type=argparse.FileType("r"),
-        help="hosts file",
+        help="inventory file (default 'hosts')",
         nargs="*",
-        default=[open("hosts")],
     )
     args = parser.parse_args()
+    if not args.hosts:
+        try:
+            with open("hosts", "r") as f:
+                args.hosts.append(f)
+        except FileNotFoundError:
+            pass
+
     sources = list(map(lambda f: f.name, args.hosts))
     app = Application(sources=sources)
     app.run()
