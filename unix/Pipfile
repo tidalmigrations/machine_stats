@@ -16,6 +16,7 @@ setuptools = "*"
 twine = "*"
 wheel = "*"
 build = "*"
+bump2version = "*"
 
 [scripts]
 stats = "machine_stats"
