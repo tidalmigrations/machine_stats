@@ -17,6 +17,18 @@ Install locally in a Python 3 environment:
 pip install machine-stats
 ```
 
+If you are using `pipx` you can install Machine Stats as the following:
+
+```
+pipx install machine-stats
+```
+
+or even run Machine Stats directly with
+
+```
+pipx run machine-stats
+```
+
 ## Data captured
 
 For Linux/Unix based systems, by default, the following metrics are captured
