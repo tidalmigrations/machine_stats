@@ -31,6 +31,16 @@ $ pip install -r requirements.txt
 $ pip install -e .
 ```
 
+### Tools
+
+We use the following tools:
+
+* `black` for code formatting (`pipenv run black .`)
+* `isort` to sort imports (`pipenv run isort .`)
+* `flake8` or `pylint` for code linting (`pipenv run flake8
+  src/machine_stats/*` or `pipenv run pylint src`)
+* `bump2version` for version bumps (`pipenv run bump2version`)
+
 ## Finally
 
 Thanks again for your interest in improving the project! You're taking action
