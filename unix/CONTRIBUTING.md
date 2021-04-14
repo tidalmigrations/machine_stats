@@ -15,7 +15,6 @@ it's 3.9.  You can use any operating system.
 Install all development dependencies using:
 
 ```console
-$ pipenv install
 $ pipenv install --dev
 ```
 
