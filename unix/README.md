@@ -30,6 +30,41 @@ or even run Machine Stats directly with
 pipx run machine-stats
 ```
 
+### Offline installation
+
+**NOTE:** Creating the packages archive for offline installation and the actual
+offline installation process must be performed on machines with the same OS and
+Python versions.
+
+1. On the machine with internet connection create the packages archive using
+   the following commands:
+
+   ```console
+   $ python3 -m pip download -d machine-stats-offline machine-stats
+   $ tar czf machine-stats-offline.tar.gz machine-stats-offline
+   ```
+
+2. Transfer the archive to machine where you need to perform the offline
+   installation (replace `<remote-host>` and ``<remote-dir> with the
+   appropriate values):
+
+   ```console
+   $ scp machine-stats-offline.tar.gz <remote-host>:/<remote-dir>/
+   ```
+
+3. On the remote host, extracte the archive and awitch to extracted directory:
+
+   ```
+   $ tar xf machine-stats-offline.tar.gz
+   $ cd machine-stats-offline
+   ```
+
+4. Install Machine Stats and its dependencies:
+
+   ```
+   $ python3 -m pip install --no-index --find-links . machine_stats-*.whl
+   ```
+
 ## Data captured
 
 For Linux/Unix based systems, by default, the following metrics are captured
