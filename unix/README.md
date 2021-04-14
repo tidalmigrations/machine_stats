@@ -66,7 +66,7 @@ from the resources and sent and stored in Tidal Migrations:
    ```
    freebsd.example.com ansible_python_interpreter=/usr/local/bin/python
    ```
-6. Execute `pipenv run stats` and pipe its output to Tidal Tools:
+6. Execute `machine-stats` and pipe its output to Tidal Tools:
 
    ```
    $ machine-stats | tidal sync servers
