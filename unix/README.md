@@ -108,6 +108,22 @@ from the resources and sent and stored in Tidal Migrations:
    $ machine-stats | tidal sync servers
    ```
 
+### Additional notes
+
+By default Machine Stats looks for the `hosts` file in current working
+directory. If your inventory file has another name or is located on another
+path, then you should specify it explicitly:
+
+```
+$ machine-stats /path/to/myhosts | tidal sync servers
+```
+
+You can specify multiple inventory files as the following:
+
+```
+$ machine-stats hosts myhosts /path/to/myhosts
+```
+
 ### Getting information about RHEL 5 hosts
 
 Red Hat Enterprise Linux 5 is shipped with Python 2.4 but `machine_stats`
