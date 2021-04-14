@@ -14,7 +14,7 @@ gather facts in a cross-platform way.
 Install locally in a Python 3 environment:
 
 ```
-pip install machine-stats
+python3 -m pip install machine-stats
 ```
 
 If you are already have `pipx` installed and prefer to use that, you can install Machine Stats as the following:
