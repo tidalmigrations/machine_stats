@@ -32,7 +32,7 @@ Python versions.
    ```
 
 2. Transfer the archive to the machine where you need to perform the offline
-   installation (replace `<remote-host>` and ``<remote-dir> with the
+   installation (replace `<remote-host>` and `<remote-dir>` with the
    appropriate values):
 
    ```console
