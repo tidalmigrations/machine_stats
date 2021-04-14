@@ -17,7 +17,8 @@ Install locally in a Python 3 environment:
 python3 -m pip install machine-stats
 ```
 
-If you are already have `pipx` installed and prefer to use that, you can install Machine Stats as the following:
+If you are already have [`pipx`](https://pipxproject.github.io/pipx/) installed
+and prefer to use that, you can install Machine Stats as the following:
 
 ```
 pipx install machine-stats
