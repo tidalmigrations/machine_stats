@@ -31,7 +31,7 @@ Python versions.
    $ tar czf machine-stats-offline.tar.gz machine-stats-offline
    ```
 
-2. Transfer the archive to machine where you need to perform the offline
+2. Transfer the archive to the machine where you need to perform the offline
    installation (replace `<remote-host>` and ``<remote-dir> with the
    appropriate values):
 
@@ -39,7 +39,7 @@ Python versions.
    $ scp machine-stats-offline.tar.gz <remote-host>:/<remote-dir>/
    ```
 
-3. On the remote host, extracte the archive and awitch to extracted directory:
+3. On the remote host, extract the archive and switch to extracted directory:
 
    ```
    $ tar xf machine-stats-offline.tar.gz
