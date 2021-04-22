@@ -5,7 +5,6 @@ Script to prepare JSON output for tidal sync servers from the list of hosts
 import argparse
 import json
 import shutil
-import sys
 
 import ansible.constants as C
 from ansible import context
@@ -15,19 +14,8 @@ from ansible.module_utils.common.collections import ImmutableDict
 from ansible.parsing.dataloader import DataLoader
 from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
+from ansible.utils.color import colorize, hostcolor
 from ansible.vars.manager import VariableManager
-
-_total_results = {"servers": [], "errors": []}
-
-
-def total_results():
-    """Return a dictionary with total stats results"""
-    return _total_results
-
-
-def eprint(*args, **kwargs):
-    """Print to stderr"""
-    print(*args, file=sys.stderr, **kwargs)
 
 
 def ram_allocated_gb(facts):
@@ -91,53 +79,36 @@ class ResultCallback(CallbackBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.host_ok = {}
-        self.host_unreachable = {}
-        self.host_failed = {}
-        self.host_no_mounts = {}
+        self._total_results = None
 
     def v2_runner_on_unreachable(self, result):
         host = result._host  # pylint: disable=protected-access
-        self.host_unreachable[host.get_name()] = result
-        eprint(
-            "{0} >>> {1}".format(
+        self._display.error(
+            "{0}: {1}".format(
                 host.get_name(),
                 result._result["msg"],  # pylint: disable=protected-access
-            )
-        )
-
-        _total_results["errors"].append(
-            {
-                "host": host.get_name(),
-                "msg": result._result["msg"],  # pylint: disable=protected-access
-            }
+            ),
+            wrap_text=False,
         )
 
     def v2_runner_on_failed(self, result, *args, **kwargs):
         del args, kwargs  # Unused
         host = result._host  # pylint: disable=protected-access
-        self.host_failed[host.get_name()] = result
-        eprint(
-            "{0} >>> {1}".format(
+        self._display.error(
+            "{0}: {1}".format(
                 host.get_name(),
                 result._result["msg"],  # pylint: disable=protected-access
-            )
-        )
-
-        _total_results["errors"].append(
-            {
-                "host": host.get_name(),
-                "msg": result._result["msg"],  # pylint: disable=protected-access
-            }
+            ),
+            wrap_text=False,
         )
 
     def v2_runner_on_ok(self, result):
         facts = result._result["ansible_facts"]  # pylint: disable=protected-access
-        host = result._host  # pylint: disable=protected-access
 
-        self.host_ok[host.get_name()] = result
+        if self._total_results is None:
+            self._total_results = {"servers": []}
 
-        _total_results["servers"].append(
+        self._total_results["servers"].append(
             {
                 "host_name": facts["ansible_hostname"],
                 "fqdn": facts["ansible_fqdn"],
@@ -154,8 +125,60 @@ class ResultCallback(CallbackBase):
             }
         )
 
+    def v2_playbook_on_stats(self, stats):
+        if self._total_results is not None:
+            print(json.dumps(self._total_results, indent=4, sort_keys=True))
 
-class Application:
+        self._display.banner("MACHINE STATS RECAP")
+
+        hosts = sorted(stats.processed.keys())
+        for h in hosts:  # pylint: disable=invalid-name
+            t = stats.summarize(h)  # pylint: disable=invalid-name
+
+            self._display.display(
+                u"%s : %s %s %s %s %s %s %s"
+                % (
+                    hostcolor(h, t),
+                    colorize(u"ok", t["ok"], C.COLOR_OK),  # pylint: disable=no-member
+                    colorize(
+                        u"changed",
+                        t["changed"],
+                        C.COLOR_CHANGED,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"unreachable",
+                        t["unreachable"],
+                        C.COLOR_UNREACHABLE,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"failed",
+                        t["failures"],
+                        C.COLOR_ERROR,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"skipped",
+                        t["skipped"],
+                        C.COLOR_SKIP,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"rescued",
+                        t["rescued"],
+                        C.COLOR_OK,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"ignored",
+                        t["ignored"],
+                        C.COLOR_WARN,  # pylint: disable=no-member
+                    ),
+                ),
+                screen_only=True,
+                stderr=True,
+            )
+
+        self._display.display("", screen_only=True, stderr=True)
+
+
+class Application:  # pylint: disable=too-few-public-methods
     """Machine Stats application"""
 
     def __init__(self, *, sources: list = None):
@@ -223,8 +246,12 @@ class Application:
 
         # Actually run it
         try:
+            tqm.load_callbacks()
             tqm.run(play)
-            print(json.dumps(total_results(), indent=4))
+            tqm.send_callback(
+                "v2_playbook_on_stats",
+                tqm._stats,  # pylint: disable=protected-access
+            )
         finally:
             # We always need to cleanup child procs and the structures we use to
             # communicate with them
@@ -234,26 +261,6 @@ class Application:
 
             # Remove ansible tmpdir
             shutil.rmtree(C.DEFAULT_LOCAL_TMP, True)  # pylint: disable=no-member
-
-            eprint("UP *********************************")
-            for host, _ in results_callback.host_ok.items():
-                eprint(host)
-
-            eprint("FAILED *****************************")
-            for host, result in results_callback.host_failed.items():
-                eprint(
-                    "{0} >>> {1}".format(
-                        host, result._result["msg"]  # pylint: disable=protected-access
-                    )
-                )
-
-            eprint("DOWN *******************************")
-            for host, result in results_callback.host_unreachable.items():
-                eprint(
-                    "{0} >>> {1}".format(
-                        host, result._result["msg"]  # pylint: disable=protected-access
-                    )
-                )
 
             if tqm is not None:
                 tqm.cleanup()
@@ -272,7 +279,7 @@ def main():
     args = parser.parse_args()
     if not args.hosts:
         try:
-            with open("hosts", "r") as f:
+            with open("hosts", "r") as f:  # pylint: disable=invalid-name
                 args.hosts.append(f)
         except FileNotFoundError:
             pass
