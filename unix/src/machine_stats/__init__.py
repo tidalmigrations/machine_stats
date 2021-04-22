@@ -132,20 +132,44 @@ class ResultCallback(CallbackBase):
         self._display.banner("MACHINE STATS RECAP")
 
         hosts = sorted(stats.processed.keys())
-        for h in hosts:
-            t = stats.summarize(h)
+        for h in hosts:  # pylint: disable=invalid-name
+            t = stats.summarize(h)  # pylint: disable=invalid-name
 
             self._display.display(
                 u"%s : %s %s %s %s %s %s %s"
                 % (
                     hostcolor(h, t),
-                    colorize(u"ok", t["ok"], C.COLOR_OK),
-                    colorize(u"changed", t["changed"], C.COLOR_CHANGED),
-                    colorize(u"unreachable", t["unreachable"], C.COLOR_UNREACHABLE),
-                    colorize(u"failed", t["failures"], C.COLOR_ERROR),
-                    colorize(u"skipped", t["skipped"], C.COLOR_SKIP),
-                    colorize(u"rescued", t["rescued"], C.COLOR_OK),
-                    colorize(u"ignored", t["ignored"], C.COLOR_WARN),
+                    colorize(u"ok", t["ok"], C.COLOR_OK),  # pylint: disable=no-member
+                    colorize(
+                        u"changed",
+                        t["changed"],
+                        C.COLOR_CHANGED,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"unreachable",
+                        t["unreachable"],
+                        C.COLOR_UNREACHABLE,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"failed",
+                        t["failures"],
+                        C.COLOR_ERROR,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"skipped",
+                        t["skipped"],
+                        C.COLOR_SKIP,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"rescued",
+                        t["rescued"],
+                        C.COLOR_OK,  # pylint: disable=no-member
+                    ),
+                    colorize(
+                        u"ignored",
+                        t["ignored"],
+                        C.COLOR_WARN,  # pylint: disable=no-member
+                    ),
                 ),
                 screen_only=True,
                 stderr=True,
@@ -154,7 +178,7 @@ class ResultCallback(CallbackBase):
         self._display.display("", screen_only=True, stderr=True)
 
 
-class Application:
+class Application:  # pylint: disable=too-few-public-methods
     """Machine Stats application"""
 
     def __init__(self, *, sources: list = None):
@@ -224,7 +248,10 @@ class Application:
         try:
             tqm.load_callbacks()
             tqm.run(play)
-            tqm.send_callback("v2_playbook_on_stats", tqm._stats)
+            tqm.send_callback(
+                "v2_playbook_on_stats",
+                tqm._stats,  # pylint: disable=protected-access
+            )
         finally:
             # We always need to cleanup child procs and the structures we use to
             # communicate with them
@@ -252,7 +279,7 @@ def main():
     args = parser.parse_args()
     if not args.hosts:
         try:
-            with open("hosts", "r") as f:
+            with open("hosts", "r") as f:  # pylint: disable=invalid-name
                 args.hosts.append(f)
         except FileNotFoundError:
             pass
