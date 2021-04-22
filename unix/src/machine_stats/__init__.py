@@ -5,7 +5,6 @@ Script to prepare JSON output for tidal sync servers from the list of hosts
 import argparse
 import json
 import shutil
-import sys
 
 import ansible.constants as C
 from ansible import context
@@ -17,11 +16,6 @@ from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
 from ansible.utils.color import colorize, hostcolor
 from ansible.vars.manager import VariableManager
-
-
-def eprint(*args, **kwargs):
-    """Print to stderr"""
-    print(*args, file=sys.stderr, **kwargs)
 
 
 def ram_allocated_gb(facts):
