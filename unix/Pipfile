@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 ansible = "<2.10"
 machine_stats = {editable = true, path = "."}
+pluginbase = "*"
 
 [dev-packages]
 black = "==20.8b1"
