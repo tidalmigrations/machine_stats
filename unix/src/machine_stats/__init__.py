@@ -4,7 +4,9 @@ Script to prepare JSON output for tidal sync servers from the list of hosts
 
 import argparse
 import json
+import os
 import shutil
+from functools import partial
 
 import ansible.constants as C
 from ansible import context
@@ -15,7 +17,40 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
 from ansible.utils.color import colorize, hostcolor
+from ansible.utils.display import Display
 from ansible.vars.manager import VariableManager
+from pluginbase import PluginBase
+
+# For easier usage calculate the path relative to here.
+here = os.path.abspath(os.path.dirname(__file__))
+get_path = partial(os.path.join, here)
+
+display = Display()
+
+
+class PluginManager(object):
+    def __init__(self):
+        # Setup a plugin base for "machine_stats.plugins" and make sure to load
+        # all the default built-in plugins from the plugins folder.
+        self._base = PluginBase(
+            package="machine_stats_plugins", searchpath=[get_path("./plugins")]
+        )
+
+        self._source = self._base.make_plugin_source(searchpath=[])
+
+    def __getattr__(self, fn):
+        def method(*args, **kwargs):
+            for plugin_name in self._source.list_plugins():
+                plugin = self._source.load_plugin(plugin_name)
+                if not hasattr(plugin, fn):
+                    display.warning(
+                        "no method '%s' for plugin '%s'" % (fn, plugin_name)
+                    )
+                    return None
+                # calling a function of a module by using its name (a string)
+                getattr(plugin, fn)(*args, **kwargs)
+
+        return method
 
 
 def ram_allocated_gb(facts):
@@ -77,9 +112,10 @@ class ResultCallback(CallbackBase):
     or writing your own custom callback plugin.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, plugins, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._total_results = None
+        self._plugins = plugins
 
     def v2_runner_on_unreachable(self, result):
         host = result._host  # pylint: disable=protected-access
@@ -102,13 +138,24 @@ class ResultCallback(CallbackBase):
             wrap_text=False,
         )
 
-    def v2_runner_on_ok(self, result):
-        facts = result._result["ansible_facts"]  # pylint: disable=protected-access
-
+    def update_results(self, host, data: dict):
         if self._total_results is None:
-            self._total_results = {"servers": []}
+            self._total_results = {}
 
-        self._total_results["servers"].append(
+        if host not in self._total_results:
+            self._total_results[host] = data
+        else:
+            self._total_results[host].update(data)
+
+    def v2_runner_on_ok(self, result):
+        self._plugins.ok_callback(self, result)
+        facts = result._result.get("ansible_facts")  # pylint: disable=protected-access
+        if facts is None:
+            return
+
+        host = result._host.get_name()
+        self.update_results(
+            host,
             {
                 "host_name": facts["ansible_hostname"],
                 "fqdn": facts["ansible_fqdn"],
@@ -122,12 +169,14 @@ class ResultCallback(CallbackBase):
                 "operating_system": facts["ansible_distribution"],
                 "operating_system_version": facts["ansible_distribution_version"],
                 "cpu_name": cpu_name(facts["ansible_processor"]),
-            }
+            },
         )
 
     def v2_playbook_on_stats(self, stats):
         if self._total_results is not None:
-            print(json.dumps(self._total_results, indent=4, sort_keys=True))
+            print(
+                json.dumps(list(self._total_results.values()), indent=4, sort_keys=True)
+            )
 
         self._display.banner("MACHINE STATS RECAP")
 
@@ -181,10 +230,30 @@ class ResultCallback(CallbackBase):
 class Application:  # pylint: disable=too-few-public-methods
     """Machine Stats application"""
 
-    def __init__(self, *, sources: list = None):
+    def __init__(
+        self, *, sources: list = None, plugins: PluginManager, args: argparse.Namespace
+    ):
         if sources is None:
             sources = list()
         self._sources = sources
+        self._plugins = plugins
+        self.args = args
+
+        self._playbook_tasks = []
+
+        self._plugins.setup(self)
+
+    def add_playbook_tasks(self, *args):
+        for arg in args:
+            if isinstance(arg, list):
+                self._playbook_tasks.extend(arg)
+            else:
+                self._playbook_tasks.append(arg)
+
+    def playbook_tasks(self):
+        if not self._playbook_tasks:
+            return None
+        return self._playbook_tasks
 
     def run(self):
         """Run the Application"""
@@ -193,14 +262,14 @@ class Application:  # pylint: disable=too-few-public-methods
         # always be set in the context object
         context.CLIARGS = ImmutableDict(
             connection="smart",
-            module_path=["/to/mymodules", "/usr/share/ansible"],
+            module_path=[get_path("./modules"), "/usr/share/ansible"],
             forks=10,
             become=None,
             become_method=None,
             become_user=None,
             check=False,
             diff=False,
-            verbosity=0,
+            verbosity=3,
         )
 
         # Initialize needed objects
@@ -209,7 +278,7 @@ class Application:  # pylint: disable=too-few-public-methods
         passwords = dict(vault_pass="secret")
 
         # Instantiate our ResultCallback for handling results as they come in
-        results_callback = ResultCallback()
+        results_callback = ResultCallback(plugins=self._plugins)
 
         # Create inventory, use path to host config file as source or hosts in a
         # comma separated string
@@ -235,7 +304,12 @@ class Application:  # pylint: disable=too-few-public-methods
 
         # Create data structure that represents our play, including tasks, this is
         # basically what our YAML loader does internally.
-        play_source = dict(name="Ansible Play", hosts="all", gather_facts="yes")
+        play_source = dict(
+            name="Ansible Play",
+            hosts="all",
+            gather_facts="yes",
+            tasks=self.playbook_tasks(),
+        )
 
         # Create play object, playbook objects use .load instead of init or new
         # methods, this will also automatically create the task objects from the
@@ -268,6 +342,7 @@ class Application:  # pylint: disable=too-few-public-methods
 
 def main():
     """Main"""
+    plugins = PluginManager()
     parser = argparse.ArgumentParser(prog="machine_stats")
     parser.add_argument(
         "hosts",
@@ -276,6 +351,9 @@ def main():
         help="inventory file (default 'hosts')",
         nargs="*",
     )
+
+    plugins.add_arguments(parser)
+
     args = parser.parse_args()
     if not args.hosts:
         try:
@@ -285,7 +363,7 @@ def main():
             pass
 
     sources = list(map(lambda f: f.name, args.hosts))
-    app = Application(sources=sources)
+    app = Application(sources=sources, plugins=plugins, args=args)
     app.run()
 
 
