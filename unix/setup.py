@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="machine_stats",
-    version="0.0.6",
+    version="0.1.0",
     author="Petr Shevtsov",
     author_email="petr.shevtsov@tidalmigrations.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment",
