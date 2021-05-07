@@ -13,6 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     packages=["machine_stats"],
     package_dir={"": "src"},
+    package_data={"": ["modules/*", "plugins/*"]},
     url="https://github.com/tidalmigrations/machine_stats",
     install_requires=[
         "ansible<2.10",
