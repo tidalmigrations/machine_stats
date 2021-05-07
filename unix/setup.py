@@ -16,6 +16,7 @@ setup(
     url="https://github.com/tidalmigrations/machine_stats",
     install_requires=[
         "ansible<2.10",
+        "pluginbase",
     ],
     entry_points={
         "console_scripts": [
