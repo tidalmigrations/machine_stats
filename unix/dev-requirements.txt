@@ -8,7 +8,7 @@ bump2version==1.0.1
 certifi==2020.12.5
 cffi==1.14.5
 chardet==4.0.0
-click==7.1.2
+click==8.0.1
 colorama==0.4.4
 cryptography==3.4.7
 docutils==0.17.1
@@ -35,11 +35,11 @@ readme-renderer==29.0
 regex==2021.4.4
 requests-toolbelt==0.9.1
 requests==2.25.1
-rfc3986==1.4.0
+rfc3986==1.5.0
 secretstorage==3.3.1 ; sys_platform == 'linux'
-six==1.15.0
+six==1.16.0
 toml==0.10.2
-tqdm==4.60.0
+tqdm==4.61.0
 twine==3.4.1
 typed-ast==1.4.3
 typing-extensions==3.10.0.0
