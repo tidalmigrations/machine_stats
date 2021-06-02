@@ -20,8 +20,14 @@ def add_arguments(parser):
 
 def ok_callback(parent, result):
     host = result._host.get_name()
+    cpu_sampling_timeout = result._result.get("timeout")
     cpu_util = result._result.get("ansible_cpu_utilization")
     if cpu_util is not None:
         parent.update_results(
-            host, {"cpu_average": cpu_util["average"], "cpu_peak": cpu_util["peak"]}
+            host,
+            {
+                "cpu_sampling_timeout": cpu_sampling_timeout,
+                "cpu_average": cpu_util["average"],
+                "cpu_peak": cpu_util["peak"],
+            },
         )
