@@ -16,41 +16,7 @@ Install locally in a Python 3 environment:
 ```
 python3 -m pip install machine-stats
 ```
-
-### Offline installation
-
-**NOTE:** Creating the packages archive for offline installation and the actual
-offline installation process must be performed on machines with the same OS and
-Python versions.
-
-1. On the machine with internet connection create the packages archive using
-   the following commands:
-
-   ```console
-   $ python3 -m pip download -d machine-stats-offline machine-stats
-   $ tar czf machine-stats-offline.tar.gz machine-stats-offline
-   ```
-
-2. Transfer the archive to the machine where you need to perform the offline
-   installation (replace `<remote-host>` and `<remote-dir>` with the
-   appropriate values):
-
-   ```console
-   $ scp machine-stats-offline.tar.gz <remote-host>:/<remote-dir>/
-   ```
-
-3. On the remote host, extract the archive and switch to extracted directory:
-
-   ```
-   $ tar xf machine-stats-offline.tar.gz
-   $ cd machine-stats-offline
-   ```
-
-4. Install Machine Stats and its dependencies:
-
-   ```
-   $ python3 -m pip install --no-index --find-links . machine_stats-*.whl
-   ```
+*Need to install in an environment without internet access?* [Checkout how to do that below](#offline-installation).
 
 ## Data captured
 
@@ -133,6 +99,41 @@ but installs Python 2.6 alongside with system Python packages.
 
    ```
    my-user@rhel5.example.com ansible_python_interpreter=/usr/bin/python2.6
+   ```
+
+### Offline installation
+
+**NOTE:** Creating the packages archive for offline installation and the actual
+offline installation process must be performed on machines with the same OS and
+Python versions.
+
+1. On the machine with internet connection create the packages archive using
+   the following commands:
+
+   ```console
+   $ python3 -m pip download -d machine-stats-offline machine-stats
+   $ tar czf machine-stats-offline.tar.gz machine-stats-offline
+   ```
+
+2. Transfer the archive to the machine where you need to perform the offline
+   installation (replace `<remote-host>` and `<remote-dir>` with the
+   appropriate values):
+
+   ```console
+   $ scp machine-stats-offline.tar.gz <remote-host>:/<remote-dir>/
+   ```
+
+3. On the remote host, extract the archive and switch to extracted directory:
+
+   ```
+   $ tar xf machine-stats-offline.tar.gz
+   $ cd machine-stats-offline
+   ```
+
+4. Install Machine Stats and its dependencies:
+
+   ```
+   $ python3 -m pip install --no-index --find-links . machine_stats-*.whl
    ```
 
 ## Generating a `hosts` file from Tidal Migrations
