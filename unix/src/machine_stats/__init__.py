@@ -175,7 +175,11 @@ class ResultCallback(CallbackBase):
     def v2_playbook_on_stats(self, stats):
         if self._total_results is not None:
             print(
-                json.dumps(list(self._total_results.values()), indent=4, sort_keys=True)
+                json.dumps(
+                    {"servers": list(self._total_results.values())},
+                    indent=4,
+                    sort_keys=True,
+                )
             )
 
         self._display.banner("MACHINE STATS RECAP")
