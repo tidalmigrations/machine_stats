@@ -16,24 +16,25 @@ Install locally in a Python 3 environment:
 ```
 python3 -m pip install machine-stats
 ```
-*Need to install in an environment without internet access?* [Checkout how to do that below](#offline-installation).
+
+_Need to install in an environment without internet access?_ [Checkout how to do that below](#offline-installation).
 
 ## Data captured
 
 For Linux/Unix based systems, by default, the following metrics are captured
 from the resources and sent and stored in Tidal Migrations:
 
-* Host Name
-* FQDN
-* IP Addresses
-* RAM Allocated (GB)
-* RAM Used (GB)
-* Storage Allocated (GB)
-* Storage Used (GB)
-* CPU Count
-* Operating System
-* Operating System Version
-* CPU name
+- Host Name
+- FQDN
+- IP Addresses
+- RAM Allocated (GB)
+- RAM Used (GB)
+- Storage Allocated (GB)
+- Storage Used (GB)
+- CPU Count
+- Operating System
+- Operating System Version
+- CPU name
 
 ## Minimal example
 
@@ -47,6 +48,7 @@ from the resources and sent and stored in Tidal Migrations:
    ```
    my-user@example.com ansible_ssh_private_key_file=path/to/key-file.pem
    ```
+
 4. Make sure that Python 2.6+ is installed on the machines from `hosts` file.
 5. If `python` executable was installed into non-default location (**not** in
    `/usr/bin/python`), add the `ansible_python_interpreter` parameter to the
@@ -55,6 +57,7 @@ from the resources and sent and stored in Tidal Migrations:
    ```
    freebsd.example.com ansible_python_interpreter=/usr/local/bin/python
    ```
+
 6. Execute `machine-stats` and pipe its output to Tidal Tools:
 
    ```
@@ -77,6 +80,33 @@ You can specify multiple inventory files as the following:
 $ machine-stats hosts myhosts /path/to/myhosts
 ```
 
+### Configuration
+
+Machine Stats uses Ansible under the hood. Most of the [Ansible configuration
+options](https://docs.ansible.com/ansible/2.9/reference_appendices/config.html#common-options)
+can be used with Machine Stats too. By default, Machine Stats will look for
+configuration files in the following locations:
+
+- `$PWD/machine_stats.cfg`
+- `$PWD/machine-stats.cfg`
+- `$PWD/machinestats.cfg`
+- `$PWD/ansible.cfg`
+- `$HOME/.machine_stats.cfg`
+- `$HOME/.machine-stats.cfg`
+- `$HOME/.machinestats.cfg`
+- `$HOME/.ansible.cfg`
+- `/etc/ansible/ansible.cfg`
+
+Also, it is possible to specify the custom configuration file location by
+setting the `ANSIBLE_CONFIG` environment variable, for example:
+
+```
+$ ANSIBLE_CONFIG=/path/to/my/machine_stats.cfg machine_stats /path/to/my/hosts
+```
+
+**Note:** if `ANSIBLE_CONFIG` value points to a directory, then Machine Stats
+will look for `ansible.cfg` in that directory.
+
 ### Getting information about RHEL 5 hosts
 
 Red Hat Enterprise Linux 5 is shipped with Python 2.4 but `machine_stats`
@@ -90,11 +120,13 @@ but installs Python 2.6 alongside with system Python packages.
    $ sudo curl -L -OOO -k \
        http://download.fedoraproject.org/pub/archive/epel/5/x86_64/{python26-libs-2.6.8-2.el5.x86_64.rpm,libffi-3.0.5-1.el5.x86_64.rpm,python26-2.6.8-2.el5.x86_64.rpm}
    ```
+
 2. Install the packages:
 
    ```console
    $ sudo rpm -ivh python26*.rpm libffi*.rpm
    ```
+
 3. Use non-standard Python location in your `hosts` file:
 
    ```
@@ -144,7 +176,7 @@ use its output to generate the `hosts` file for `machine_stats`.
 
 ### Requirements
 
-* [`jq`](https://stedolan.github.io/jq/)
+- [`jq`](https://stedolan.github.io/jq/)
 
 ### Usage
 
