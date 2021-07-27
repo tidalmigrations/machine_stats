@@ -26,8 +26,10 @@ def ok_callback(parent, result):
         parent.update_results(
             host,
             {
-                "cpu_sampling_timeout": cpu_sampling_timeout,
-                "cpu_average": cpu_util["average"],
-                "cpu_peak": cpu_util["peak"],
+                "custom_fields": {
+                    "cpu_sampling_timeout": cpu_sampling_timeout,
+                    "cpu_average": cpu_util["average"],
+                    "cpu_peak": cpu_util["peak"],
+                }
             },
         )
