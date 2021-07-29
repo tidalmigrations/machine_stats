@@ -23,4 +23,4 @@ gcloud compute instances create "${VM_NAME}" \
 
 echo "VM Instance started"
 echo "To connect:"
-echo "  gcloud compute ssh --zone ${VM_ZONE} ${VM_NAME}"
+echo "  gcloud compute ssh --project=${CLOUDSDK_CORE_PROJECT} --zone ${VM_ZONE} ${VM_NAME}"
