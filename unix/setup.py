@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="machine_stats",
-    version="1.0.0",
+    version="1.0.1",
     author="Petr Shevtsov",
     author_email="petr.shevtsov@tidalmigrations.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment",
@@ -17,7 +17,7 @@ setup(
     url="https://github.com/tidalmigrations/machine_stats",
     install_requires=[
         "ansible<2.10",
-        "pluginbase==1.0.0",
+        "pluginbase==1.0.1",
     ],
     entry_points={
         "console_scripts": [
