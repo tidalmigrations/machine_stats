@@ -226,7 +226,7 @@ class ResultCallback(CallbackBase):
                 )
             )
 
-        self._display.banner("MACHINE STATS RECAP")
+        self._display.display("MACHINE STATS RECAP", stderr=True)
 
         hosts = sorted(stats.processed.keys())
         for h in hosts:  # pylint: disable=invalid-name
