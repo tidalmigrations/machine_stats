@@ -26,7 +26,7 @@ You can easily export these with the 'Export' button from your Tidal Migrations 
 
 4) Securely provide the password for the user account:
 ```
-./windows/save_password.ps1`
+./windows/save_password.ps1
 ```
 
 5) Invoke the runner:
