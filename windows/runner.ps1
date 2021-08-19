@@ -20,7 +20,7 @@ $username = "INSERT_WINDOWS_USERNAME"
 
 ################################################################
 # Do not modify below this line:
-$securePwdFile = "$PWD\SecuredText.txt"
+$securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
 
 if(![System.IO.File]::Exists($securePwdFile)){
   Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
@@ -33,7 +33,7 @@ if(![System.IO.File]::Exists($securePwdFile)){
 $secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secPwd
 
-$env_user = Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $cred -ScriptBlock { $env:USERNAME }
+$env_user = Invoke-Command -ComputerName [Environment]::MachineName -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Output "About to execute inventory gathering as user: $env_user"
 
 
