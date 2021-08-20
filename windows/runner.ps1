@@ -102,4 +102,4 @@ Write-Output "Wrote to $outfile"
 $jobs | Remove-Job
 
 # Sync with Tidal:
-tidal sync servers $outfile 2>&1
+Get-Content -Path $outfile -ReadCount 500 | tidal sync servers
