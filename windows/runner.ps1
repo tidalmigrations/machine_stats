@@ -88,8 +88,14 @@ Write-Output "$num_results results received out of $num_servers servers."
 $results = @{ "servers" = $server_stats; }
 $date = Get-Date -format yyyy_MM_dd
 $outfile = "./$date-server_stats.json"
-$results | ConvertTo-Json -depth 99 | Out-File $outfile -Encoding utf8 -Force
+$json = $results | ConvertTo-Json -depth 99
 
+# Sets current directory to this scripts location
+Write-Output "[System.Environment]::CurrentDirectory"
+[System.Environment]::CurrentDirectory = (Get-Location).Path
+
+# This write ensures that the file is written without a BOM, and a UTF-8 encoding.
+[IO.File]::WriteAllLines($outfile, $json)
 Write-Output "Wrote to $outfile"
 
 # Cleanup:
