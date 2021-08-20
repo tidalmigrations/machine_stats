@@ -91,7 +91,6 @@ $outfile = "./$date-server_stats.json"
 $json = $results | ConvertTo-Json -depth 99
 
 # Sets current directory to this scripts location
-Write-Output "[System.Environment]::CurrentDirectory"
 [System.Environment]::CurrentDirectory = (Get-Location).Path
 
 # This write ensures that the file is written without a BOM, and a UTF-8 encoding.
