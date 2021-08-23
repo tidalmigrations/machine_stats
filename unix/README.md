@@ -44,7 +44,9 @@ from the resources and sent and stored in Tidal Migrations:
 
 ## Minimal example
 
-1. Create a `hosts` file in the current directory.
+1. Create a `hosts` file in the current directory. See [below](#Generating-a-hosts-file-from-Tidal-Migrations) on a couple ways
+   you can easily create this.
+
 2. Add connection strings in the form of `ssh-user@ip-address` or
    `ssh-user@domain` to the `hosts` file one per line If the `ssh-user@` part
    is omitted, then the current user name is used.
@@ -176,7 +178,17 @@ Python versions.
 
 ## Generating a `hosts` file from Tidal Migrations
 
-Pro-Tip: If you already use Tidal Migrations [Ansible Tower integration
+You can easily generate a hosts file directly from your server inventory in
+Tidal Migrations. For example you can use this command:
+
+```
+tidal export servers | jq '.[].host_name' > hosts
+```
+
+This will create a file (`hosts`), in your current directory, that you can
+use above in Step 1.
+
+Alternatively, if you use Tidal Migrations [Ansible Tower integration
 script](https://github.com/tidalmigrations/ansible-tower-integration) you can
 use its output to generate the `hosts` file for `machine_stats`.
 
