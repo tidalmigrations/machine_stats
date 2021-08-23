@@ -69,3 +69,18 @@ TotalVirtual_Memory_GB
 ```
 
 *NB: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in [windows/server_stats.ps1](windows/server_stats.ps1)*
+
+
+## Troubleshooting
+
+If you see an error that says:
+
+>[file] cannot be loaded because running scripts is disabled on this system.
+
+You can allow the script to be run by executing the following:
+
+```
+Set-ExecutionPolicy -ExecutionPlocy ByPass -Scope CurrentUser
+```
+
+See the [PowerShell documentation for more information](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy).
