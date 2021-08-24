@@ -15,7 +15,7 @@ $ServerStats = {
     $OSTotalVisibleMemory = [math]::round(($OSInfo.TotalVisibleMemorySize  / 1MB), 2) 
     $OSFreeVisibleMemory = [math]::round(($OSInfo.FreePhysicalMemory  / 1MB), 2) 
     $OSUsedMemory = "{0:N2}" -f $OSTotalVisibleMemory - $OSFreeVisibleMemory
-    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory | Measure-Object -Property capacity -Sum | % {[math]::round(($_.sum / 1GB),2)} 
+    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory | Measure-Object -Property capacity -Sum | ForEach-Object {[math]::round(($_.sum / 1GB),2)} 
     $Disk = Get-WMIObject Win32_LogicalDisk
     $Total_FreeSpaceGB = 0
     $Total_DriveSpaceGB = 0
@@ -26,6 +26,13 @@ $ServerStats = {
       $Total_DriveSpaceGB += $TotalSize
     }
     $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
+
+    $CPUUtilization = ( `
+      Get-Counter -Counter "\Processor(_Total)\% Processor Time" -SampleInterval 1 -MaxSamples 30 | `
+      Select-Object -ExpandProperty countersamples | `
+      Select-Object -ExpandProperty CookedValue | `
+      Measure-Object -Average -Maximum `
+    )
 
     # Create an object to return, convert this to JSON or CSV as you need:
     $server_info = New-Object PSObject 
@@ -49,6 +56,9 @@ $ServerStats = {
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_SocketDesignation" -value $cpu.SocketDesignation 
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "TotalVisible_Memory_GB" -value $OSTotalVisibleMemory
     Add-Member -inputObject $custom_fields -memberType NoteProperty -name "TotalVirtual_Memory_GB" -value $OSTotalVirtualMemory 
+    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "cpu_average" -value $CPUUtilization.Average
+    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "cpu_peak" -value $CPUUtilization.Maximum
+    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "cpu_sampling_timeout" -value $CPUUtilization.Count
 
     Add-Member -inputObject $server_info -memberType NoteProperty -name "custom_fields" -value $custom_fields 
     $server_info
