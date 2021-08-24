@@ -80,7 +80,7 @@ If you see an error that says:
 You can allow the script to be run by executing the following:
 
 ```
-Set-ExecutionPolicy -ExecutionPlocy ByPass -Scope CurrentUser
+Set-ExecutionPolicy -ExecutionPolicy ByPass -Scope CurrentUser
 ```
 
 See the [PowerShell documentation for more information](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy).
