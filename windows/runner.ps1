@@ -26,7 +26,7 @@ if(![System.IO.File]::Exists($securePwdFile)){
   Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
   exit 1
 } else {
-  Write-Output "Reading credential from $securePwdFile"
+  Write-Host "Reading credential from $securePwdFile"
 }
 
 
@@ -34,7 +34,7 @@ $secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secPwd
 
 $env_user = Invoke-Command -ComputerName [Environment]::MachineName -Credential $cred -ScriptBlock { $env:USERNAME }
-Write-Output "About to execute inventory gathering as user: $env_user"
+Write-Host "About to execute inventory gathering as user: $env_user"
 
 
 # Load the ScriptBlock $ServerStats:
@@ -47,7 +47,7 @@ $server_list = Get-Content ".\servers.txt"
 # $server_list = @($env:COMPUTERNAME, $env:COMPUTERNAME, $env:COMPUTERNAME )
 
 $num_servers = $server_list.Count
-Write-Output "$num_servers Servers read from servers.txt"
+Write-Host "$num_servers Servers read from servers.txt"
 
 # Collected server statistics go here:
 $server_stats = @()
@@ -81,7 +81,7 @@ $jobs | Receive-Job | ForEach-Object {
 }
 
 $num_results = $server_stats.Count
-Write-Output "$num_results results received out of $num_servers servers."
+Write-Host "$num_results results received out of $num_servers servers."
 
 
 # Write results to file:
@@ -95,7 +95,7 @@ $json = $results | ConvertTo-Json -depth 99
 
 # This write ensures that the file is written without a BOM, and a UTF-8 encoding.
 [IO.File]::WriteAllLines($outfile, $json)
-Write-Output "Wrote to $outfile"
+Write-Host "Wrote to $outfile"
 
 # Cleanup:
 $jobs | Remove-Job
