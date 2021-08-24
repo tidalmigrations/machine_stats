@@ -73,6 +73,8 @@ TotalVirtual_Memory_GB
 
 ## Troubleshooting
 
+### Scripts disabled error
+
 If you see an error that says:
 
 >[file] cannot be loaded because running scripts is disabled on this system.
@@ -84,3 +86,19 @@ Set-ExecutionPolicy -ExecutionPolicy ByPass -Scope CurrentUser
 ```
 
 See the [PowerShell documentation for more information](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy).
+
+### Authentication error
+
+If an error is returned describing that
+
+>The WinRM client cannot process the request. If the authentication scheme is different from Kerberos, or if the client computer is not joined to a domain, then HTTPS transport must be used or the destination machine must be added to the TrustedHosts configuration setting. Use winrm.cmd to configure TrustedHosts
+
+You can resolve this by running this command:
+
+```
+Set-Item WSMan:localhost\client\trustedhosts -value *
+```
+
+You can confirm this ran successfully with, `get-item WSMan:\localhost\Client\TrustedHosts`, which should list an output with a `*` under the Value column.
+
+After running this command you should be able to try again and successfully connect to the remote hosts to gather data.
