@@ -27,12 +27,15 @@ $ServerStats = {
     }
     $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
 
-    $CPUUtilization = ( `
-      Get-Counter -Counter "\Processor(_Total)\% Processor Time" -SampleInterval 1 -MaxSamples 30 | `
-      Select-Object -ExpandProperty countersamples | `
-      Select-Object -ExpandProperty CookedValue | `
-      Measure-Object -Average -Maximum `
-    )
+    $counter_params = @{
+        Counter = "\Processor(_Total)\% Processor Time"
+        SampleInterval = 1
+        MaxSamples = 30
+    }
+    $CPUUtilization = (Get-Counter @counter_params |
+        Select-Object -ExpandProperty countersamples |
+            Select-Object -ExpandProperty CookedValue |
+                Measure-Object -Average -Maximum)
 
     # Create an object to return, convert this to JSON or CSV as you need:
     $server_info = New-Object -TypeName psobject -Property @{
