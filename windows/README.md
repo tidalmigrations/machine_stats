@@ -31,9 +31,9 @@ You can easily export these with the 'Export' button from your Tidal Migrations 
 ./windows/save_password.ps1
 ```
 
-5) Invoke the runner:
+5) Invoke the runner and sync with Tidal Migrations:
 ```
-./windows/runner.ps1
+./windows/runner.ps1 | tidal sync servers
 ```
 
 You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
