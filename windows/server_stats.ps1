@@ -2,10 +2,10 @@ $ServerStats = {
     $CPUInfo = Get-WmiObject Win32_Processor 
     $OSInfo = Get-WmiObject Win32_OperatingSystem  
 
-    if( $CPUInfo.count -gt 1 ){
-      $cpu = $CPUInfo[0]
+    if ($CPUInfo.count -gt 1) {
+        $cpu = $CPUInfo[0]
     } else {
-      $cpu = $CPUInfo
+        $cpu = $CPUInfo
     }
     $cpu_count = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
 
@@ -15,15 +15,17 @@ $ServerStats = {
     $OSTotalVisibleMemory = [math]::round(($OSInfo.TotalVisibleMemorySize  / 1MB), 2) 
     $OSFreeVisibleMemory = [math]::round(($OSInfo.FreePhysicalMemory  / 1MB), 2) 
     $OSUsedMemory = "{0:N2}" -f $OSTotalVisibleMemory - $OSFreeVisibleMemory
-    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory | Measure-Object -Property capacity -Sum | ForEach-Object {[math]::round(($_.sum / 1GB),2)} 
+    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory |
+        Measure-Object -Property capacity -Sum |
+            ForEach-Object { [math]::round(($_.sum / 1GB), 2) } 
     $Disk = Get-WMIObject Win32_LogicalDisk
     $Total_FreeSpaceGB = 0
     $Total_DriveSpaceGB = 0
     ForEach ($drive in $Disk) {
-      $FreeSpace = [System.Math]::Round((($drive.FreeSpace) / 1GB))
-      $TotalSize = [System.Math]::Round((($drive.size) / 1GB))
-      $Total_FreeSpaceGB += $FreeSpace
-      $Total_DriveSpaceGB += $TotalSize
+        $FreeSpace = [System.Math]::Round((($drive.FreeSpace) / 1GB))
+        $TotalSize = [System.Math]::Round((($drive.size) / 1GB))
+        $Total_FreeSpaceGB += $FreeSpace
+        $Total_DriveSpaceGB += $TotalSize
     }
     $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
 
@@ -65,4 +67,3 @@ $ServerStats = {
     Add-Member -InputObject $server_info -MemberType NoteProperty -name "custom_fields" -value $custom_fields 
     $server_info
 }
-
