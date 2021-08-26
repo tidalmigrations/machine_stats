@@ -40,7 +40,7 @@ _Need to install in an environment without internet access?_ [Checkout how to do
     python3 -m pip install machine-stats
     ```
 
-### Ubuntu 20.04
+### Ubuntu 20.04/21.04
 
 1. Make sure `pip` is installed and is of the latest version:
     ```
