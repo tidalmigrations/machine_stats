@@ -85,6 +85,7 @@ Write-Host "$num_results results received out of $num_servers servers."
 
 
 # Output results
+$results = @{ servers = $server_stats }
 $json = $results | ConvertTo-Json -depth 99
 Write-Output $json
 
