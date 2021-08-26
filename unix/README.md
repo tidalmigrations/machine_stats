@@ -27,7 +27,7 @@ python3 -m pip install machine-stats
 
 _Need to install in an environment without internet access?_ [Checkout how to do that below](#offline-installation).
 
-### Ubuntu 18.04
+### Debian 9/Ubuntu 18.04
 
 1. Make sure `pip` is installed and is of the latest version:
     ```
@@ -40,9 +40,9 @@ _Need to install in an environment without internet access?_ [Checkout how to do
     python3 -m pip install machine-stats
     ```
 
-### Ubuntu 20.04/21.04
+### Debian 10/Debian 11/Ubuntu 20.04/Ubuntu 21.04
 
-1. Make sure `pip` is installed and is of the latest version:
+1. Make sure `pip` is installed:
     ```
     sudo apt update && \
       sudo apt install -y python3-pip
@@ -52,7 +52,7 @@ _Need to install in an environment without internet access?_ [Checkout how to do
     python3 -m pip install machine-stats
     ```
 
-### CentOS 7
+### CentOS 7/CentOS 8/CentOS Stream/Red Hat Enterprise Linux 7/Red Hat Enterprise Linux 8/Rocky Linux 8
 
 1. Install Python 3:
     ```
