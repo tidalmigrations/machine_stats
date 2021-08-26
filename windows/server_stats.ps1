@@ -2,12 +2,12 @@ $ServerStats = {
     $CPUInfo = Get-WmiObject Win32_Processor 
     $OSInfo = Get-WmiObject Win32_OperatingSystem  
 
-    if( $CPUInfo.count -gt 1 ){
-      $cpu = $CPUInfo[0]
+    if ($CPUInfo.count -gt 1) {
+        $cpu = $CPUInfo[0]
     } else {
-      $cpu = $CPUInfo
+        $cpu = $CPUInfo
     }
-    $cpu_count = $CPUInfo.count
+    $cpu_count = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
 
     # Get Memory Information. 
     # The data will be shown in a table as MB, rounded to the nearest second decimal. 
@@ -15,52 +15,55 @@ $ServerStats = {
     $OSTotalVisibleMemory = [math]::round(($OSInfo.TotalVisibleMemorySize  / 1MB), 2) 
     $OSFreeVisibleMemory = [math]::round(($OSInfo.FreePhysicalMemory  / 1MB), 2) 
     $OSUsedMemory = "{0:N2}" -f $OSTotalVisibleMemory - $OSFreeVisibleMemory
-    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory | Measure-Object -Property capacity -Sum | ForEach-Object {[math]::round(($_.sum / 1GB),2)} 
+    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory |
+        Measure-Object -Property capacity -Sum |
+            ForEach-Object { [math]::round(($_.sum / 1GB), 2) } 
     $Disk = Get-WMIObject Win32_LogicalDisk
     $Total_FreeSpaceGB = 0
     $Total_DriveSpaceGB = 0
     ForEach ($drive in $Disk) {
-      $FreeSpace = [System.Math]::Round((($drive.FreeSpace) / 1GB))
-      $TotalSize = [System.Math]::Round((($drive.size) / 1GB))
-      $Total_FreeSpaceGB += $FreeSpace
-      $Total_DriveSpaceGB += $TotalSize
+        $FreeSpace = [System.Math]::Round((($drive.FreeSpace) / 1GB))
+        $TotalSize = [System.Math]::Round((($drive.size) / 1GB))
+        $Total_FreeSpaceGB += $FreeSpace
+        $Total_DriveSpaceGB += $TotalSize
     }
     $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
 
-    $CPUUtilization = ( `
-      Get-Counter -Counter "\Processor(_Total)\% Processor Time" -SampleInterval 1 -MaxSamples 30 | `
-      Select-Object -ExpandProperty countersamples | `
-      Select-Object -ExpandProperty CookedValue | `
-      Measure-Object -Average -Maximum `
-    )
+    $counter_params = @{
+        Counter = "\Processor(_Total)\% Processor Time"
+        SampleInterval = 1
+        MaxSamples = 30
+    }
+    $CPUUtilization = (Get-Counter @counter_params |
+        Select-Object -ExpandProperty countersamples |
+            Select-Object -ExpandProperty CookedValue |
+                Measure-Object -Average -Maximum)
 
     # Create an object to return, convert this to JSON or CSV as you need:
-    $server_info = New-Object PSObject 
-    $custom_fields = New-Object PSObject 
+    $server_info = New-Object -TypeName psobject -Property @{
+        host_name = $cpu.SystemName
+        ram_allocated_gb = $PhysicalMemory 
+        ram_used_gb = $OSUsedMemory 
+        storage_allocated_gb = $Total_DriveSpaceGB 
+        storage_used_gb = $Total_UsedDriveSpaceGB 
+        cpu_count = $cpu_count
+        operating_system = $OSInfo.Caption 
+        operating_system_version = $OSInfo.Version 
+        cpu_name = $cpu.Name 
+    } 
+    $custom_fields = New-Object -TypeName psobject -Property @{
+        CPU_Description = $cpu.Description 
+        CPU_Manufacturer = $cpu.Manufacturer 
+        CPU_L2CacheSize = $cpu.L2CacheSize 
+        CPU_L3CacheSize = $cpu.L3CacheSize 
+        CPU_SocketDesignation = $cpu.SocketDesignation 
+        TotalVisible_Memory_GB = $OSTotalVisibleMemory
+        TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
+        cpu_average = $CPUUtilization.Average
+        cpu_peak = $CPUUtilization.Maximum
+        cpu_sampling_timeout = $CPUUtilization.Count
+    }
 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "host_name" -value $cpu.SystemName 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "ram_allocated_gb" -value $PhysicalMemory 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "ram_used_gb" -value $OSUsedMemory 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "storage_allocated_gb" -value $Total_DriveSpaceGB 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "storage_used_gb" -value $Total_UsedDriveSpaceGB 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "cpu_count" -value ($cpu.NumberOfCores * $cpu_count)
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "operating_system" -value $OSInfo.Caption 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "operating_system_version" -value $OSInfo.Version 
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "cpu_name" -value $cpu.Name 
-
-    # Custom fields:
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_Description" -value $cpu.Description 
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_Manufacturer" -value $cpu.Manufacturer 
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_L2CacheSize" -value $cpu.L2CacheSize 
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_L3CacheSize" -value $cpu.L3CacheSize 
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "CPU_SocketDesignation" -value $cpu.SocketDesignation 
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "TotalVisible_Memory_GB" -value $OSTotalVisibleMemory
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "TotalVirtual_Memory_GB" -value $OSTotalVirtualMemory 
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "cpu_average" -value $CPUUtilization.Average
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "cpu_peak" -value $CPUUtilization.Maximum
-    Add-Member -inputObject $custom_fields -memberType NoteProperty -name "cpu_sampling_timeout" -value $CPUUtilization.Count
-
-    Add-Member -inputObject $server_info -memberType NoteProperty -name "custom_fields" -value $custom_fields 
+    Add-Member -InputObject $server_info -MemberType NoteProperty -name "custom_fields" -value $custom_fields 
     $server_info
 }
-
