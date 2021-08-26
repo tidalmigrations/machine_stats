@@ -33,7 +33,7 @@ if(![System.IO.File]::Exists($securePwdFile)){
 $secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secPwd
 
-$env_user = Invoke-Command -ComputerName [Environment]::MachineName -Credential $cred -ScriptBlock { $env:USERNAME }
+$env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Host "About to execute inventory gathering as user: $env_user"
 
 
