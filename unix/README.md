@@ -40,6 +40,18 @@ _Need to install in an environment without internet access?_ [Checkout how to do
     python3 -m pip install machine-stats
     ```
 
+### Ubuntu 20.04
+
+1. Make sure `pip` is installed and is of the latest version:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip
+    ```
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
 ### CentOS 7
 
 1. Install Python 3:
