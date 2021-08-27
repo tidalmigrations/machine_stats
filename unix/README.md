@@ -37,6 +37,10 @@ _Need to install in an environment without internet access?_ [Checkout how to do
       python3 -m pip install --upgrade --user pip
     ```
     **Note:** Direct upgrade to the latest available `pip` version results with an unusable `pip` installation. That's why we perform the upgrade through the intermediate version (`18.1`).
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
 
 ### Debian 9/Ubuntu 18.04
 
