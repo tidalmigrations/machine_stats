@@ -93,6 +93,17 @@ _Need to install in an environment without internet access?_ [Checkout how to do
     pip install machine-stats
     ```
 
+### SUSE Linux Enterprise Server 15
+
+1. Install `pip`:
+    ```
+    sudo zypper install -y python3-pip
+    ```
+2. Install `machine-stats`:
+    ```
+    pip install machine-stats
+    ```
+
 ## Data captured
 
 For Linux/Unix based systems, by default, the following metrics are captured
