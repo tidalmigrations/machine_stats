@@ -29,7 +29,7 @@ _Need to install in an environment without internet access?_ [Checkout how to do
 
 ### Ubuntu 16.04
 
-1. Make sure `pip` is installed and is of the latest version available:
+1. Make sure `pip` is installed and is one of the latest version available:
     ```
     sudo apt update && \
       sudo apt install -y python3-pip && \
@@ -44,11 +44,11 @@ _Need to install in an environment without internet access?_ [Checkout how to do
 
 ### Debian 9/Ubuntu 18.04
 
-1. Make sure `pip` is installed and is of the latest version:
+1. Make sure `pip` is installed and is one of the latest version:
     ```
     sudo apt update && \
       sudo apt install -y python3-pip && \
-      python3 -m pip install -U pip
+      python3 -m pip install --upgrade pip
     ```
 2. Install `machine-stats`:
     ```
@@ -73,9 +73,9 @@ _Need to install in an environment without internet access?_ [Checkout how to do
     ```
     sudo yum install -y python3
     ```
-2. Upgrade `pip` to the latest version:
+2. Upgrade `pip` to the latest available version:
     ```
-    python3 -m pip install -U --user pip
+    python3 -m pip install --upgrade --user pip
     ```
 3. Install `machine-stats`:
     ```
