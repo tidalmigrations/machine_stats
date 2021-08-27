@@ -27,6 +27,17 @@ python3 -m pip install machine-stats
 
 _Need to install in an environment without internet access?_ [Checkout how to do that below](#offline-installation).
 
+### Ubuntu 16.04
+
+1. Make sure `pip` is installed and is of the latest version available:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip && \
+      python3 -m pip install --user pip==18.1 && \
+      python3 -m pip install --upgrade --user pip
+    ```
+    **Note:** Direct upgrade to the latest available `pip` version results with an unusable `pip` installation. That's why we perform the upgrade through the intermediate version (`18.1`).
+
 ### Debian 9/Ubuntu 18.04
 
 1. Make sure `pip` is installed and is of the latest version:
