@@ -82,6 +82,17 @@ _Need to install in an environment without internet access?_ [Checkout how to do
     python3 -m pip install machine-stats
     ```
 
+### SUSE Linux Enterprise Server 12
+
+1. Install Python 3.6:
+    ```
+    sudo zypper install -y python36-base
+    ```
+2. Install `machine-stats`:
+    ```
+    pip install machine-stats
+    ```
+
 ## Data captured
 
 For Linux/Unix based systems, by default, the following metrics are captured
