@@ -14,6 +14,7 @@ Under the hood Virt Stats relies on awesome [libvirt](https://libvirt.org/).
     ```
     $ qemu-img create -f qcow2 ./debian9.qcow2 8G
     $ virt-install \
+        --connect qemu:///system \
         --name debian9 \
         --ram 1024 \
         --disk path=./debian9.qcow2,size=8 \
