@@ -17,6 +17,8 @@ Get familiar with Machine Stats, Tidal Tools and Tidal Migrations Platform!
 
 ## Installation
 
+### General
+
 Install locally in a Python 3 environment:
 
 ```
@@ -24,6 +26,83 @@ python3 -m pip install machine-stats
 ```
 
 _Need to install in an environment without internet access?_ [Checkout how to do that below](#offline-installation).
+
+### Ubuntu 16.04
+
+1. Make sure `pip` is installed and is one of the latest version available:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip && \
+      python3 -m pip install --user pip==18.1 && \
+      python3 -m pip install --upgrade --user pip
+    ```
+    **Note:** Direct upgrade to the latest available `pip` version results with an unusable `pip` installation. That's why we perform the upgrade through the intermediate version (`18.1`).
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### Debian 9/Ubuntu 18.04
+
+1. Make sure `pip` is installed and is one of the latest version:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip && \
+      python3 -m pip install --upgrade pip
+    ```
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### Debian 10/Debian 11/Ubuntu 20.04/Ubuntu 21.04
+
+1. Make sure `pip` is installed:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip
+    ```
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### CentOS 7/CentOS 8/CentOS Stream/Red Hat Enterprise Linux 7/Red Hat Enterprise Linux 8/Rocky Linux 8
+
+1. Install Python 3:
+    ```
+    sudo yum install -y python3
+    ```
+2. Upgrade `pip` to the latest available version:
+    ```
+    python3 -m pip install --upgrade --user pip
+    ```
+3. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### SUSE Linux Enterprise Server 12
+
+1. Install Python 3.6:
+    ```
+    sudo zypper install -y python36-base
+    ```
+2. Install `machine-stats`:
+    ```
+    pip install machine-stats
+    ```
+
+### SUSE Linux Enterprise Server 15
+
+1. Install `pip`:
+    ```
+    sudo zypper install -y python3-pip
+    ```
+2. Install `machine-stats`:
+    ```
+    pip install machine-stats
+    ```
 
 ## Data captured
 
