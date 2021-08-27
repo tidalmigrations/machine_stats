@@ -17,8 +17,6 @@ Get familiar with Machine Stats, Tidal Tools and Tidal Migrations Platform!
 
 ## Installation
 
-### General
-
 Install locally in a Python 3 environment:
 
 ```
@@ -26,6 +24,9 @@ python3 -m pip install machine-stats
 ```
 
 _Need to install in an environment without internet access?_ [Checkout how to do that below](#offline-installation).
+
+<details>
+    <summary>Distribution-specific installation instructions</summary>
 
 ### Ubuntu 16.04
 
@@ -102,7 +103,8 @@ _Need to install in an environment without internet access?_ [Checkout how to do
 2. Install `machine-stats`:
     ```
     pip install machine-stats
-    ```
+    ```  
+</details>
 
 ## Data captured
 
