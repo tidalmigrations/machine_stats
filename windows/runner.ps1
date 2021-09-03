@@ -1,3 +1,9 @@
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [int]
+    $CpuUtilizationTimeout = 30
+)
 ###
 # runner.ps1
 #
@@ -54,7 +60,7 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-  $jobs += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats -AsJob
+  $jobs += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats -AsJob -ArgumentList $CpuUtilizationTimeout
 }
 
 Do {
