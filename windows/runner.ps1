@@ -37,8 +37,16 @@ $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credentia
 Write-Host "About to execute inventory gathering as user: $env_user"
 
 function ServerStats {
-    Param($ComputerName)
-    Param($Credential)
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $ComputerName,
+
+        [Parameter(Mandatory)]
+        [pscredential]
+        $Credential
+    )
     $CPUInfo = Get-WmiObject Win32_Processor -ComputerName $ComputerName -namespace "root\cimv2" -Impersonation 3 -Credential $Credential
     $OSInfo = Get-WmiObject Win32_OperatingSystem  
 
