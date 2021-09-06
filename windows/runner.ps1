@@ -89,6 +89,23 @@ function ServerStats {
         MaxSamples = 30
     }
 
+    # purposed method for calculating cpu utilization
+    # $perf = Get-WmiObject -Namespace "root\cimv2" -Class Win32_PerfRawData_PerfOS_Processor -Impersonation 3 -Credential $cred -ComputerName $Computer
+    # $ppt1 = $perf[$perf.count-1].PercentProcessorTime # $perf.count-1 is the index for _Total
+    # $ts1 = $perf[$perf.count-1].TimeStamp_Sys100NS
+    # 
+    # Start-Sleep -s 10
+
+    # $perf = Get-WmiObject -Namespace "root\cimv2" -Class Win32_PerfRawData_PerfOS_Processor -Impersonation 3 -Credential $cred -ComputerName $Computer
+    # $ppt2 = $perf[$perf.count-1].PercentProcessorTime # $perf.count-1 is the index for _Total
+    # $ts2 = $perf[$perf.count-1].TimeStamp_Sys100NS
+
+    # $cpu_utilization = (1-(($ppt2-$ppt1)/($ts2-$ts1)))*100
+
+
+
+
+
     # Create an object to return, convert this to JSON or CSV as you need:
     $server_info = New-Object -TypeName psobject -Property @{
         host_name = $cpu.SystemName
