@@ -41,7 +41,7 @@ $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $User
 $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Host "About to execute inventory gathering as user: $env_user"
 
-function ServerStats {
+$ServerStats = {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
@@ -52,13 +52,19 @@ function ServerStats {
         [pscredential]
         $Credential
     )
-    $CPUInfo = Get-WmiObject Win32_Processor -ComputerName $ComputerName -namespace "root\cimv2" -Impersonation 3 -Credential $Credential
-    $OSInfo = Get-WmiObject Win32_OperatingSystem  
+    $getWmiObjectParams = @{
+        ComputerName = $ComputerName
+        Credential = $Credential
+        Namespace = "ROOT\cimv2"
+        Impersonation = 3 # Impersonate. Allows objects to use the credentials of the caller.
+    }
+    $CPUInfo = Get-WmiObject Win32_Processor @getWmiObjectParams
+    $OSInfo = Get-WmiObject Win32_OperatingSystem @getWmiObjectParams 
 
-    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory |
+    $PhysicalMemory = Get-WmiObject CIM_PhysicalMemory @getWmiObjectParams |
         Measure-Object -Property capacity -Sum |
             ForEach-Object { [math]::round(($_.sum / 1GB), 2) } 
-    $Disk = Get-WMIObject Win32_LogicalDisk
+    $Disk = Get-WmiObject Win32_LogicalDisk @getWmiObjectParams
 
     if ($CPUInfo.count -gt 1) {
         $cpu = $CPUInfo[0]
@@ -82,12 +88,6 @@ function ServerStats {
         $Total_DriveSpaceGB += $TotalSize
     }
     $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
-
-    $counter_params = @{
-        Counter = "\Processor(_Total)\% Processor Time"
-        SampleInterval = 1
-        MaxSamples = 30
-    }
 
     # purposed method for calculating cpu utilization
     # $perf = Get-WmiObject -Namespace "root\cimv2" -Class Win32_PerfRawData_PerfOS_Processor -Impersonation 3 -Credential $cred -ComputerName $Computer
@@ -143,7 +143,7 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-  $jobs += ServerStats -ComputerName $_ -Credential $cred 
+  $jobs += Start-Job -ScriptBlock $ServerStats -ArgumentList $_, $cred
 }
 
 Do {
