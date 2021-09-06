@@ -1,3 +1,9 @@
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory)]
+    [string]
+    $UserName
+)
 ###
 # runner.ps1
 #
@@ -16,7 +22,6 @@
 #
 #    support@tidalmigrations.com
 #
-$username = "INSERT_WINDOWS_USERNAME"
 
 ################################################################
 # Do not modify below this line:
@@ -31,7 +36,7 @@ if(![System.IO.File]::Exists($securePwdFile)){
 
 
 $secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
-$cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secPwd
+$cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
 
 $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Host "About to execute inventory gathering as user: $env_user"
