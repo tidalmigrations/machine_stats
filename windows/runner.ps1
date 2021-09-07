@@ -2,7 +2,11 @@
 param (
     [Parameter(Mandatory)]
     [string]
-    $UserName
+    $UserName,
+
+    [Parameter()]
+    [uint]
+    $CpuUtilizationTimeout = 30
 )
 ###
 # runner.ps1
@@ -50,7 +54,11 @@ $ServerStats = {
 
         [Parameter(Mandatory)]
         [pscredential]
-        $Credential
+        $Credential,
+
+        [Parameter(Mandatory)]
+        [uint]
+        $CpuUtilizationTimeout
     )
     $getWmiObjectParams = @{
         ComputerName = $ComputerName
@@ -96,7 +104,7 @@ $ServerStats = {
                 Select-Object -Property PercentProcessorTime, TimeStamp_Sys100NS
     }
     $perf = @(getPerf)
-    Start-Sleep -Seconds 10 # FIXME: make configurable
+    Start-Sleep -Seconds $CpuUtilizationTimeout
     $perf += getPerf
 
     $pptDiff = $perf[1].PercentProcessorTime - $perf[0].PercentProcessorTime
@@ -123,7 +131,10 @@ $ServerStats = {
         CPU_SocketDesignation = $cpu.SocketDesignation 
         TotalVisible_Memory_GB = $OSTotalVisibleMemory
         TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
-        cpu_utilization = $cpu_utilization
+        cpu_utilization = @{
+            value = $cpu_utilization
+            timeout = $CpuUtilizationTimeout
+        }
     }
 
     Add-Member -InputObject $server_info -MemberType NoteProperty -name "custom_fields" -value $custom_fields 
@@ -141,7 +152,7 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-  $jobs += Start-Job -ScriptBlock $ServerStats -ArgumentList $_, $cred
+  $jobs += Start-Job -ScriptBlock $ServerStats -ArgumentList $_, $cred, $CpuUtilizationTimeout
 }
 
 Do {
