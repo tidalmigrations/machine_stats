@@ -5,7 +5,7 @@ param (
     $UserName,
 
     [Parameter()]
-    [uint]
+    [double]
     $CpuUtilizationTimeout = 30
 )
 ###
@@ -57,7 +57,7 @@ $ServerStats = {
         $Credential,
 
         [Parameter(Mandatory)]
-        [uint]
+        [double]
         $CpuUtilizationTimeout
     )
     $getWmiObjectParams = @{
