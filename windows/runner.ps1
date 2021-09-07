@@ -89,22 +89,20 @@ $ServerStats = {
     }
     $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
 
-    # purposed method for calculating cpu utilization
-    # $perf = Get-WmiObject -Namespace "root\cimv2" -Class Win32_PerfRawData_PerfOS_Processor -Impersonation 3 -Credential $cred -ComputerName $Computer
-    # $ppt1 = $perf[$perf.count-1].PercentProcessorTime # $perf.count-1 is the index for _Total
-    # $ts1 = $perf[$perf.count-1].TimeStamp_Sys100NS
-    # 
-    # Start-Sleep -s 10
+    # CPU utilization
+    function getPerf() {
+        Get-WmiObject -Class Win32_PerfRawData_PerfOS_Processor @getWmiObjectParams |
+            Where-Object -Property Name -eq "_Total" |
+                Select-Object -Property PercentProcessorTime, TimeStamp_Sys100NS
+    }
+    $perf = @()
+    $perf += getPerf
+    Start-Sleep -Seconds 10 # FIXME: make configurable
+    $perf += getPerf
 
-    # $perf = Get-WmiObject -Namespace "root\cimv2" -Class Win32_PerfRawData_PerfOS_Processor -Impersonation 3 -Credential $cred -ComputerName $Computer
-    # $ppt2 = $perf[$perf.count-1].PercentProcessorTime # $perf.count-1 is the index for _Total
-    # $ts2 = $perf[$perf.count-1].TimeStamp_Sys100NS
-
-    # $cpu_utilization = (1-(($ppt2-$ppt1)/($ts2-$ts1)))*100
-
-
-
-
+    $pptDiff = $perf[1].PercentProcessorTime - $perf[0].PercentProcessorTime
+    $tsDiff = $perf[1].TimeStamp_Sys100NS - $perf[0].TimeStamp_Sys100NS
+    $cpu_utilization = (1 - $pptDiff / $tsDiff) * 100
 
     # Create an object to return, convert this to JSON or CSV as you need:
     $server_info = New-Object -TypeName psobject -Property @{
@@ -126,6 +124,7 @@ $ServerStats = {
         CPU_SocketDesignation = $cpu.SocketDesignation 
         TotalVisible_Memory_GB = $OSTotalVisibleMemory
         TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
+        cpu_utilization = $cpu_utilization
     }
 
     Add-Member -InputObject $server_info -MemberType NoteProperty -name "custom_fields" -value $custom_fields 
