@@ -95,8 +95,7 @@ $ServerStats = {
             Where-Object -Property Name -eq "_Total" |
                 Select-Object -Property PercentProcessorTime, TimeStamp_Sys100NS
     }
-    $perf = @()
-    $perf += getPerf
+    $perf = @(getPerf)
     Start-Sleep -Seconds 10 # FIXME: make configurable
     $perf += getPerf
 
