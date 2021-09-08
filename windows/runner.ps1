@@ -32,15 +32,13 @@ param (
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
 
 if(![System.IO.File]::Exists($securePwdFile)){
-  Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
-  exit 1
-} else {
-  Write-Host "Reading credential from $securePwdFile"
+    Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
+    exit 1
 }
+Write-Host "Reading credential from $securePwdFile"
 
-
-$secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
-$cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
+$secPwd = Get-Content $securePwdFile | ConvertTo-SecureString
+$cred = New-Object System.Management.Automation.PSCredential ($UserName, $secPwd)
 
 $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Host "About to execute inventory gathering as user: $env_user"
@@ -62,9 +60,12 @@ $ServerStats = {
     )
     $getWmiObjectParams = @{
         ComputerName = $ComputerName
-        Credential = $Credential
         Namespace = "ROOT\cimv2"
         Impersonation = 3 # Impersonate. Allows objects to use the credentials of the caller.
+    }
+    $remote = $ComputerName -notin ".", "localhost", ([Environment]::MachineName)
+    if ($remote) {
+        $getWmiObjectParams | Add-Member -NotePropertyName Credential -NotePropertyValue $Credential
     }
     $CPUInfo = Get-WmiObject Win32_Processor @getWmiObjectParams
     $OSInfo = Get-WmiObject Win32_OperatingSystem @getWmiObjectParams 
@@ -152,30 +153,30 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-  $jobs += Start-Job -ScriptBlock $ServerStats -ArgumentList $_, $cred, $CpuUtilizationTimeout
+    $jobs += Start-Job -ScriptBlock $ServerStats -ArgumentList $_, $cred, $CpuUtilizationTimeout
 }
 
 Do {
-  $TotProgress = 0
-  ForEach ($job in $jobs) {
-    Try {
-      $Prog = ($job | Get-Job).ChildJobs[0].Progress.StatusDescription[-1]
-      If ($Prog -is [char]) {
-        $Prog = 0
-      }
-      $TotProgress += $Prog
+    $TotProgress = 0
+    ForEach ($job in $jobs) {
+        Try {
+            $Prog = ($job | Get-Job).ChildJobs[0].Progress.StatusDescription[-1]
+            If ($Prog -is [char]) {
+                $Prog = 0
+            }
+            $TotProgress += $Prog
+        }
+        Catch {
+            Start-Sleep -Milliseconds 500
+            Break
+        }
     }
-    Catch {
-      Start-Sleep -Milliseconds 500
-      Break
-    }
-  }
-  Write-Progress -Id 1 -Activity "Watching Background Jobs" -Status "Waiting for background jobs to complete: $TotProgress of $num_servers" -PercentComplete (($TotProgress / $num_servers) * 100)
-  Start-Sleep -Seconds 3
-} Until (($jobs | Get-Job | Where-Object {(($_.State -eq "Running") -or ($_.state -eq "NotStarted"))}).count -eq 0)
+    Write-Progress -Id 1 -Activity "Watching Background Jobs" -Status "Waiting for background jobs to complete: $TotProgress of $num_servers" -PercentComplete (($TotProgress / $num_servers) * 100)
+    Start-Sleep -Seconds 3
+} Until (($jobs | Get-Job | Where-Object { (($_.State -eq "Running") -or ($_.state -eq "NotStarted")) }).count -eq 0)
 
 $jobs | Receive-Job | ForEach-Object {
-  $server_stats += $_
+    $server_stats += $_
 }
 
 $num_results = $server_stats.Count
