@@ -5,6 +5,10 @@ param (
     $UserName,
 
     [Parameter()]
+    [string]
+    $ServersPath = (Join-Path -Path $PWD -ChildPath "servers.txt"),
+
+    [Parameter()]
     [double]
     $CpuUtilizationTimeout = 30
 )
@@ -143,7 +147,7 @@ $ServerStats = {
 }
 
 # Get server inventory:
-$server_list = Get-Content ".\servers.txt"
+$server_list = Get-Content $ServersPath
 
 $num_servers = $server_list.Count
 Write-Host "$num_servers Servers read from servers.txt"
