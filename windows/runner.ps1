@@ -1,3 +1,45 @@
+<#
+.SYNOPSIS
+
+Gathers machine statistics (RAM, storage, CPU, etc) from a server environment.
+
+.DESCRIPTION
+
+The runner.ps1 script gathers machine statistics from a server environment.
+
+.PARAMETER UserName
+Specifies the user name used for connection to the remote machine.
+To securely provide a password, please run the save_password.ps1 script.
+
+.PARAMETER ServersPath
+Specifies the path to file with the list of servers (one server per line).
+By default it looks for servers.txt in the current directory.
+
+.PARAMETER CpuUtilizationTimeout
+Specifies the number of seconds to measure CPU utilization.
+The default value is 30.
+
+.INPUTS
+
+None. You cannot pipe objects to runner.ps1
+
+.OUTPUTS
+
+runner.ps1 generates a JSON output with all the gathered data suitable to be
+used with Tidal Tools or Tidal Migrations API.
+
+.EXAMPLE
+
+.\runner.ps1
+
+.EXAMPLE
+
+.\runner.ps1 -UserName myuser
+
+.EXAMPLE
+
+.\runner.ps1 -CpuUtilizationTimeout 20
+#>
 [CmdletBinding()]
 param (
     [Parameter(Mandatory)]
@@ -12,27 +54,7 @@ param (
     [double]
     $CpuUtilizationTimeout = 30
 )
-###
-# runner.ps1
-#
-# To use, simply:
-#  1. Set your username below (line 19), use a username that has login access to the hosts you are scanning.
-#
-#  2. Run the save_password.ps1 script to securely store your credential in
-#     SecuredText.txt
-#
-#  3. Save a list of server hostnames in servers.txt
-#
-#  4. Run this script in a Scheduled Task (or invoke directly from the command line)
-#
-#
-#  For questions or support, send mail to:
-#
-#    support@tidalmigrations.com
-#
 
-################################################################
-# Do not modify below this line:
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
 
 if(![System.IO.File]::Exists($securePwdFile)){
