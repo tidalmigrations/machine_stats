@@ -19,6 +19,9 @@ By default it looks for servers.txt in the current directory.
 Specifies the number of seconds to measure CPU utilization.
 The default value is 30.
 
+.PARAMETER WinRM
+Specifies if WinRM should be used.
+
 .INPUTS
 
 None. You cannot pipe objects to runner.ps1
@@ -52,7 +55,11 @@ param (
 
     [Parameter()]
     [double]
-    $CpuUtilizationTimeout = 30
+    $CpuUtilizationTimeout = 30,
+
+    [Parameter()]
+    [switch]
+    $WinRM
 )
 
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
@@ -76,7 +83,7 @@ $ServerStats = {
         [string]
         $ComputerName,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [pscredential]
         $Credential,
 
@@ -179,7 +186,21 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-    $jobs += Start-Job -ScriptBlock $ServerStats -ArgumentList $_, $cred, $CpuUtilizationTimeout
+    if ($WinRM -eq $false) {
+        $startJobParams = @{
+            ScriptBlock = $ServerStats
+            ArgumentList = $_, $cred, $CpuUtilizationTimeout
+        }
+        $jobs += Start-Job @startJobParams
+    } else {
+        $invokeCommandParams = @{
+            ComputerName = $_
+            Credential = $cred
+            ScriptBlock = $ServerStats
+            ArgumentList = "localhost", $null, $CpuUtilizationTimeout
+        }
+        $jobs += Invoke-Command @invokeCommandParams -AsJob
+    }
 }
 
 Do {
