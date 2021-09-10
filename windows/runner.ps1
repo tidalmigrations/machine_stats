@@ -165,10 +165,8 @@ $ServerStats = {
         CPU_SocketDesignation = $cpu.SocketDesignation 
         TotalVisible_Memory_GB = $OSTotalVisibleMemory
         TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
-        cpu_utilization = @{
-            value = $cpu_utilization
-            timeout = $CpuUtilizationTimeout
-        }
+        cpu_utilization = $cpu_utilization
+        cpu_utilization_timeout = $CpuUtilizationTimeout
     }
 
     Add-Member -InputObject $server_info -MemberType NoteProperty -name "custom_fields" -value $custom_fields 
