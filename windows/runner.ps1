@@ -113,7 +113,7 @@ $ServerStats = {
     } else {
         $cpu = $CPUInfo
     }
-    $cpu_count = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
+    $cpu_count = (Get-WmiObject Win32_ComputerSystem @getWmiObjectParams).NumberOfLogicalProcessors
 
     # Get Memory Information. 
     # The data will be shown in a table as MB, rounded to the nearest second decimal. 
