@@ -73,9 +73,6 @@ Write-Host "Reading credential from $securePwdFile"
 $secPwd = Get-Content $securePwdFile | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential ($UserName, $secPwd)
 
-$env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
-Write-Host "About to execute inventory gathering as user: $env_user"
-
 $ServerStats = {
     [CmdletBinding()]
     param (
