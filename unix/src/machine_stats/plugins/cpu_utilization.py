@@ -27,9 +27,8 @@ def ok_callback(parent, result):
             host,
             {
                 "custom_fields": {
-                    "cpu_sampling_timeout": cpu_sampling_timeout,
-                    "cpu_average": cpu_util["average"],
-                    "cpu_peak": cpu_util["peak"],
+                    "cpu_utilization": cpu_util,
+                    "cpu_utilization_timeout": cpu_sampling_timeout,
                 }
             },
         )

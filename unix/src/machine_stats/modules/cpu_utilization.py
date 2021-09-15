@@ -16,7 +16,11 @@ def run_module():
     # change is if this module effectively modified the target
     # state will include any data that you want your module to pass back
     # for consumption, for example, in a subsequent task
-    result = dict(changed=False, timeout=0, ansible_cpu_utilization=None)
+    result = dict(
+        changed=False,
+        timeout=0.0,
+        ansible_cpu_utilization=0.0,
+    )
 
     # the AnsibleModule object will be our abstraction working with Ansible
     # this includes instantiation, a couple of common attr would be the
@@ -36,36 +40,32 @@ def run_module():
 
     # get CPU utilization values
     try:
-        average, peak = cpu_utilization(module.params["timeout"])
+        utilization = cpu_utilization(module.params["timeout"])
     except Exception as e:
         module.fail_json(msg=str(e), **result)
 
     # manipulate or modify the state as needed
     result["timeout"] = module.params["timeout"]
-    result["ansible_cpu_utilization"] = dict(average=average, peak=peak)
+    result["ansible_cpu_utilization"] = utilization
 
     module.exit_json(**result)
 
 
-def cpu_utilization(timeout):
-    last_idle = last_total = total_runs = 0
-    cpu_stats = []
-
-    while total_runs < timeout:
-        with open("/proc/stat") as f:
-            fields = [float(column) for column in f.readline().strip().split()[1:]]
+def get_perf():
+    with open("/proc/stat") as f:
+        fields = [float(column) for column in f.readline().strip().split()[1:]]
         idle, total = fields[3], sum(fields)
-        idle_delta, total_delta = idle - last_idle, total - last_total
-        last_idle, last_total = idle, total
-        utilisation = 100.0 * (1.0 - idle_delta / total_delta)
-        cpu_stats.append(utilisation)
-        total_runs += 1
-        sleep(1)
+        return idle, total
 
-    average = sum(cpu_stats) / len(cpu_stats)
-    peak = max(cpu_stats)
 
-    return average, peak
+def cpu_utilization(timeout):
+    last_idle, last_total = get_perf()
+    sleep(timeout)
+    idle, total = get_perf()
+    idle_delta, total_delta = idle - last_idle, total - last_total
+    utilization = 100.0 * (1.0 - idle_delta / total_delta)
+
+    return utilization
 
 
 def main():
