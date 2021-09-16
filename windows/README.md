@@ -1,44 +1,35 @@
 # Machine Stats for Windows
 
-Machine Stats for Windows uses WinRM to `Invoke-Command` across your servers, creating a JSON file to securely send to your [Tidal Migrations](https://tidalmigrations.com/) instance using the [tidal command](https://tidalmigrations.com/tidal-tools/).
+Machine Stats for Windows gathers different parameters (RAM, Storage, CPU, etc) across your servers, creating a JSON file to securely send to your [Tidal Migrations](https://tidalmigrations.com/) instance using the [tidal command](https://tidalmigrations.com/tidal-tools/).
 
-The script `runner.ps1` should be customized for each network that you will be scanning.
+## Features
 
-1) Specify your username (step 1) and a list of hostnames (step 3).
-
-2) If you plan on running this in a scheduled task, you may want to store your credential with the `PsCredential` method. See [this blog post](https://www.interworks.com/blog/trhymer/2013/07/08/powershell-how-encrypt-and-store-credentials-securely-use-automation-scripts) for an example.
-
-> _NB: You do need WinRM enabled across your environment for this._
-> _For a simple guide to do this via GPO, see [here](https://support.auvik.com/hc/en-us/articles/204424994-How-to-enable-WinRM-with-domain-controller-Group-Policy-for-WMI-monitoring)._
-
-As of Windows 2008 Server onward [WinRM service starts automatically](https://docs.microsoft.com/en-us/windows/win32/winrm/installation-and-configuration-for-windows-remote-management#configuration-of-winrm-and-ipmi).
+- Works with WinRM enabled or disabled
+- Works with computers within an AD domain or workgroups
+- Customizable CPU utilization measurement timeouts
+- Ready to be run in a scheduled task
 
 ## Usage
 
-1) Edit line 19 in the [windows/runner.ps1.](windows/runner.ps1) file, to provide the needed Windows username to access to VMs.
+1. Download and install [Tidal Tools](https://get.tidal.sh/).
+2. Ensure you are logged in to your Tidal Migrations account with
+    ```
+    tidal login
+    ```
+3. Prepare the username and a password to access your servers:
+    - Specify `-UserName` parameter value
+    - Store the password securely by running `.\save_password.ps1` script
+4. Ensure you have a file that has a list of all the hostnames you want to scan. By default, Machine Stats looks for `servers.txt`, but you can also specify any custom location with `-ServersPath` parameter. The hosts will need to be accessible via your network connection from the machine that you run this from.
 
-2) Ensure you are logged in to Tidal Migrations, via:
-```
-tidal login
-```
+   You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
+5. Invoke the runner and sync with Tidal Migrations:
+    ```
+    .\runner.ps1 | tidal sync servers
+    ```
 
-3) Ensure you have a file `windows/servers.txt` that has a list of all the hostnames you want to scan. The hosts will need to be accessible via your network connection from the machine that you run this from.
+   You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
 
-You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
-
-4) Securely provide the password for the user account:
-```
-./windows/save_password.ps1
-```
-
-5) Invoke the runner and sync with Tidal Migrations:
-```
-./windows/runner.ps1 | tidal sync servers
-```
-
-You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
-
-https://your_domain.tidalmg.com/#/servers
+   https://your_domain.tidalmg.com/#/servers
 
 ## Data captured
 
@@ -56,7 +47,7 @@ Operating System Version
 CPU name
 ```
 
-It is also configured to capture the following values, however in order to see them in Tidal Migrations you must add the following as custom fields for servers. You can do that at a URL that looks like, https://your_domain.tidalmg.com/#/admin/servers
+It is also configured to capture the following values:
 
 ```
 CPU_Description
@@ -66,10 +57,39 @@ CPU_L3CacheSize
 CPU_SocketDesignation
 TotalVisible_Memory_GB
 TotalVirtual_Memory_GB
+CPU Utilization
 ```
 
-*NB: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in [windows/server_stats.ps1](windows/server_stats.ps1)*
+## Parameters
 
+### `-UserName <String>`
+
+Specifies the user name used for connection to the remote machine.
+To securely provide a password, please run the `save_password.ps1` 
+script.
+        
+### `-ServersPath <String>`
+
+Specifies the path to file with the list of servers (one server per 
+line).
+By default it looks for `servers.txt` in the current directory.
+        
+### `-CpuUtilizationTimeout <Double>`
+
+Specifies the number of seconds to measure CPU utilization.
+The default value is `30`.
+        
+### `-WinRM [<SwitchParameter>]`
+
+Specifies if WinRM should be used.
+
+## Getting more help
+
+To get more help, run the following:
+
+```
+Get-Help .\runner.ps1 -Full
+```
 
 ## Troubleshooting
 

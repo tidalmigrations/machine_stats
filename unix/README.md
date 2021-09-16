@@ -122,6 +122,7 @@ from the resources and sent and stored in Tidal Migrations:
 - Operating System
 - Operating System Version
 - CPU name
+- CPU utilization
 
 ## Minimal example
 
