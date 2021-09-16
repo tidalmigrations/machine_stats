@@ -110,8 +110,10 @@ $ServerStats = {
     } else {
         $cpu = $CPUInfo
     }
-    $cpu_count = (Get-WmiObject Win32_ComputerSystem @getWmiObjectParams).NumberOfLogicalProcessors
-
+    $cpu_count = $CPUInfo.count
+    if ($cpu_count -eq 0) {
+      $cpu_count = (Get-WmiObject Win32_ComputerSystem @getWmiObjectParams).NumberOfLogicalProcessors
+    }
     # Get Memory Information. 
     # The data will be shown in a table as MB, rounded to the nearest second decimal. 
     $OSTotalVirtualMemory = [math]::round($OSInfo.TotalVirtualMemorySize / 1MB, 2) 
