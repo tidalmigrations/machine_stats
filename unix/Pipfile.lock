@@ -254,11 +254,11 @@
         },
         "build": {
             "hashes": [
-                "sha256:32290592c8ccf70ce84107962f6129407abf52cedaa752af28c0c95d99dfa2e7",
-                "sha256:d8d8417caff47888274d677f984de509554637dd1ea952d467b027849b06d83b"
+                "sha256:1aaadcd69338252ade4f7ec1265e1a19184bf916d84c9b7df095f423948cb89f",
+                "sha256:21b7ebbd1b22499c4dac536abc7606696ea4d909fd755e00f09f3c0f2c05e3c8"
             ],
             "index": "pypi",
-            "version": "==0.6.0.post1"
+            "version": "==0.7.0"
         },
         "bump2version": {
             "hashes": [
