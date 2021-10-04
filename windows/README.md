@@ -15,7 +15,7 @@ As of Windows 2008 Server onward [WinRM service starts automatically](https://do
 
 ## Usage
 
-1) Edit line 19 in the [windows/runner.ps1.](windows/runner.ps1) file, to provide the needed Windows username to access to VMs.
+1) Edit line 19 in the [windows/runner.ps1.](runner.ps1) file, to provide the needed Windows username to access to VMs.
 
 2) Ensure you are logged in to Tidal Migrations, via:
 ```
