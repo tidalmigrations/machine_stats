@@ -20,21 +20,21 @@ $username = "INSERT_WINDOWS_USERNAME"
 
 ################################################################
 # Do not modify below this line:
-$securePwdFile = "$PWD\SecuredText.txt"
+$securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
 
 if(![System.IO.File]::Exists($securePwdFile)){
   Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
   exit 1
 } else {
-  Write-Output "Reading credential from $securePwdFile"
+  Write-Host "Reading credential from $securePwdFile"
 }
 
 
 $secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secPwd
 
-$env_user = Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $cred -ScriptBlock { $env:USERNAME }
-Write-Output "About to execute inventory gathering as user: $env_user"
+$env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
+Write-Host "About to execute inventory gathering as user: $env_user"
 
 
 # Load the ScriptBlock $ServerStats:
@@ -47,7 +47,7 @@ $server_list = Get-Content ".\servers.txt"
 # $server_list = @($env:COMPUTERNAME, $env:COMPUTERNAME, $env:COMPUTERNAME )
 
 $num_servers = $server_list.Count
-Write-Output "$num_servers Servers read from servers.txt"
+Write-Host "$num_servers Servers read from servers.txt"
 
 # Collected server statistics go here:
 $server_stats = @()
@@ -81,19 +81,13 @@ $jobs | Receive-Job | ForEach-Object {
 }
 
 $num_results = $server_stats.Count
-Write-Output "$num_results results received out of $num_servers servers."
+Write-Host "$num_results results received out of $num_servers servers."
 
 
-# Write results to file:
-$results = @{ "servers" = $server_stats; }
-$date = Get-Date -format yyyy_MM_dd
-$outfile = "./$date-server_stats.json"
-$results | ConvertTo-Json -depth 99 | Out-File $outfile -Encoding utf8 -Force
-
-Write-Output "Wrote to $outfile"
+# Output results
+$results = @{ servers = $server_stats }
+$json = $results | ConvertTo-Json -depth 99
+Write-Output $json
 
 # Cleanup:
 $jobs | Remove-Job
-
-# Sync with Tidal:
-tidal sync servers $outfile 2>&1

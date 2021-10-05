@@ -9,6 +9,12 @@ process](https://guides.tidalmg.com).
 Machine Stats for Linux/Unix leverages [Ansible](https://www.ansible.com/) to
 gather facts in a cross-platform way.
 
+## Interactive tutorial
+
+Get familiar with Machine Stats, Tidal Tools and Tidal Migrations Platform!
+
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Ftidalmigrations%2Fmachine-stats-workshop&cloudshell_image=gcr.io%2Ftidal-1529434400027%2Fmachine-stats-workshop&cloudshell_tutorial=machine-stats.md&shellonly=true)
+
 ## Installation
 
 Install locally in a Python 3 environment:
@@ -18,6 +24,87 @@ python3 -m pip install machine-stats
 ```
 
 _Need to install in an environment without internet access?_ [Checkout how to do that below](#offline-installation).
+
+<details>
+    <summary>Distribution-specific installation instructions</summary>
+
+### Ubuntu 16.04
+
+1. Make sure `pip` is installed and is one of the latest version available:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip && \
+      python3 -m pip install --user pip==18.1 && \
+      python3 -m pip install --upgrade --user pip
+    ```
+    **Note:** Direct upgrade to the latest available `pip` version results with an unusable `pip` installation. That's why we perform the upgrade through the intermediate version (`18.1`).
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### Debian 9/Ubuntu 18.04
+
+1. Make sure `pip` is installed and is one of the latest version:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip && \
+      python3 -m pip install --upgrade pip
+    ```
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### Debian 10/Debian 11/Ubuntu 20.04/Ubuntu 21.04
+
+1. Make sure `pip` is installed:
+    ```
+    sudo apt update && \
+      sudo apt install -y python3-pip
+    ```
+2. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### CentOS 7/CentOS 8/CentOS Stream/Red Hat Enterprise Linux 7/Red Hat Enterprise Linux 8/Rocky Linux 8
+
+1. Install Python 3:
+    ```
+    sudo yum install -y python3
+    ```
+2. Upgrade `pip` to the latest available version:
+    ```
+    python3 -m pip install --upgrade --user pip
+    ```
+3. Install `machine-stats`:
+    ```
+    python3 -m pip install machine-stats
+    ```
+
+### SUSE Linux Enterprise Server 12
+
+1. Install Python 3.6:
+    ```
+    sudo zypper install -y python36-base
+    ```
+2. Install `machine-stats`:
+    ```
+    pip install machine-stats
+    ```
+
+### SUSE Linux Enterprise Server 15
+
+1. Install `pip`:
+    ```
+    sudo zypper install -y python3-pip
+    ```
+2. Install `machine-stats`:
+    ```
+    pip install machine-stats
+    ```  
+</details>
 
 ## Data captured
 
@@ -38,7 +125,9 @@ from the resources and sent and stored in Tidal Migrations:
 
 ## Minimal example
 
-1. Create a `hosts` file in the current directory.
+1. Create a `hosts` file in the current directory. See [below](#Generating-a-hosts-file-from-Tidal-Migrations) on a couple ways
+   you can easily create this.
+
 2. Add connection strings in the form of `ssh-user@ip-address` or
    `ssh-user@domain` to the `hosts` file one per line If the `ssh-user@` part
    is omitted, then the current user name is used.
@@ -170,7 +259,17 @@ Python versions.
 
 ## Generating a `hosts` file from Tidal Migrations
 
-Pro-Tip: If you already use Tidal Migrations [Ansible Tower integration
+You can easily generate a hosts file directly from your server inventory in
+Tidal Migrations. For example you can use this command:
+
+```
+tidal export servers | jq '.[].host_name' > hosts
+```
+
+This will create a file (`hosts`), in your current directory, that you can
+use above in Step 1.
+
+Alternatively, if you use Tidal Migrations [Ansible Tower integration
 script](https://github.com/tidalmigrations/ansible-tower-integration) you can
 use its output to generate the `hosts` file for `machine_stats`.
 
