@@ -15,27 +15,34 @@ Under the hood Virt Stats relies on awesome [libvirt](https://libvirt.org/).
     ```
 - Download a [Debian Cloud image](https://cloud.debian.org/images/cloud/) suitable for QEMU, for example:
     ```
-    $ curl -L -O https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-nocloud-amd64.qcow2
+    $ curl -L -O https://cloud.debian.org/images/cloud/buster/latest/debian-10-nocloud-amd64.qcow2
     ```
 - Move the image file to `/var/lib/libvirt/images` to workaround permissions issue:
     ```
-    $ sudo mv debian-11-nocloud-amd64.qcow2 /var/lib/libvirt/images/
+    $ sudo mv debian-10-nocloud-amd64.qcow2 /var/lib/libvirt/images/
     ```
 - Create a new VM using the following command:
     ```
     $ virt-install \
       --connect qemu:///system \
-      --name debian11 \
+      --name debian10 \
       --memory 1024 \
       --vcpus 1 \
-      --disk path=/var/lib/libvirt/images/debian-11-nocloud-amd64.qcow2,size=8,bus=virtio,format=qcow2 \
+      --disk path=/var/lib/libvirt/images/debian-10-nocloud-amd64.qcow2,size=8,bus=virtio,format=qcow2 \
       --import \
       --graphics none \
-      --os-variant debian11 \
+      --os-variant debian10 \
       --network network=default,model=virtio
     ```
-  * It will boot Debian 11
+  * It will boot Debian 10
   * To login, use `root` without a password
+  * Install and enable QEMU Guest Agent:
+      ```
+      # apt-get update && apt-get install -y qemu-guest-agent
+      # systemctl enable qemu-quest-agent
+      # systemctl start qemu-guest-agent
+      # logout
+      ```
   * Press `^[` (<kbd>Ctrl+[</kbd>) on your keyboard
   * `Domain creation completed` message should appear.
   * Verify, that the VM is up and running:
@@ -43,7 +50,7 @@ Under the hood Virt Stats relies on awesome [libvirt](https://libvirt.org/).
       virsh -c qemu:///system list
        Id   Name       State
       --------------------------
-       1    debian11   running
+       1    debian10   running
       ```
 
 ## Finally
