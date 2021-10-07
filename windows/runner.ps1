@@ -19,8 +19,8 @@ By default it looks for servers.txt in the current directory.
 Specifies the number of seconds to measure CPU utilization.
 The default value is 30.
 
-.PARAMETER WinRM
-Specifies if WinRM should be used.
+.PARAMETER NoWinRM
+Specifies if WinRM should not be used.
 
 .INPUTS
 
@@ -59,7 +59,7 @@ param (
 
     [Parameter()]
     [switch]
-    $WinRM
+    $NoWinRM
 )
 
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
@@ -182,7 +182,7 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-    if ($WinRM -eq $false) {
+    if ($NoWinRM -eq $true) {
         $startJobParams = @{
             ScriptBlock = $ServerStats
             ArgumentList = $_, $cred, $CpuUtilizationTimeout
