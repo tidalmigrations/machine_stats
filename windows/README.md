@@ -79,9 +79,9 @@ By default it looks for `servers.txt` in the current directory.
 Specifies the number of seconds to measure CPU utilization.
 The default value is `30`.
         
-### `-WinRM [<SwitchParameter>]`
+### `-NoWinRM [<SwitchParameter>]`
 
-Specifies if WinRM should be used.
+Specifies if WinRM should not be used.
 
 ## Getting more help
 
