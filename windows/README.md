@@ -47,7 +47,7 @@ Operating System Version
 CPU name
 ```
 
-It is also configured to capture the following values:
+Note: These attributes are automatically added as custom fields for all server records within the Tidal Migrations Platform, if they don't already exist so that the data can be added to them.
 
 ```
 CPU_Description
