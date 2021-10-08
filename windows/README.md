@@ -4,7 +4,7 @@ Machine Stats for Windows gathers different parameters (RAM, Storage, CPU, etc) 
 
 ## Features
 
-- Works with WinRM enabled or disabled
+It is capable of connecting and gathering information from Windows machines via two different approaches. By default, it connects to machines via WinRM or if remote hosts are on the same domain it is able to connect directly via WMI.
 - Works with computers within an AD domain or workgroups
 - Customizable CPU utilization measurement timeouts
 - Ready to be run in a scheduled task
