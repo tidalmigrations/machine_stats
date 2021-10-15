@@ -25,6 +25,6 @@ def ok_callback(parent, result):
         parent.update_results(
             host,
             {
-                "processes": process_stats
+                "process_stats": process_stats
             },
         )

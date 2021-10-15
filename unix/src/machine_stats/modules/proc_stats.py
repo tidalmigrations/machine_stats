@@ -51,8 +51,7 @@ def parse_status(process_path):
     following attributes ['path', 'name', 'total_alive_time', 'pid', 'ppid',
     'max_memory_used_mb', 'memory_used_mb']'''
 
-    status = dict()
-    rename_dict = {"vmpeak": "max_memory_used_mb", "vmsize": "memory_used_mb"}
+    stats = dict()
     # Follow the symlink for the exe file to get the path and name of
     # the executable
     #
@@ -60,8 +59,8 @@ def parse_status(process_path):
     # all symlinks. Otherwise some processes will be identified as
     # /proc/2138/exe
     path, name = str(Path(process_path + "/exe").resolve()).rsplit("/", 1)
-    status["path"] = path
-    status["name"] = name
+    stats["path"] = path
+    stats["name"] = name
 
     # Use the folder create time for the process as an indicator for
     # the start time.
@@ -69,7 +68,7 @@ def parse_status(process_path):
     # There is a caveat that on Linux, st_ctime tracks the last time
     # the metadata for a folder changed. So we're making an assumption
     # that the folder metadata has not changed since creation
-    status["total_alive_time"] =  time() - os.stat(process_path).st_ctime
+    stats["total_alive_time"] =  round(time() - os.stat(process_path).st_ctime)
 
     # This algorithm expects all status files to be formatted like:
     # ```
@@ -82,31 +81,35 @@ def parse_status(process_path):
     # PPid:	0
     # ...
     # ```
+    status = dict()
     with open(process_path + "/status") as proc_status:
-        traits = ["pid", "ppid", "user", "vmpeak", "vmsize"]
         for line in proc_status:
             name, value = line.split(":")
             name = name.lower().strip()
-            value = value.strip()
-            if name in traits:
-                if name in rename_dict.keys():
-                    # Virtual Memory data is usually stored in a human
-                    # readable string based off of KB
-                    # Ex:
-                    #
-                    # VmPeak: 168 kB
-                    status[rename_dict[name]] = int(value.split()[0])/1024
-                elif status["name"] == "exe" and name == "name":
-                    # Let's try to do some error recovery here, we
-                    # can't get the process name because the
-                    # script/runner doesn't have enough priveleges,
-                    # but we can still get the process name from
-                    # status file..
-                    status["name"] = value
-                    status["path"] = "/"
-                else:
-                    status[name] = value
-        return status
+            status[name] = value.strip()
+    try:
+        stats["pid"] = int(status["pid"])
+        stats["ppid"] = int(status["ppid"])
+    except Exception as error:
+        print(error)
+    # Virtual Memory data is usually stored in a human
+    # readable string based off of KB
+    # Ex:
+    #
+    # VmPeak: 168 kB
+    stats["memory_used_mb"] = int(status["vmsize"].split()[0])/1024
+    stats["max_memory_used_mb"] = int(status["vmsize"].split()[0])/1024
+
+    # Let's try to do some error recovery here, we
+    # can't get the process name because the
+    # script/runner doesn't have enough priveleges,
+    # but we can still get the process name from
+    # status file..
+    if stats["name"] == "exe":
+        stats["name"] = status["name"]
+        stats["path"] = "/"
+
+    return stats
 
 def process_stats():
     '''Returns a list of dictionaries representing important stats for
