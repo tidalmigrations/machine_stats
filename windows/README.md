@@ -22,18 +22,18 @@ As of Windows 2008 Server onward [WinRM service starts automatically](https://do
 tidal login
 ```
 
-3) Ensure you have a file `windows/servers.txt` that has a list of all the hostnames you want to scan. The hosts will need to be accessible via your network connection from the machine that you run this from.
+3) Ensure you have a file `windows\servers.txt` that has a list of all the hostnames you want to scan. The hosts will need to be accessible via your network connection from the machine that you run this from.
 
 You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
 
 4) Securely provide the password for the user account:
 ```
-./windows/save_password.ps1
+.\windows\save_password.ps1
 ```
 
 5) Invoke the runner and sync with Tidal Migrations:
 ```
-./windows/runner.ps1 | tidal sync servers
+.\windows\runner.ps1 | tidal sync servers
 ```
 
 You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
