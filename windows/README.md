@@ -56,6 +56,16 @@ Operating System Version
 CPU name
 ```
 
+We also capture information about each running processes running on the host machine
+```
+User
+Process Name
+Process Path
+Memory Used (MB)
+Max Memory Used (MB)
+Total Alive Time
+```
+
 It is also configured to capture the following values, however in order to see them in Tidal Migrations you must add the following as custom fields for servers. You can do that at a URL that looks like, https://your_domain.tidalmg.com/#/admin/servers
 
 ```
