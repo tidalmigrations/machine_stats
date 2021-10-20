@@ -1,9 +1,11 @@
-# Helper Functions for aggregating process information
-$memory_used_mb = {[math]::Round(($_.WorkingSet64 / 1MB), 2)};
-$max_memory_used_mb = {[math]::Round(($_.PeakWorkingSet64 / 1MB), 2)};
-$process_alive_time = {(New-TimeSpan -Start $_.StartTime -End (Get-Date)).TotalSeconds}
-
+# Note, all code to be executed on the remote server needs to belong
+# in the ServerStats code block
 $ServerStats = {
+    # Helper Functions for aggregating process information
+    $memory_used_mb = {[math]::Round(($_.WorkingSet64 / 1MB), 2)};
+    $max_memory_used_mb = {[math]::Round(($_.PeakWorkingSet64 / 1MB), 2)};
+    $process_alive_time = {(New-TimeSpan -Start $_.StartTime -End (Get-Date)).TotalSeconds}
+
     $CPUInfo = Get-WmiObject Win32_Processor 
     $OSInfo = Get-WmiObject Win32_OperatingSystem  
 
@@ -46,7 +48,7 @@ $ServerStats = {
 
     # Get Information on current running processes
     # IncludeUserName means we need admin priveleges
-    $processes = Get-Process -IncludeUserName |
+    $process_stats = Get-Process -IncludeUserName |
       Select-Object -Property @{Name=’user’; Expression={$_.UserName}},
                               @{Name=’process_name’; Expression={$_.ProcessName}},
                               @{Name=’path’; Expression={$_.Path}},
@@ -81,6 +83,6 @@ $ServerStats = {
     }
 
     Add-Member -InputObject $server_info -MemberType NoteProperty -name "custom_fields" -value $custom_fields
-    Add-Member -InputObject $server_info -MemberType NoteProperty -name "processes" -value $processes
+    Add-Member -InputObject $server_info -MemberType NoteProperty -name "process_stats" -value $process_stats
     $server_info
 }
