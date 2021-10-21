@@ -56,7 +56,7 @@ Operating System Version
 CPU name
 ```
 
-We have the ability to capture information about processes running on the host machine. This feature is disabled by default, if you want it enabled you will need to go into the `windows/server_stats.ps1` file and uncomment lines 50 to 67 and line 96. We gather the following information about a process:
+You can also capture information about processes running on the host machine. This feature is disabled by default, to enable it uncomment lines 50 to 67 and line 96 in [windows/server_stats.ps1.](server_stats.ps1). If you do that, it will gather the following information about a process:
 ```
 User
 Process Name

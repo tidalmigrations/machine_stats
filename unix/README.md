@@ -123,7 +123,7 @@ from the resources and sent and stored in Tidal Migrations:
 - Operating System Version
 - CPU name
 
-We also can optionally capture metrics about processes running on the server:
+You also can optionally capture metrics about processes running on the server:
 
 - User
 - Process Name
@@ -132,7 +132,7 @@ We also can optionally capture metrics about processes running on the server:
 - Max Memory Used (MB)
 - Total Alive Time
 
-To enable capturing process metrics set the `gather_process_stats` key in `ansible.cfg` to `True`
+To enable capturing process metrics set the `gather_process_stats` key in `ansible.cfg` to `true`
 ```
 gather_process_stats = true
 ```

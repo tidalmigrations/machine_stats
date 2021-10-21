@@ -40,7 +40,7 @@ def run_module():
     try:
         stats = process_stats()
     except Exception as e:
-        module.fail_json(msg=str("failed here"), **result)
+        module.fail_json(msg=str("Failed to capture running processes. Try again or try disabling process gathering info you don't need it."), **result)
 
     result["ansible_proc_stats"] = stats
 
