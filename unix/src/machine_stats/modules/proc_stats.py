@@ -47,7 +47,7 @@ def run_module():
     module.exit_json(**result)
 
 def parse_status(process_path):
-    '''Takes in a string value of a process path, returns a dictionary container the
+    '''Takes in a string value of a process path, returns a dictionary containing the
     following attributes ['path', 'name', 'total_alive_time', 'pid', 'ppid',
     'max_memory_used_mb', 'memory_used_mb']'''
 
