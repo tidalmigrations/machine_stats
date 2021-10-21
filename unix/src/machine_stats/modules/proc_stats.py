@@ -40,7 +40,7 @@ def run_module():
     try:
         stats = process_stats()
     except Exception as e:
-        module.fail_json(msg=str("Failed to capture running processes. Try again or try disabling process gathering info you don't need it."), **result)
+        module.fail_json(msg=str(e), **result)
 
     result["ansible_proc_stats"] = stats
 
@@ -87,11 +87,10 @@ def parse_status(process_path):
             name, value = line.split(":")
             name = name.lower().strip()
             status[name] = value.strip()
-    try:
-        stats["pid"] = int(status["pid"])
-        stats["ppid"] = int(status["ppid"])
-    except Exception as error:
-        print(error)
+
+    # Parse error will throw to parent function
+    stats["pid"] = int(status["pid"])
+    stats["ppid"] = int(status["ppid"])
     # Virtual Memory data is usually stored in a human
     # readable string based off of KB
     # Ex:
