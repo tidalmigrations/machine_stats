@@ -123,6 +123,19 @@ from the resources and sent and stored in Tidal Migrations:
 - Operating System Version
 - CPU name
 
+You also can optionally capture metrics about processes running on the server:
+
+- User
+- Process Name
+- Process Path
+- Memory Used (MB)
+- Max Memory Used (MB)
+- Total Alive Time
+
+To enable capturing process metrics set the `gather_process_stats` key in `ansible.cfg` to `true`
+```
+gather_process_stats = true
+```
 ## Minimal example
 
 1. Create a `hosts` file in the current directory. See [below](#Generating-a-hosts-file-from-Tidal-Migrations) on a couple ways

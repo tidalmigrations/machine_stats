@@ -15,25 +15,25 @@ As of Windows 2008 Server onward [WinRM service starts automatically](https://do
 
 ## Usage
 
-1) Edit line 19 in the [windows/runner.ps1.](windows/runner.ps1) file, to provide the needed Windows username to access to VMs.
+1) Edit line 19 in the [windows/runner.ps1.](runner.ps1) file, to provide the needed Windows username to access to VMs.
 
 2) Ensure you are logged in to Tidal Migrations, via:
 ```
 tidal login
 ```
 
-3) Ensure you have a file `windows/servers.txt` that has a list of all the hostnames you want to scan. The hosts will need to be accessible via your network connection from the machine that you run this from.
+3) Ensure you have a file `windows\servers.txt` that has a list of all the hostnames you want to scan. The hosts will need to be accessible via your network connection from the machine that you run this from.
 
 You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
 
 4) Securely provide the password for the user account:
 ```
-./windows/save_password.ps1
+.\windows\save_password.ps1
 ```
 
 5) Invoke the runner and sync with Tidal Migrations:
 ```
-./windows/runner.ps1 | tidal sync servers
+.\windows\runner.ps1 | tidal sync servers
 ```
 
 You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
@@ -54,6 +54,16 @@ CPU Count
 Operating System
 Operating System Version
 CPU name
+```
+
+You can also capture information about processes running on the host machine. This feature is disabled by default, to enable it uncomment lines 50 to 67 and line 96 in [windows/server_stats.ps1.](server_stats.ps1). If you do that, it will gather the following information about a process:
+```
+User
+Process Name
+Process Path
+Memory Used (MB)
+Max Memory Used (MB)
+Total Alive Time in Seconds
 ```
 
 It is also configured to capture the following values, however in order to see them in Tidal Migrations you must add the following as custom fields for servers. You can do that at a URL that looks like, https://your_domain.tidalmg.com/#/admin/servers
