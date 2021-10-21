@@ -56,14 +56,14 @@ Operating System Version
 CPU name
 ```
 
-We also capture information about each running processes running on the host machine
+We have the ability to capture information about processes running on the host machine. This feature is disabled by default, if you want it enabled you will need to go into the `windows/server_stats.ps1` file and uncomment lines 50 to 67 and line 96. We gather the following information about a process:
 ```
 User
 Process Name
 Process Path
 Memory Used (MB)
 Max Memory Used (MB)
-Total Alive Time
+Total Alive Time in Seconds
 ```
 
 It is also configured to capture the following values, however in order to see them in Tidal Migrations you must add the following as custom fields for servers. You can do that at a URL that looks like, https://your_domain.tidalmg.com/#/admin/servers

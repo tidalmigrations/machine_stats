@@ -47,24 +47,25 @@ $ServerStats = {
             Select-Object -ExpandProperty CookedValue |
                 Measure-Object -Average -Maximum)
 
-    if ($is_admin){
-    # Get Information on current running processes
-    # IncludeUserName means we need admin priveleges
-      $process_stats = Get-Process -IncludeUserName |
-        Select-Object -Property @{Name=’user’; Expression={$_.UserName}},
-                                @{Name=’process_name’; Expression={$_.ProcessName}},
-                                @{Name=’path’; Expression={$_.Path}},
-                                @{Name=’memory_used_mb’; Expression=$memory_used_mb},
-                                @{Name=’max_memory_used_mb’; Expression=$max_memory_used_mb},
-                                @{N=’total_alive_time’; E=$process_alive_time}
-    } else {
-        $process_stats = Get-Process |
-          Select-Object -Property @{Name=’process_name’; Expression={$_.ProcessName}},
-                                  @{Name=’path’; Expression={$_.Path}},
-                                  @{Name=’memory_used_mb’; Expression=$memory_used_mb},
-                                  @{Name=’max_memory_used_mb’; Expression=$max_memory_used_mb},
-                                  @{N=’total_alive_time’; E=$process_alive_time}
-    }
+    # if ($is_admin){
+    # # Get Information on current running processes
+    # # IncludeUserName means we need admin priveleges
+    #   $process_stats = Get-Process -IncludeUserName |
+    #     Select-Object -Property @{Name=’user’; Expression={$_.UserName}},
+    #                             @{Name=’process_name’; Expression={$_.ProcessName}},
+    #                             @{Name=’path’; Expression={$_.Path}},
+    #                             @{Name=’memory_used_mb’; Expression=$memory_used_mb},
+    #                             @{Name=’max_memory_used_mb’; Expression=$max_memory_used_mb},
+    #                             @{N=’total_alive_time’; E=$process_alive_time}
+    # } else {
+    #     $process_stats = Get-Process |
+    #       Select-Object -Property @{Name=’process_name’; Expression={$_.ProcessName}},
+    #                               @{Name=’path’; Expression={$_.Path}},
+    #                               @{Name=’memory_used_mb’; Expression=$memory_used_mb},
+    #                               @{Name=’max_memory_used_mb’; Expression=$max_memory_used_mb},
+    #                               @{N=’total_alive_time’; E=$process_alive_time}
+    # }
+
     # Create an object to return, convert this to JSON or CSV as you need:
     $server_info = New-Object -TypeName psobject -Property @{
         host_name = $cpu.SystemName
@@ -92,6 +93,6 @@ $ServerStats = {
     }
 
     Add-Member -InputObject $server_info -MemberType NoteProperty -name "custom_fields" -value $custom_fields
-    Add-Member -InputObject $server_info -MemberType NoteProperty -name "process_stats" -value $process_stats
+    # Add-Member -InputObject $server_info -MemberType NoteProperty -name "process_stats" -value $process_stats
     $server_info
 }
