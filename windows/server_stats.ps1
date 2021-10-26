@@ -52,14 +52,14 @@ $ServerStats = {
     # # IncludeUserName means we need admin priveleges
     #   $process_stats = Get-Process -IncludeUserName |
     #     Select-Object -Property @{Name=’user’; Expression={$_.UserName}},
-    #                             @{Name=’process_name’; Expression={$_.ProcessName}},
+    #                             @{Name=’name’; Expression={$_.ProcessName}},
     #                             @{Name=’path’; Expression={$_.Path}},
     #                             @{Name=’memory_used_mb’; Expression=$memory_used_mb},
     #                             @{Name=’max_memory_used_mb’; Expression=$max_memory_used_mb},
     #                             @{N=’total_alive_time’; E=$process_alive_time}
     # } else {
     #     $process_stats = Get-Process |
-    #       Select-Object -Property @{Name=’process_name’; Expression={$_.ProcessName}},
+    #       Select-Object -Property @{Name=’name’; Expression={$_.ProcessName}},
     #                               @{Name=’path’; Expression={$_.Path}},
     #                               @{Name=’memory_used_mb’; Expression=$memory_used_mb},
     #                               @{Name=’max_memory_used_mb’; Expression=$max_memory_used_mb},
