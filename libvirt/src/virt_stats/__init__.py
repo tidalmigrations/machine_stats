@@ -64,7 +64,7 @@ def main():
     for domain in conn.listAllDomains(libvirt.VIR_CONNECT_LIST_DOMAINS_ACTIVE):
         results.append(
             {
-                "hostname": hostname(domain),
+                "host_name": hostname(domain),
                 "ip_addresses": ip_addresses(domain),
             }
         )
