@@ -1,6 +1,8 @@
 import argparse
-import libvirt
+import json
 import sys
+
+import libvirt
 
 
 def libvirt_version():
@@ -9,15 +11,47 @@ def libvirt_version():
     version %= 1000000
     minor = version // 1000
     release = version % 1000
-    
+
     return "%d.%d.%d" % (major, minor, release)
+
+
+def hostname(domain: libvirt.virDomain):
+    try:
+        hostname = domain.hostname()
+    except libvirt.libvirtError:
+        macs = []
+        ifaces = domain.interfaceAddresses(
+            libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE
+        )
+        for (_, val) in ifaces.items():
+            if val["hwaddr"]:
+                macs.append(val["hwaddr"])
+        conn = domain.connect()
+        for network in conn.listAllNetworks(libvirt.VIR_CONNECT_LIST_NETWORKS_ACTIVE):
+            for lease in network.DHCPLeases():
+                for mac in macs:
+                    if lease["mac"] == mac:
+                        return lease["hostname"]
+
+
+def ip_addresses(domain: libvirt.virDomain):
+    ips = []
+    ifaces = domain.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE)
+    for (_, val) in ifaces.items():
+        if val["addrs"]:
+            for ipaddr in val["addrs"]:
+                if (
+                    ipaddr["type"] == libvirt.VIR_IP_ADDR_TYPE_IPV4
+                    or ipaddr["type"] == libvirt.VIR_IP_ADDR_TYPE_IPV6
+                ):
+                    ips.append(ipaddr["addr"])
+    return ips
+
 
 def main():
     parser = argparse.ArgumentParser(prog="virt-stats")
     parser.add_argument(
-        "-c", "--connect",
-        metavar="URI",
-        help="hypervisor connection URI"
+        "-c", "--connect", metavar="URI", help="hypervisor connection URI"
     )
     args = parser.parse_args()
     try:
@@ -25,10 +59,18 @@ def main():
     except libvirt.libvirtError:
         print("Failed to open connection to the hypervisor")
         sys.exit(1)
-    
-    for domain in conn.listAllDomains():
-        if domain.isActive():
-            print("hostname", domain.hostname())
+
+    results = []
+    for domain in conn.listAllDomains(libvirt.VIR_CONNECT_LIST_DOMAINS_ACTIVE):
+        results.append(
+            {
+                "hostname": hostname(domain),
+                "ip_addresses": ip_addresses(domain),
+            }
+        )
+
+    print(json.dumps(results, sort_keys=True, indent=4))
+
 
 if __name__ == "__main__":
     main()
