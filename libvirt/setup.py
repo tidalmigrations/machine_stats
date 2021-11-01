@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
 setup(
     name="virt_stats",
     version="0.1.0",
-    author="Petr Shevtsov",
-    author_email="petr.shevtsov@tidalmigrations.com",
+    author="Petr Razumov",
+    author_email="petr.razumov@tidalmigrations.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from virtual environment",
     long_description=long_description,
     long_description_content_type="text/markdown",
