@@ -48,3 +48,7 @@ If running Virt-Stats as a CLI failed, try running it as the following:
 ```
 python3 -m virt-stats
 ```
+
+## Contributing
+
+If you're interested in contributing to Virt-Stats, please check our [contributing](CONTRIBUTING.md) guide.
