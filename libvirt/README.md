@@ -32,7 +32,7 @@ Please refer to the [Connection URIs](https://libvirt.org/uri.html) documentatio
 
 ## Output
 
-Virt-Stats outputs the JSON document suitable to be piped to Tidal Tools:
+Virt-Stats outputs a JSON document suitable to be piped to Tidal Tools:
 
 ```
 virt-stats --connection qemu:///system | tidal sync servers
