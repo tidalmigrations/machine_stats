@@ -4,8 +4,9 @@ A simple and effective way to gather guest VM statistics (hostname, IP addresses
 
 ## Prerequisutes
 
+* [Python 3+](https://python.org/)
 * [libvirt](https://libvirt.org/) >=3.0.0 installed on both operator machine (i.e where you run Virt-Stats) and on remote machine (i.e where you run your virtual environmnent and guest VMs)
-* Every guest VM must have [QEMU guest agent](https://wiki.qemu.org/Features/GuestAgent) installed and running.
+* [QEMU guest agent](https://wiki.qemu.org/Features/GuestAgent) installed and running on guest VMs _(optional)_.
 
 ## Installation
 
@@ -48,6 +49,6 @@ If running Virt-Stats as a CLI failed, try running it as the following:
 python3 -m virt-stats
 ```
 
-### libvirt.libvirtError: this function is not supported by the connection driver: virDomainGetHostname
+## Contributing
 
-Make sure you're running libvirt of version 4.8.0 or higher.
+If you're interested in contributing to Virt-Stats, please check our [contributing](CONTRIBUTING.md) guide.
