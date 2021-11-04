@@ -48,7 +48,3 @@ If running Virt-Stats as a CLI failed, try running it as the following:
 ```
 python3 -m virt-stats
 ```
-
-### libvirt.libvirtError: this function is not supported by the connection driver: virDomainGetHostname
-
-Make sure you're running libvirt of version 4.8.0 or higher.
