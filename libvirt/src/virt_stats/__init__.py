@@ -67,7 +67,7 @@ def ip_addresses(domain: libvirt.virDomain):
 def main():
     parser = argparse.ArgumentParser(prog="virt-stats")
     parser.add_argument(
-        "-c", "--connect", metavar="URI", help="hypervisor connection URI"
+        "-c", "--connect", metavar="URI", help="hypervisor connection URI (check https://libvirt.org/uri.html for details)"
     )
     args = parser.parse_args()
     try:
