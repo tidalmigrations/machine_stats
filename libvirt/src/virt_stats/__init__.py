@@ -18,6 +18,7 @@ def libvirt_version():
 def hostname(domain: libvirt.virDomain):
     try:
         hostname = domain.hostname()
+        return hostname
     except libvirt.libvirtError:
         macs = []
         ifaces = domain.interfaceAddresses(
