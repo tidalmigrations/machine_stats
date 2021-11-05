@@ -1,8 +1,12 @@
 import argparse
 import json
+import os
 import sys
+import io
 
 import libvirt
+
+from contextlib import contextmanager
 
 
 def libvirt_version():
@@ -14,10 +18,21 @@ def libvirt_version():
 
     return "%d.%d.%d" % (major, minor, release)
 
+@contextmanager
+def suppress_stderr():
+    try:
+        stderr = os.dup(sys.stderr.fileno())
+        devnull = open(os.devnull, "w")
+        os.dup2(devnull.fileno(), sys.stderr.fileno())
+        yield
+    finally:
+        os.dup2(stderr, sys.stderr.fileno())
+        devnull.close()
 
 def hostname(domain: libvirt.virDomain):
     try:
-        hostname = domain.hostname()
+        with suppress_stderr():
+            hostname = domain.hostname()
         return hostname
     except libvirt.libvirtError:
         macs = []
