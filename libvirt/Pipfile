@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+libvirt-python = ">=3.0.0"
+virt_stats = {editable = true, path = "."}
+
+[dev-packages]
+black = "==20.8b1"
+flake8 = "*"
+isort = "*"
+pylint = "*"
+setuptools = "*"
+twine = "*"
+wheel = "*"
+build = "*"
+bump2version = "*"
