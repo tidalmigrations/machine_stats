@@ -1,12 +1,11 @@
-# Machine Stats for Virtual environments (Virt-Stats)
+# Machine Stats for Hypervisors (Virt-Stats)
 
-A simple and effective way to gather guest VM statistics (hostname, IP addresses) from a [libvirt](https://libvirt.org/)-based environment as a first layer of a [Tidal Migrations discovery process](https://guides.tidalmg.com/).
+A simple and effective way to gather guest VM statistics (hostname, IP addresses) from a [libvirt](https://libvirt.org/)-based environment as a first layer of a [Tidal Migrations discovery process](https://guides.tidalmg.com/). A common use case is to use this to integrate your KVM-based virtual machine inventory into the Tidal Migrations Platform.
 
 ## Prerequisutes
 
 * [Python 3+](https://python.org/)
 * [libvirt](https://libvirt.org/) >=3.0.0 installed on both operator machine (i.e where you run Virt-Stats) and on remote machine (i.e where you run your virtual environmnent and guest VMs)
-* [QEMU guest agent](https://wiki.qemu.org/Features/GuestAgent) installed and running on guest VMs _(optional)_.
 
 ## Installation
 
@@ -36,7 +35,7 @@ Please refer to the [Connection URIs](https://libvirt.org/uri.html) documentatio
 Virt-Stats outputs a JSON document suitable to be piped to Tidal Tools:
 
 ```
-virt-stats --connection qemu:///system | tidal sync servers
+virt-stats --connection qemu+ssh://me@10.0.0.1/system | tidal sync servers
 ```
 
 ## Troubleshooting
