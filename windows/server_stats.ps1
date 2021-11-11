@@ -4,7 +4,7 @@ $ServerStats = {
     # Helper Functions for aggregating process information
     $memory_used_mb = {[math]::Round(($_.WorkingSet64 / 1MB), 2)};
     $max_memory_used_mb = {[math]::Round(($_.PeakWorkingSet64 / 1MB), 2)};
-    $process_alive_time = {[math]::Round((New-TimeSpan -Start $_.StartTime -End (Get-Date)).TotalSeconds)}
+    $process_alive_time = {[[int] (New-TimeSpan -Start $_.StartTime -End (Get-Date)).TotalSeconds}
     $is_admin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 
     $CPUInfo = Get-WmiObject Win32_Processor 
