@@ -63,6 +63,11 @@ def ip_addresses(domain: libvirt.virDomain):
                     ips.append(ipaddr["addr"])
     return ips
 
+def memory_stats_gb(memory_stats: dict, tag: str):
+    v = memory_stats.get(tag)
+    if not v:
+        return None
+    return v / 1024 ** 2 # convert kb to gb
 
 def main():
     parser = argparse.ArgumentParser(prog="virt-stats")
@@ -78,10 +83,14 @@ def main():
 
     results = []
     for domain in conn.listAllDomains(libvirt.VIR_CONNECT_LIST_DOMAINS_ACTIVE):
+        memory_stats = domain.memoryStats()
         results.append(
             {
+                "cpu_count": domain.vcpusFlags(),
                 "host_name": hostname(domain),
                 "ip_addresses": ip_addresses(domain),
+                "ram_allocated_gb": memory_stats_gb(memory_stats, "available"),
+                "ram_used_gb": memory_stats_gb(memory_stats, "actual"),
             }
         )
 
