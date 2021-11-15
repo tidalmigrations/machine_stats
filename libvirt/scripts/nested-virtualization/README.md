@@ -9,7 +9,7 @@ virtualization enabled.
 
 ## Configuration
 
-Copy `.env.example` to `.env` and edit the variables.
+Copy `.env.example` to `.env` and edit the variables. Please check the [Restrictions](https://cloud.google.com/compute/docs/instances/nested-virtualization/overview#restrictions) before making any VM configuration changes.
 
 ## Usage
 
