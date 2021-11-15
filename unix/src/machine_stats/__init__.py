@@ -12,8 +12,8 @@ from ansible.utils.path import unfrackpath
 
 # Setting default configuration parameters
 default_config = {
-    "ANSIBLE_HOST_KEY_CHECKING": False,
-    "ANSIBLE_GATHER_TIMEOUT": 180,
+    "ANSIBLE_HOST_KEY_CHECKING": "False",
+    "ANSIBLE_GATHER_TIMEOUT": "180",
 }
 for k, v in default_config.items():
     os.environ[k] = v
