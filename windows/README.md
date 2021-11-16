@@ -15,21 +15,20 @@ As of Windows 2008 Server onward [WinRM service starts automatically](https://do
 
 ## Usage
 
-1) Edit line 19 in the [windows/runner.ps1.](runner.ps1) file, to provide the needed Windows username to access to VMs.
+1) Download and install [Tidal Tools](https://get.tidal.sh/)
 
-2) Ensure you are logged in to Tidal Migrations, via:
+2) Ensure you are logged in to your Tidal Migrations account with
 ```
 tidal login
 ```
 
-3) Ensure you have a file `windows\servers.txt` that has a list of all the hostnames you want to scan. The hosts will need to be accessible via your network connection from the machine that you run this from.
+3) Prepare the username and a password to access your servers:
+    - Specify `-UserName` parameter value
+    - Store the password securely by running `.\save_password.ps1` script
 
-You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
+4) Ensure you have a file that has a list of all the hostnames you want to scan. By default, Machine Stats looks for `servers.txt`, but you can also specify any custom location with `-ServersPath` parameter. The hosts will need to be accessible via your network connection from the machine that you run this from.
 
-4) Securely provide the password for the user account:
-```
-.\windows\save_password.ps1
-```
+   You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
 
 5) Invoke the runner and sync with Tidal Migrations:
 ```
