@@ -23,6 +23,9 @@ run `pip install pipenv` in the virtualenv you're already using and invoke the
 command above from the `unix` directory of the cloned _Machine Stats_ repo. It
 will do the correct thing.
 
+Make changes in the source code (e.g in `src/machine_stats/__init__.py`) and
+run `pipenv run machine_stats` to run it locally.
+
 Non `pipenv` install works too:
 
 ```console
