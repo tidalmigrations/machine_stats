@@ -89,22 +89,29 @@ def parse_status(process_path):
             status[name] = value.strip()
 
     # Parse error will throw to parent function
-    stats["pid"] = int(status["pid"])
-    stats["ppid"] = int(status["ppid"])
+    if status.get("pid"):
+        stats["pid"] = int(status["pid"])
+
+    if status.get("ppid"):
+        stats["ppid"] = int(status["ppid"])
+
     # Virtual Memory data is usually stored in a human
     # readable string based off of KB
     # Ex:
     #
     # VmPeak: 168 kB
-    stats["memory_used_mb"] = int(status["vmsize"].split()[0])/1024
-    stats["max_memory_used_mb"] = int(status["vmsize"].split()[0])/1024
+    if status.get("vmsize"):
+        stats["memory_used_mb"] = int(status["vmsize"].split()[0])/1024
+
+    if status.get("vmpeak"):
+        stats["max_memory_used_mb"] = int(status["vmpeak"].split()[0])/1024
 
     # Let's try to do some error recovery here, we
     # can't get the process name because the
     # script/runner doesn't have enough priveleges,
     # but we can still get the process name from
     # status file..
-    if stats["name"] == "exe":
+    if stats.get("name") == "exe":
         stats["name"] = status["name"]
         stats["path"] = "/"
 
