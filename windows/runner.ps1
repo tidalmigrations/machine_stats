@@ -1,25 +1,51 @@
-###
-# runner.ps1
-#
-# To use, simply:
-#  1. Set your username below (line 19), use a username that has login access to the hosts you are scanning.
-#
-#  2. Run the save_password.ps1 script to securely store your credential in
-#     SecuredText.txt
-#
-#  3. Save a list of server hostnames in servers.txt
-#
-#  4. Run this script in a Scheduled Task (or invoke directly from the command line)
-#
-#
-#  For questions or support, send mail to:
-#
-#    support@tidalmigrations.com
-#
-$username = "INSERT_WINDOWS_USERNAME"
+<#
+.SYNOPSIS
 
-################################################################
-# Do not modify below this line:
+Gathers machine statistics (RAM, storage, CPU, etc) from a server environment.
+
+.DESCRIPTION
+
+The runner.ps1 script gathers machine statistics from a server environment.
+
+.PARAMETER UserName
+
+Specifies the user name used for connection to the remote machine.
+To securely provide a password, please run the save_password.ps1 script.
+
+.PARAMETER ServersPath
+
+Specifies the path to file with the list of servers (one server per line).
+By default it looks for servers.txt in the current directory.
+
+.INPUTS
+
+None. You cannot pipe objects to runner.ps1
+
+.OUTPUTS
+
+runner.ps1 generates a JSON output with all the gathered data suitable to be
+used with Tidal Tools or Tidal Migrations API.
+
+.EXAMPLE
+
+.\runner.ps1
+
+.EXAMPLE
+
+.\runner.ps1 -UserName myuser
+
+#>
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory)]
+    [string]
+    $UserName,
+
+    [Parameter()]
+    [string]
+    $ServersPath = (Join-Path -Path $PWD -ChildPath "servers.txt")
+)
+
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
 
 if(![System.IO.File]::Exists($securePwdFile)){
@@ -31,7 +57,7 @@ if(![System.IO.File]::Exists($securePwdFile)){
 
 
 $secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
-$cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secPwd
+$cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
 
 $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Host "About to execute inventory gathering as user: $env_user"
@@ -41,13 +67,11 @@ Write-Host "About to execute inventory gathering as user: $env_user"
 . ".\server_stats.ps1"
 
 # Get server inventory:
-$server_list = Get-Content ".\servers.txt"
-
-# NB: For initial testing, you may want to haardcode a few:
-# $server_list = @($env:COMPUTERNAME, $env:COMPUTERNAME, $env:COMPUTERNAME )
+$server_list = Get-Content $ServersPath
 
 $num_servers = $server_list.Count
-Write-Host "$num_servers Servers read from servers.txt"
+$ServersBaseName = Get-ChildItem -Path $ServersPath | Select-Object -ExpandProperty BaseName
+Write-Host "$num_servers Servers read from $ServersBaseName"
 
 # Collected server statistics go here:
 $server_stats = @()
