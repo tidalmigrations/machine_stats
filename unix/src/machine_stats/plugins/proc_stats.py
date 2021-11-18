@@ -11,9 +11,7 @@ def setup(app):
 def add_arguments(parser):
     parser.add_argument(
         "--process-stats",
-        metavar="BOOL",
-        type=bool,
-        default=True,
+        action="store_true",
         help="turn on collecting stats on running processes",
     )
 

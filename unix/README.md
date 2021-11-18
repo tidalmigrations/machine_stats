@@ -132,10 +132,11 @@ You also can optionally capture metrics about processes running on the server:
 - Max Memory Used (MB)
 - Total Alive Time
 
-To enable capturing process metrics set the `gather_process_stats` key in `ansible.cfg` to `true`
+To enable capturing process metrics add the command-line flag `--process-stats`:
 ```
-gather_process_stats = true
+machine-stats --process-stats
 ```
+
 ## Minimal example
 
 1. Create a `hosts` file in the current directory. See [below](#Generating-a-hosts-file-from-Tidal-Migrations) on a couple ways
