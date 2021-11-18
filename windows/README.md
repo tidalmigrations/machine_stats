@@ -17,7 +17,7 @@ As of Windows 2008 Server onward [WinRM service starts automatically](https://do
 
 1) Download and install [Tidal Tools](https://get.tidal.sh/)
 
-2) Ensure you are logged in to your Tidal Migrations account with
+2) Ensure you are logged in to your Tidal Migrations workspace with
 ```
 tidal login
 ```
