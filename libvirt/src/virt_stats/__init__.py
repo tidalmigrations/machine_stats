@@ -18,6 +18,7 @@ def libvirt_version():
 
     return "%d.%d.%d" % (major, minor, release)
 
+
 @contextmanager
 def suppress_stderr():
     try:
@@ -28,6 +29,7 @@ def suppress_stderr():
     finally:
         os.dup2(stderr, sys.stderr.fileno())
         devnull.close()
+
 
 def hostname(domain: libvirt.virDomain):
     try:
@@ -63,16 +65,34 @@ def ip_addresses(domain: libvirt.virDomain):
                     ips.append(ipaddr["addr"])
     return ips
 
-def memory_stats_gb(memory_stats: dict, tag: str):
-    v = memory_stats.get(tag)
+
+def ram_allocated_gb(memory_stats: dict):
+    v = memory_stats.get("available")
     if not v:
         return None
-    return v / 1024 ** 2 # convert kb to gb
+    return round(
+        v / 1024 ** 2, 2
+    )  # convert kb to gb and round to 2 digits precision after the decimal point.
+
+
+def ram_used_gb(memory_stats: dict):
+    mem_total = memory_stats.get("available")
+    mem_free = memory_stats.get("unused")
+    if not mem_total or not mem_free:
+        return None
+    mem_used = mem_total - mem_free
+    return round(
+        mem_used / 1024 ** 2, 2
+    )  # convert kb to gb and round to 2 digits precision after the decimal point.
+
 
 def main():
     parser = argparse.ArgumentParser(prog="virt-stats")
     parser.add_argument(
-        "-c", "--connect", metavar="URI", help="hypervisor connection URI (check https://libvirt.org/uri.html for details)"
+        "-c",
+        "--connect",
+        metavar="URI",
+        help="hypervisor connection URI (check https://libvirt.org/uri.html for details)",
     )
     args = parser.parse_args()
     try:
@@ -89,7 +109,8 @@ def main():
                 "cpu_count": domain.vcpusFlags(),
                 "host_name": hostname(domain),
                 "ip_addresses": ip_addresses(domain),
-                "ram_allocated_gb": round(memory_stats_gb(memory_stats, "available"), 2)
+                "ram_allocated_gb": ram_allocated_gb(memory_stats),
+                "ram_used_gb": ram_used_gb(memory_stats),
             }
         )
 
