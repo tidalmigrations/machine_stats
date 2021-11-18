@@ -23,6 +23,7 @@ As of now Virt-Stats captures the following metrics:
 * IP Addresses
 * CPU count
 * RAM allocated (GB)
+* RAM used (GB)
 
 ## Usage
 
