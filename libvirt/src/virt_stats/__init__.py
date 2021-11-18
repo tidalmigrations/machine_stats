@@ -89,8 +89,7 @@ def main():
                 "cpu_count": domain.vcpusFlags(),
                 "host_name": hostname(domain),
                 "ip_addresses": ip_addresses(domain),
-                "ram_allocated_gb": memory_stats_gb(memory_stats, "available"),
-                "ram_used_gb": memory_stats_gb(memory_stats, "actual"),
+                "ram_allocated_gb": round(memory_stats_gb(memory_stats, "available"), 2)
             }
         )
 
