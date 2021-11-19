@@ -5,6 +5,7 @@ ANSIBLE_METADATA = {"metadata_version": "1.1"}
 import os
 from time import time
 from pathlib import Path
+from pwd import getpwuid
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -114,6 +115,15 @@ def parse_status(process_path):
     if stats.get("name") == "exe":
         stats["name"] = status["name"]
         stats["path"] = "/"
+
+    # Finally, let's see if we can read the username
+    if status.get("uid"):
+        try:
+            uid = int(status["uid"].split()[0])
+            user_entry = getpwuid(uid)
+            stats["user"] = user_entry.pw_name
+        except KeyError as e:
+            stats["user"] = ""
 
     return stats
 
