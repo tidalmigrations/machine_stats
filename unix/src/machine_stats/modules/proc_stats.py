@@ -118,12 +118,15 @@ def parse_status(process_path):
 
     # Finally, let's see if we can read the username
     if status.get("uid"):
+        uid = int(status["uid"].split()[0])
         try:
-            uid = int(status["uid"].split()[0])
-            user_entry = getpwuid(uid)
+            user_entry = getpwuid(
+                uid
+            )  # KeyError is raised if the entry asked for cannot be found.
+        except KeyError:
+            stats["user"] = str(uid)  # Fallback to UID
+        else:
             stats["user"] = user_entry.pw_name
-        except KeyError as e:
-            stats["user"] = ""
 
     return stats
 
