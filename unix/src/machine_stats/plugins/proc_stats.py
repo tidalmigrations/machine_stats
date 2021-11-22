@@ -3,7 +3,9 @@ def setup(app):
     if process_stats:
         app.add_playbook_tasks(
             dict(
-                action=dict(module="proc_stats", args=dict(process_stats=process_stats)),
+                action=dict(
+                    module="proc_stats", args=dict(process_stats=process_stats)
+                ),
             )
         )
 
@@ -22,7 +24,5 @@ def ok_callback(parent, result):
     if process_stats is not None:
         parent.update_results(
             host,
-            {
-                "process_stats": process_stats
-            },
+            {"process_stats": process_stats},
         )
