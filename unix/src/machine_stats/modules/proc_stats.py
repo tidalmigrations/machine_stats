@@ -9,6 +9,7 @@ from pwd import getpwuid
 
 from ansible.module_utils.basic import AnsibleModule
 
+
 def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(process_stats=dict(type="bool", required=False, default=True))
@@ -47,10 +48,11 @@ def run_module():
 
     module.exit_json(**result)
 
+
 def parse_status(process_path):
-    '''Takes in a string value of a process path, returns a dictionary containing the
+    """Takes in a string value of a process path, returns a dictionary containing the
     following attributes ['path', 'name', 'total_alive_time', 'pid', 'ppid',
-    'max_memory_used_mb', 'memory_used_mb']'''
+    'max_memory_used_mb', 'memory_used_mb']"""
 
     stats = dict()
     # Follow the symlink for the exe file to get the path and name of
@@ -69,7 +71,7 @@ def parse_status(process_path):
     # There is a caveat that on Linux, st_ctime tracks the last time
     # the metadata for a folder changed. So we're making an assumption
     # that the folder metadata has not changed since creation
-    stats["total_alive_time"] =  round(time() - os.stat(process_path).st_ctime)
+    stats["total_alive_time"] = round(time() - os.stat(process_path).st_ctime)
 
     # This algorithm expects all status files to be formatted like:
     # ```
@@ -102,10 +104,10 @@ def parse_status(process_path):
     #
     # VmPeak: 168 kB
     if status.get("vmsize"):
-        stats["memory_used_mb"] = int(status["vmsize"].split()[0])/1024
+        stats["memory_used_mb"] = int(status["vmsize"].split()[0]) / 1024
 
     if status.get("vmpeak"):
-        stats["max_memory_used_mb"] = int(status["vmpeak"].split()[0])/1024
+        stats["max_memory_used_mb"] = int(status["vmpeak"].split()[0]) / 1024
 
     # Let's try to do some error recovery here, we
     # can't get the process name because the
@@ -130,18 +132,24 @@ def parse_status(process_path):
 
     return stats
 
-def process_stats():
-    '''Returns a list of dictionaries representing important stats for
-    processes. These attributes include ['path', 'name', 'total_alive_time', 'pid',
-    'ppid', 'max_memory_used_mb', 'memory_used_mb']'''
 
-    process_paths = [folder.path for folder in os.scandir("/proc") if
-                     folder.is_dir() and str.isdigit(folder.name)]
+def process_stats():
+    """Returns a list of dictionaries representing important stats for
+    processes. These attributes include ['path', 'name', 'total_alive_time', 'pid',
+    'ppid', 'max_memory_used_mb', 'memory_used_mb']"""
+
+    process_paths = [
+        folder.path
+        for folder in os.scandir("/proc")
+        if folder.is_dir() and str.isdigit(folder.name)
+    ]
 
     return [parse_status(process) for process in process_paths]
 
+
 def main():
     run_module()
+
 
 if __name__ == "__main__":
     main()
