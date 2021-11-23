@@ -48,11 +48,11 @@ param (
 
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
 
-if(![System.IO.File]::Exists($securePwdFile)){
-  Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
-  exit 1
+if (![System.IO.File]::Exists($securePwdFile)) {
+    Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
+    exit 1
 } else {
-  Write-Host "Reading credential from $securePwdFile"
+    Write-Host "Reading credential from $securePwdFile"
 }
 
 
@@ -78,30 +78,29 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-  $jobs += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats -AsJob
+    $jobs += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats -AsJob
 }
 
 Do {
-  $TotProgress = 0
-  ForEach ($job in $jobs) {
-    Try {
-      $Prog = ($job | Get-Job).ChildJobs[0].Progress.StatusDescription[-1]
-      If ($Prog -is [char]) {
-        $Prog = 0
-      }
-      $TotProgress += $Prog
+    $TotProgress = 0
+    ForEach ($job in $jobs) {
+        Try {
+            $Prog = ($job | Get-Job).ChildJobs[0].Progress.StatusDescription[-1]
+            If ($Prog -is [char]) {
+                $Prog = 0
+            }
+            $TotProgress += $Prog
+        } Catch {
+            Start-Sleep -Milliseconds 500
+            Break
+        }
     }
-    Catch {
-      Start-Sleep -Milliseconds 500
-      Break
-    }
-  }
-  Write-Progress -Id 1 -Activity "Watching Background Jobs" -Status "Waiting for background jobs to complete: $TotProgress of $num_servers" -PercentComplete (($TotProgress / $num_servers) * 100)
-  Start-Sleep -Seconds 3
-} Until (($jobs | Get-Job | Where-Object {(($_.State -eq "Running") -or ($_.state -eq "NotStarted"))}).count -eq 0)
+    Write-Progress -Id 1 -Activity "Watching Background Jobs" -Status "Waiting for background jobs to complete: $TotProgress of $num_servers" -PercentComplete (($TotProgress / $num_servers) * 100)
+    Start-Sleep -Seconds 3
+} Until (($jobs | Get-Job | Where-Object { (($_.State -eq "Running") -or ($_.state -eq "NotStarted")) }).count -eq 0)
 
 $jobs | Receive-Job | ForEach-Object {
-  $server_stats += $_
+    $server_stats += $_
 }
 
 $num_results = $server_stats.Count
@@ -110,7 +109,7 @@ Write-Host "$num_results results received out of $num_servers servers."
 
 # Output results
 $results = @{ servers = $server_stats }
-$json = $results | ConvertTo-Json -depth 99
+$json = $results | ConvertTo-Json -Depth 99
 Write-Output $json
 
 # Cleanup:
