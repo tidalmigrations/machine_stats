@@ -17,6 +17,14 @@ To securely provide a password, please run the save_password.ps1 script.
 Specifies the path to file with the list of servers (one server per line).
 By default it looks for servers.txt in the current directory.
 
+.PARAMETER NoWinRM
+
+Specifies if WinRM should not be used.
+
+.PARAMETER ProcessStats
+
+Specifies if capturing process metrics should be enabled (WinRM only).
+
 .INPUTS
 
 None. You cannot pipe objects to runner.ps1
@@ -43,7 +51,15 @@ param (
 
     [Parameter()]
     [string]
-    $ServersPath = (Join-Path -Path $PWD -ChildPath "servers.txt")
+    $ServersPath = (Join-Path -Path $PWD -ChildPath "servers.txt"),
+
+    [Parameter()]
+    [switch]
+    $NoWinRM,
+
+    [Parameter()]
+    [switch]
+    $ProcessStats
 )
 
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
@@ -78,7 +94,21 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-    $jobs += Invoke-Command -ComputerName $_ -Credential $cred -ScriptBlock $ServerStats -AsJob
+    if ($NoWinRM -eq $tru) {
+        $startJobParams = @{
+            ScriptBlock  = $ServerStats
+            ArgumentList = $_, $cred, $ProcessStats
+        }
+        $jobs += Start-Job @startJobParams
+    } else {
+        $invokeCommandParams = @{
+            ComputerName = $_
+            Credential   = $cred
+            ScriptBlock  = $ServerStats
+            ArgumentList = "localhost", $null, $ProcessStats
+        }
+        $jobs += Invoke-Command @invokeCommandParams -AsJob
+    }
 }
 
 Do {
