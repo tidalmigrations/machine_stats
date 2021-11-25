@@ -20,6 +20,7 @@ $ServerStats = {
         Namespace     = "ROOT\cimv2"
         Impersonation = 3 # Impersonate. Allows objects to use the credentials of the caller.
     }
+    # If $remote is $true, it means that -NoWinRM parameter was set.
     $remote = $ComputerName -notin ".", "localhost", ([System.Environment]::MachineName)
     if ($remote) {
         $getWmiObjectParams | Add-Member -NotePropertyName Credential -NotePropertyValue $Credential
