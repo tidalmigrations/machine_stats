@@ -86,6 +86,32 @@ def ram_used_gb(memory_stats: dict):
     )  # convert kb to gb and round to 2 digits precision after the decimal point.
 
 
+def storage_devices(domain: libvirt.virDomain) -> set:
+    storage_devices = set()
+    list_of_lists = [item[-1] for item in domain.fsInfo()]
+    for sublist in list_of_lists:
+        storage_devices.update(sublist)
+    return storage_devices
+
+
+def storage_allocated_gb(domain: libvirt.virDomain):
+    capacity = 0
+    for device in storage_devices(domain):
+        capacity += domain.blockInfo(device)[0]
+    return round(
+        capacity / 1024 ** 3, 2
+    )  # convert bytes to gb and round to 2 digits precision after the decimal point.
+
+
+def storage_used_gb(domain: libvirt.virDomain):
+    allocation = 0
+    for device in storage_devices(domain):
+        allocation += domain.blockInfo(device)[1]
+    return round(
+        allocation / 1024 ** 3, 2
+    )  # convert bytes to gb and round to 2 digits precision after the decimal point.
+
+
 def main():
     parser = argparse.ArgumentParser(prog="virt-stats")
     parser.add_argument(
@@ -111,6 +137,8 @@ def main():
                 "ip_addresses": ip_addresses(domain),
                 "ram_allocated_gb": ram_allocated_gb(memory_stats),
                 "ram_used_gb": ram_used_gb(memory_stats),
+                "storage_allocated_gb": storage_allocated_gb(domain),
+                "storage_used_gb": storage_used_gb(domain),
             }
         )
 
