@@ -4,12 +4,15 @@ ANSIBLE_METADATA = {"metadata_version": "1.1"}
 
 from time import sleep
 
-from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.basic import MODE_OPERATOR_RE, AnsibleModule
 
 
 def run_module():
     # define available arguments/parameters a user can pass to the module
-    module_args = dict(timeout=dict(type="int", required=False, default=30))
+    module_args = dict(
+        timeout=dict(type="int", required=False, default=30),
+        only_value=dict(type="bool", required=False, default=False),
+    )
 
     # seed the result dict in the object
     # we primarily care about changed and state
@@ -36,25 +39,34 @@ def run_module():
 
     # get CPU utilization values
     try:
-        average, peak = cpu_utilization(module.params["timeout"])
+        if module.params["only_value"]:
+            value = cpu_utilization_value(module.params["timeout"])
+        else:
+            average, peak = cpu_utilization(module.params["timeout"])
     except Exception as e:
         module.fail_json(msg=str(e), **result)
 
     # manipulate or modify the state as needed
     result["timeout"] = module.params["timeout"]
-    result["ansible_cpu_utilization"] = dict(average=average, peak=peak)
+    if module.params["only_value"]:
+        result["ansible_cpu_utilization"] = dict(value=value)
+    else:
+        result["ansible_cpu_utilization"] = dict(average=average, peak=peak)
 
     module.exit_json(**result)
 
+def get_perf():
+    with open("/proc/stat") as f:
+        fields = [float(column) for column in f.readline().strip().split()[1:]]
+        idle, total = fields[3], sum(fields)
+        return idle, total
 
 def cpu_utilization(timeout):
     last_idle = last_total = total_runs = 0
     cpu_stats = []
 
     while total_runs < timeout:
-        with open("/proc/stat") as f:
-            fields = [float(column) for column in f.readline().strip().split()[1:]]
-        idle, total = fields[3], sum(fields)
+        idle, total = get_perf()
         idle_delta, total_delta = idle - last_idle, total - last_total
         last_idle, last_total = idle, total
         utilisation = 100.0 * (1.0 - idle_delta / total_delta)
@@ -66,6 +78,16 @@ def cpu_utilization(timeout):
     peak = max(cpu_stats)
 
     return average, peak
+
+
+def cpu_utilization_value(timeout):
+    last_idle, last_total = get_perf()
+    sleep(timeout)
+    idle, total = get_perf()
+    idle_delta, total_delta = idle - last_idle, total - last_total
+    utilization = 100.0 * (1.0 - idle_delta / total_delta)
+
+    return utilization
 
 
 def main():
