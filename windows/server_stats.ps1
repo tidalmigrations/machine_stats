@@ -12,8 +12,8 @@ $ServerStats = {
         $Credential,
 
         [Parameter()]
-        [switch]
-        $ProcessStats
+        [bool]
+        $ProcessStats=$false
     )
     $getWmiObjectParams = @{
         ComputerName  = $ComputerName
