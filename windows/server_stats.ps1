@@ -13,7 +13,11 @@ $ServerStats = {
 
         [Parameter()]
         [bool]
-        $ProcessStats=$false
+        $ProcessStats=$false,
+
+        [Parameter()]
+        [double]
+        $CpuUtilizationTimeout
     )
     $getWmiObjectParams = @{
         ComputerName  = $ComputerName
@@ -67,7 +71,7 @@ $ServerStats = {
         $counter_params = @{
             Counter        = "\Processor(_Total)\% Processor Time"
             SampleInterval = 1
-            MaxSamples     = 30
+            MaxSamples     = $CpuUtilizationTimeout
         }
         $CPUUtilization = (Get-Counter @counter_params |
             Select-Object -ExpandProperty countersamples |
@@ -121,9 +125,6 @@ $ServerStats = {
         CPU_SocketDesignation  = $cpu.SocketDesignation 
         TotalVisible_Memory_GB = $OSTotalVisibleMemory
         TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
-        cpu_average            = $CPUUtilization.Average
-        cpu_peak               = $CPUUtilization.Maximum
-        cpu_sampling_timeout   = $CPUUtilization.Count
     }
 
     if (!$remote) {
