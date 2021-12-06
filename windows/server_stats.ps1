@@ -13,7 +13,11 @@ $ServerStats = {
 
         [Parameter()]
         [bool]
-        $ProcessStats=$false
+        $ProcessStats=$false,
+
+        [Parameter()]
+        [double]
+        $CpuUtilizationTimeout
     )
     $getWmiObjectParams = @{
         ComputerName  = $ComputerName
@@ -67,7 +71,7 @@ $ServerStats = {
         $counter_params = @{
             Counter        = "\Processor(_Total)\% Processor Time"
             SampleInterval = 1
-            MaxSamples     = 30
+            MaxSamples     = $CpuUtilizationTimeout
         }
         $CPUUtilization = (Get-Counter @counter_params |
             Select-Object -ExpandProperty countersamples |
