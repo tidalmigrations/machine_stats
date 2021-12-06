@@ -125,9 +125,6 @@ $ServerStats = {
         CPU_SocketDesignation  = $cpu.SocketDesignation 
         TotalVisible_Memory_GB = $OSTotalVisibleMemory
         TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
-        cpu_average            = $CPUUtilization.Average
-        cpu_peak               = $CPUUtilization.Maximum
-        cpu_sampling_timeout   = $CPUUtilization.Count
     }
 
     if (!$remote) {
