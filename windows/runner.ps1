@@ -59,7 +59,11 @@ param (
 
     [Parameter()]
     [switch]
-    $ProcessStats
+    $ProcessStats,
+
+    [Parameter()]
+    [switch]
+    $CpuUtilizationOnlyValue
 )
 
 $securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
@@ -97,7 +101,7 @@ $server_list | ForEach-Object {
     if ($NoWinRM -eq $tru) {
         $startJobParams = @{
             ScriptBlock  = $ServerStats
-            ArgumentList = $_, $cred, $ProcessStats
+            ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationOnlyValue
         }
         $jobs += Start-Job @startJobParams
     } else {
@@ -105,7 +109,7 @@ $server_list | ForEach-Object {
             ComputerName = $_
             Credential   = $cred
             ScriptBlock  = $ServerStats
-            ArgumentList = "localhost", $null, $ProcessStats
+            ArgumentList = "localhost", $null, $ProcessStats, $CpuUtilizationOnlyValue
         }
         $jobs += Invoke-Command @invokeCommandParams -AsJob
     }

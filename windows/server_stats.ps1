@@ -13,7 +13,11 @@ $ServerStats = {
 
         [Parameter()]
         [bool]
-        $ProcessStats=$false
+        $ProcessStats=$false,
+
+        [Parameter()]
+        [bool]
+        $CpuUtilizationOnlyValue=$false
     )
     $getWmiObjectParams = @{
         ComputerName  = $ComputerName
@@ -63,16 +67,30 @@ $ServerStats = {
     }
     $Total_UsedDriveSpaceGB = $Total_DriveSpaceGB - $Total_FreeSpaceGB
 
-    if (!$remote) { # CPU utilization requires WinRM
-        $counter_params = @{
-            Counter        = "\Processor(_Total)\% Processor Time"
-            SampleInterval = 1
-            MaxSamples     = 30
+    if ($CpuUtilizationOnlyValue) { # Get only value for CPU utilization
+        function getPerf() {
+            Get-WmiObject -Class Win32_PerfRawData_PerfOS_Processor @getWmiObjectParams |
+            Where-Object -Property Name -eq "_Total" |
+            Select-Object -Property PercentProcessorTime, TimeStamp_Sys100NS
         }
-        $CPUUtilization = (Get-Counter @counter_params |
-            Select-Object -ExpandProperty countersamples |
-            Select-Object -ExpandProperty CookedValue |
-            Measure-Object -Average -Maximum)
+        $perf = @(getPerf)
+        Start-Sleep -Seconds 30
+        $perf += getPerf
+        $pptDiff = $perf[1].PercentProcessorTime - $perf[0].PercentProcessorTime
+        $tsDiff = $perf[1].TimeStamp_Sys100NS - $perf[0].TimeStamp_Sys100NS
+        $CPUUtilization = (1 - $pptDiff / $tsDiff) * 100
+    } else { # Get peak and average
+        if (!$remote) { # CPU utilization requires WinRM
+            $counter_params = @{
+                Counter        = "\Processor(_Total)\% Processor Time"
+                SampleInterval = 1
+                MaxSamples     = 30
+            }
+            $CPUUtilization = (Get-Counter @counter_params |
+                Select-Object -ExpandProperty countersamples |
+                Select-Object -ExpandProperty CookedValue |
+                Measure-Object -Average -Maximum)
+        }
     }
 
     $process_stats = $null
@@ -126,10 +144,14 @@ $ServerStats = {
         cpu_sampling_timeout   = $CPUUtilization.Count
     }
 
-    if (!$remote) {
-        $custom_fields | Add-Member -NotePropertyName cpu_average -NotePropertyValue $CPUUtilization.Average
-        $custom_fields | Add-Member -NotePropertyName cpu_peak -NotePropertyValue $CPUUtilization.Maximum
-        $custom_fields | Add-Member -NotePropertyName cpu_sampling_timeout -NotePropertyValue $CPUUtilization.Count
+    if ($CpuUtilizationOnlyValue) {
+        $custom_fields | Add-Member -NotePropertyName cpu_utilization -NotePropertyValue $CPUUtilization
+    } else {
+        if (!$remote) {
+            $custom_fields | Add-Member -NotePropertyName cpu_average -NotePropertyValue $CPUUtilization.Average
+            $custom_fields | Add-Member -NotePropertyName cpu_peak -NotePropertyValue $CPUUtilization.Maximum
+            $custom_fields | Add-Member -NotePropertyName cpu_sampling_timeout -NotePropertyValue $CPUUtilization.Count
+        }
     }
 
     Add-Member -InputObject $server_info -MemberType NoteProperty -Name "custom_fields" -Value $custom_fields
