@@ -25,6 +25,11 @@ Specifies if WinRM should not be used.
 
 Specifies if capturing process metrics should be enabled (WinRM only).
 
+.PARAMETER CpuUtilizationTimeout
+
+Specifies the number of seconds to measure CPU utilization.
+The default value is 30.
+
 .INPUTS
 
 None. You cannot pipe objects to runner.ps1
@@ -59,7 +64,11 @@ param (
 
     [Parameter()]
     [switch]
-    $ProcessStats,
+    $ProcessStats
+
+    [Parameter()]
+    [double]
+    $CpuUtilizationTimeout = 30,
 
     [Parameter()]
     [switch]
@@ -101,7 +110,7 @@ $server_list | ForEach-Object {
     if ($NoWinRM -eq $tru) {
         $startJobParams = @{
             ScriptBlock  = $ServerStats
-            ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationOnlyValue
+            ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue
         }
         $jobs += Start-Job @startJobParams
     } else {
@@ -109,7 +118,7 @@ $server_list | ForEach-Object {
             ComputerName = $_
             Credential   = $cred
             ScriptBlock  = $ServerStats
-            ArgumentList = "localhost", $null, $ProcessStats, $CpuUtilizationOnlyValue
+            ArgumentList = "localhost", $null, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue
         }
         $jobs += Invoke-Command @invokeCommandParams -AsJob
     }
