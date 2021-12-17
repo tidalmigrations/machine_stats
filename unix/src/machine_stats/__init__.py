@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 from functools import partial
+from datetime import datetime
 
 from ansible.utils.path import unfrackpath
 
@@ -205,6 +206,9 @@ class ResultCallback(CallbackBase):
         if facts is None:
             return
 
+        dateTimeObj = datetime.now()
+        timestamp = "%s-%s-%s %s:%s:%s" % (dateTimeObj.year, dateTimeObj.month, dateTimeObj.day, dateTimeObj.hour, dateTimeObj.minute, dateTimeObj.second)
+
         host = result._host.get_name()
         self.update_results(
             host,
@@ -221,6 +225,7 @@ class ResultCallback(CallbackBase):
                 "operating_system": facts["ansible_distribution"],
                 "operating_system_version": facts["ansible_distribution_version"],
                 "cpu_name": cpu_name(facts["ansible_processor"]),
+                "timestamp": timestamp, 
             },
         )
 
