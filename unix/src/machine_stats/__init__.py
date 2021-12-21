@@ -220,7 +220,7 @@ class ResultCallback(CallbackBase):
                 "cpu_count": cpu_count(facts),
                 "operating_system": facts["ansible_distribution"],
                 "operating_system_version": facts["ansible_distribution_version"],
-                "cpu_name": cpu_name(facts["ansible_processor"]),                
+                "cpu_name": cpu_name(facts["ansible_processor"]),
             },
         )
 
