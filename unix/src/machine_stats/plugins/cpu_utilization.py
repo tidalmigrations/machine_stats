@@ -34,6 +34,7 @@ def ok_callback(parent, result):
     host = result._host.get_name()
     cpu_sampling_timeout = result._result.get("timeout")
     cpu_util = result._result.get("ansible_cpu_utilization")
+
     if cpu_util is not None:
         if "value" in cpu_util:
             parent.update_results(
@@ -42,6 +43,7 @@ def ok_callback(parent, result):
                     "custom_fields": {
                         "cpu_sampling_timeout": cpu_sampling_timeout,
                         "cpu_utilization": cpu_util["value"],
+                        "cpu_utilization_timestamp": cpu_util["rtc_date"] + " " + cpu_util["rtc_time"]
                     }
                 },
             )
@@ -53,6 +55,7 @@ def ok_callback(parent, result):
                         "cpu_sampling_timeout": cpu_sampling_timeout,
                         "cpu_average": cpu_util["average"],
                         "cpu_peak": cpu_util["peak"],
+                        "cpu_utilization_timestamp": cpu_util["rtc_date"] + " " + cpu_util["rtc_time"]
                     }
                 },
             )
