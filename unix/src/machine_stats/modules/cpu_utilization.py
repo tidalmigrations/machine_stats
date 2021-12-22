@@ -40,18 +40,18 @@ def run_module():
     # get CPU utilization values
     try:
         if module.params["only_value"]:
-            value = cpu_utilization_value(module.params["timeout"])
+            value, rtc_date, rtc_time = cpu_utilization_value(module.params["timeout"])
         else:
-            average, peak = cpu_utilization(module.params["timeout"])
+            average, peak, rtc_date, rtc_time = cpu_utilization(module.params["timeout"])
     except Exception as e:
         module.fail_json(msg=str(e), **result)
 
     # manipulate or modify the state as needed
     result["timeout"] = module.params["timeout"]
     if module.params["only_value"]:
-        result["ansible_cpu_utilization"] = dict(value=value)
+        result["ansible_cpu_utilization"] = dict(value=value, rtc_date=rtc_date, rtc_time=rtc_time)
     else:
-        result["ansible_cpu_utilization"] = dict(average=average, peak=peak)
+        result["ansible_cpu_utilization"] = dict(average=average, peak=peak , rtc_date=rtc_date, rtc_time=rtc_time)
 
     module.exit_json(**result)
 
@@ -60,6 +60,16 @@ def get_perf():
         fields = [float(column) for column in f.readline().strip().split()[1:]]
         idle, total = fields[3], sum(fields)
         return idle, total
+
+def get_date_time():
+    with open("/proc/driver/rtc") as t:
+        rtc_time_line = t.readline().strip().split()
+        rtc_date_line = t.readline().strip().split()
+    
+        rtc_time = rtc_time_line[2]
+        rtc_date = rtc_date_line[2]
+        
+        return rtc_date, rtc_time
 
 def cpu_utilization(timeout):
     last_idle = last_total = total_runs = 0
@@ -74,20 +84,24 @@ def cpu_utilization(timeout):
         total_runs += 1
         sleep(1)
 
+    rtc_date, rtc_time = get_date_time()
+
     average = sum(cpu_stats) / len(cpu_stats)
     peak = max(cpu_stats)
 
-    return average, peak
+    return average, peak, rtc_date, rtc_time
 
 
 def cpu_utilization_value(timeout):
     last_idle, last_total = get_perf()
+    rtc_date, rtc_time = get_date_time()
+
     sleep(timeout)
     idle, total = get_perf()
     idle_delta, total_delta = idle - last_idle, total - last_total
     utilization = 100.0 * (1.0 - idle_delta / total_delta)
 
-    return utilization
+    return utilization, rtc_date, rtc_time
 
 
 def main():
