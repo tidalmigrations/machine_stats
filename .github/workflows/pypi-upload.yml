@@ -43,6 +43,16 @@ jobs:
             --data '{"event_type":"publish_amis"}' \
             https://api.github.com/repos/tidalmigrations/Infrastructure-templates/dispatches
 
+      # This step triggers the publish-ova workflow here
+      #   https://github.com/tidalmigrations/preconfigured-ova/blob/main/.github/workflows/publish-ova-image.yml
+      - name:
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN_GITHUB }}" \
+            --data '{"event_type":"publish_ova"}' \
+            https://api.github.com/repos/tidalmigrations/preconfigured-ova/dispatches
+
 
   virt_stats:
     name: Virt Stats PyPI Upload
