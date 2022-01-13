@@ -283,6 +283,64 @@ class ResultCallback(CallbackBase):
         self._display.display("", screen_only=True, stderr=True)
 
 
+class MeasurementsResultCallback(ResultCallback):
+    def convert_to_measurements(self, result):
+        """How to measure fields
+
+        The fields that need to be tracked can be added in the fields_to_measure list.
+        If it's a custom field, please add it to the custom_fields_to_measure list.
+
+        TODO: Move these to flags
+        """
+        print(str(self._total_results))
+
+        fields_to_measure = ["ram_used_gb"]
+        custom_fields_to_measure = ["cpu_average", "cpu_peak"]
+
+        """Process JSON payload
+
+        Go through each server in the JSON payload, and for the fields mentioned in the 
+        `configs.fields_to_measure` or `configs.custom_fields_to_measure`, add its measurements to the
+        processed data.
+        """
+
+        processed_json_payload = []
+        for server in list(self._total_results.values()):
+            for field in server:
+                # Add data (ram_used_gb) from fields_to_measure list to the processed_json_payload list
+                if field in fields_to_measure:
+                    server_dict = {}
+                    server_dict["measurable_type"] = "server"
+                    server_dict["field_name"] = field + "_timeseries"
+                    server_dict["value"] = server[field]
+                    server_dict["measurable"] = {"host_name": server["host_name"]}
+
+                    processed_json_payload.append(server_dict)
+
+                # Add custom fields data (cpu_average) from custom_fields_to_measure list to the processed_json_payload list
+                elif field == "custom_fields":
+                    for custom_field in server["custom_fields"]:
+                        if custom_field in custom_fields_to_measure:
+                            server_dict = {}
+                            server_dict["measurable_type"] = "server"
+                            server_dict["field_name"] = custom_field + "_timeseries"
+                            server_dict["value"] = server["custom_fields"][custom_field]
+                            server_dict["measurable"] = {
+                                "host_name": server["host_name"]
+                            }
+
+                            processed_json_payload.append(server_dict)
+
+        if self._total_results is not None:
+            print(
+                json.dumps(
+                    {"measurements": list(processed_json_payload)},
+                    indent=4,
+                    sort_keys=True,
+                )
+            )
+
+
 class Application:  # pylint: disable=too-few-public-methods
     """Machine Stats application"""
 
@@ -334,7 +392,10 @@ class Application:  # pylint: disable=too-few-public-methods
         passwords = dict(vault_pass="secret")
 
         # Instantiate our ResultCallback for handling results as they come in
-        results_callback = ResultCallback(plugins=self._plugins)
+        if self.args.measurement:
+            results_callback = MeasurementsResultCallback(plugins=self._plugins)
+        else:
+            results_callback = ResultCallback(plugins=self._plugins)
 
         # Create inventory, use path to host config file as source or hosts in a
         # comma separated string
@@ -406,6 +467,30 @@ def main():
         type=argparse.FileType("r"),
         help="inventory file (default 'hosts')",
         nargs="*",
+    )
+
+    measurement_args = parser.add_argument_group("Measurements arguments")
+    measurement_args.add_argument(
+        "-m",
+        "--measurement",
+        action="store_true",
+        help="enable measurements",
+    )
+    measurement_args.add_argument(
+        "-f",
+        "--field",
+        metavar="STRING",
+        default=["ram_used_gb"],
+        help="(TODO) Add a list of fields to measure. Defaults to ram_used_gb",
+        action="append",
+    )
+    measurement_args.add_argument(
+        "-cf",
+        "--custom-field",
+        metavar="STRING",
+        default=["cpu_average", "cpu_peak"],
+        help="(TODO) Add a list of custom fields to measure. Defaults to cpu_average cpu_peak",
+        action="append",
     )
 
     plugins.add_arguments(parser)
