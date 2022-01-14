@@ -284,7 +284,7 @@ class ResultCallback(CallbackBase):
 
 
 class MeasurementsResultCallback(ResultCallback):
-    def convert_to_measurements(self, result):
+    def v2_playbook_on_stats(self, stats):
         """How to measure fields
 
         The fields that need to be tracked can be added in the fields_to_measure list.
@@ -292,22 +292,21 @@ class MeasurementsResultCallback(ResultCallback):
 
         TODO: Move these to flags
         """
-        print(str(self._total_results))
 
         fields_to_measure = ["ram_used_gb"]
         custom_fields_to_measure = ["cpu_average", "cpu_peak"]
 
         """Process JSON payload
 
-        Go through each server in the JSON payload, and for the fields mentioned in the 
-        `configs.fields_to_measure` or `configs.custom_fields_to_measure`, add its measurements to the
-        processed data.
+        Go through each server in the results, and for the fields mentioned in the 
+        `fields_to_measure` or `custom_fields_to_measure`, add its measurements to the
+        transformed data.
         """
 
-        processed_json_payload = []
+        transformed_json_payload = []
         for server in list(self._total_results.values()):
             for field in server:
-                # Add data (ram_used_gb) from fields_to_measure list to the processed_json_payload list
+                # Add data (ram_used_gb) from fields_to_measure list to the transformed_json_payload list
                 if field in fields_to_measure:
                     server_dict = {}
                     server_dict["measurable_type"] = "server"
@@ -315,9 +314,9 @@ class MeasurementsResultCallback(ResultCallback):
                     server_dict["value"] = server[field]
                     server_dict["measurable"] = {"host_name": server["host_name"]}
 
-                    processed_json_payload.append(server_dict)
+                    transformed_json_payload.append(server_dict)
 
-                # Add custom fields data (cpu_average) from custom_fields_to_measure list to the processed_json_payload list
+                # Add custom fields data (cpu_average) from custom_fields_to_measure list to the transformed_json_payload list
                 elif field == "custom_fields":
                     for custom_field in server["custom_fields"]:
                         if custom_field in custom_fields_to_measure:
@@ -329,12 +328,12 @@ class MeasurementsResultCallback(ResultCallback):
                                 "host_name": server["host_name"]
                             }
 
-                            processed_json_payload.append(server_dict)
+                            transformed_json_payload.append(server_dict)
 
         if self._total_results is not None:
             print(
                 json.dumps(
-                    {"measurements": list(processed_json_payload)},
+                    {"measurements": list(transformed_json_payload)},
                     indent=4,
                     sort_keys=True,
                 )
