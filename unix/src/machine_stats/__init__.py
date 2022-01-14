@@ -289,8 +289,6 @@ class MeasurementsResultCallback(ResultCallback):
 
         The fields that need to be tracked can be added in the fields_to_measure list.
         If it's a custom field, please add it to the custom_fields_to_measure list.
-
-        TODO: Move these to flags
         """
 
         fields_to_measure = ["ram_used_gb"]
@@ -474,22 +472,6 @@ def main():
         "--measurement",
         action="store_true",
         help="enable measurements",
-    )
-    measurement_args.add_argument(
-        "-f",
-        "--field",
-        metavar="STRING",
-        default=["ram_used_gb"],
-        help="(TODO) Add a list of fields to measure. Defaults to ram_used_gb",
-        action="append",
-    )
-    measurement_args.add_argument(
-        "-cf",
-        "--custom-field",
-        metavar="STRING",
-        default=["cpu_average", "cpu_peak"],
-        help="(TODO) Add a list of custom fields to measure. Defaults to cpu_average cpu_peak",
-        action="append",
     )
 
     plugins.add_arguments(parser)
