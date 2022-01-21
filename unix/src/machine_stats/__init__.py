@@ -466,7 +466,7 @@ def main():
         nargs="*",
     )
 
-    measurement_args = parser.add_argument_group("Measurements arguments")
+    measurement_args = parser.add_argument_group("measurements arguments")
     measurement_args.add_argument(
         "-m",
         "--measurement",
