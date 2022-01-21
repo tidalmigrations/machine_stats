@@ -292,7 +292,7 @@ class MeasurementsResultCallback(ResultCallback):
         """
 
         fields_to_measure = ["ram_used_gb"]
-        custom_fields_to_measure = ["cpu_average", "cpu_peak"]
+        custom_fields_to_measure = ["cpu_average", "cpu_peak", "cpu_utilization"]
 
         """Process JSON payload
 
