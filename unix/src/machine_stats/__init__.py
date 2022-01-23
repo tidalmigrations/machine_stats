@@ -291,7 +291,7 @@ class MeasurementsResultCallback(ResultCallback):
         If it's a custom field, please add it to the custom_fields_to_measure list.
         """
 
-        fields_to_measure = ["ram_used_gb"]
+        fields_to_measure = []
         custom_fields_to_measure = ["cpu_average", "cpu_peak", "cpu_utilization"]
 
         """Process JSON payload
