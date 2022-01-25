@@ -63,6 +63,7 @@ git push origin --tags
 
 This will update the version and trigger the PyPI build and deploy.
 
+_Note_: You can verify that the version has been updated after running the `bump2version` command by checking the `config.cfg` file. (current_version)
 ## Finally
 
 Thanks again for your interest in improving the project! You're taking action
