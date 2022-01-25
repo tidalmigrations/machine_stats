@@ -44,6 +44,26 @@ We use the following tools:
   src/machine_stats/*` or `pipenv run pylint src`)
 * `bump2version` for version bumps (`pipenv run bump2version`)
 
+### How to bump Machine Stats version
+
+We use [`bump2version`](https://pypi.org/project/bump2version/) to update version numbers.
+
+For example, if the current version in `1.0.0`:
+
+* `pipenv bump2version patch` will change the version to `1.0.1`
+* `pipenv bump2version minor` will change the version to `1.1.0`
+* `pipenv bump2version major` will change the version to `2.0.0`
+
+After that all you need to do is to run
+
+```
+git push origin master
+git push origin --tags
+```
+
+This will update the version and trigger the PyPI build and deploy.
+
+_Note_: You can verify that the version has been updated after running the `bump2version` command by checking the `config.cfg` file. (current_version)
 ## Finally
 
 Thanks again for your interest in improving the project! You're taking action
