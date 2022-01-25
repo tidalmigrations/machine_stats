@@ -61,7 +61,7 @@ git push origin master
 git push origin --tags
 ```
 
-This will update the version and trigger the PyPI build and delpoy.
+This will update the version and trigger the PyPI build and deploy.
 
 ## Finally
 
