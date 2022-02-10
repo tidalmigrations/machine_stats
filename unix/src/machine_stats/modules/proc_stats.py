@@ -58,7 +58,12 @@ def parse_status(process_path):
     # Note : This call requires root level access to be able to follow
     # all symlinks. Otherwise some processes will be identified as
     # /proc/2138/exe
-    path, name = str(Path(process_path + "/exe").resolve()).rsplit("/", 1)
+
+    try:
+        path, name = str(Path(process_path + "/exe").resolve()).rsplit("/", 1)
+    except:
+        return stats
+
     stats["path"] = path
     stats["name"] = name
 
@@ -118,7 +123,7 @@ def process_stats():
     process_paths = [folder.path for folder in os.scandir("/proc") if
                      folder.is_dir() and str.isdigit(folder.name)]
 
-    return [parse_status(process) for process in process_paths]
+    return list(filter(None, [parse_status(process) for process in process_paths]))
 
 def main():
     run_module()
