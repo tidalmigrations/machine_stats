@@ -50,9 +50,9 @@ We use [`bump2version`](https://pypi.org/project/bump2version/) to update versio
 
 For example, if the current version in `1.0.0`:
 
-* `pipenv bump2version patch` will change the version to `1.0.1`
-* `pipenv bump2version minor` will change the version to `1.1.0`
-* `pipenv bump2version major` will change the version to `2.0.0`
+* `pipenv run bump2version patch` will change the version to `1.0.1`
+* `pipenv run bump2version minor` will change the version to `1.1.0`
+* `pipenv run bump2version major` will change the version to `2.0.0`
 
 After that all you need to do is to run
 
