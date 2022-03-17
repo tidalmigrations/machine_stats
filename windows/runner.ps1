@@ -64,7 +64,7 @@ param (
 
     [Parameter()]
     [switch]
-    $ProcessStats
+    $ProcessStats,
 
     [Parameter()]
     [double]
