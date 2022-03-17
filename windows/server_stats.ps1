@@ -17,7 +17,7 @@ $ServerStats = {
 
         [Parameter()]
         [double]
-        $CpuUtilizationTimeout
+        $CpuUtilizationTimeout,
 
         [Parameter()]
         [bool]
