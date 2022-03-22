@@ -80,6 +80,10 @@ $ServerStats = {
         $perf = @(getPerf)
         Start-Sleep -Seconds $CpuUtilizationTimeout
         $perf += getPerf
+
+        $CPUUtilizationTimestamp_1 = $perf[0].TimeStamp_Sys100NS
+        $CPUUtilizationTimestamp_2 = $perf[1].TimeStamp_Sys100NS
+
         $pptDiff = $perf[1].PercentProcessorTime - $perf[0].PercentProcessorTime
         $tsDiff = $perf[1].TimeStamp_Sys100NS - $perf[0].TimeStamp_Sys100NS
         $CPUUtilization = (1 - $pptDiff / $tsDiff) * 100
@@ -147,6 +151,8 @@ $ServerStats = {
 
     if ($CpuUtilizationOnlyValue) {
         $custom_fields | Add-Member -NotePropertyName cpu_utilization -NotePropertyValue $CPUUtilization
+        $custom_fields | Add-Member -NotePropertyName cpu_utilization_timestamp_1 -NotePropertyValue $CPUUtilizationTimestamp_1
+        $custom_fields | Add-Member -NotePropertyName cpu_utilization_timestamp_2 -NotePropertyValue $CPUUtilizationTimestamp_2
     } else {
         if (!$remote) {
             $custom_fields | Add-Member -NotePropertyName cpu_average -NotePropertyValue $CPUUtilization.Average
