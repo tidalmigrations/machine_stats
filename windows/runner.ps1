@@ -56,7 +56,7 @@ param (
 
     [Parameter()]
     [string]
-    $ServersPath = (Join-Path -Path $PWD -ChildPath "servers.txt"),
+    $ServersPath = "C:\machine_stats\windows\servers.txt",
 
     [Parameter()]
     [switch]
@@ -75,7 +75,7 @@ param (
     $CpuUtilizationOnlyValue
 )
 
-$securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
+$securePwdFile = "C:\machine_stats\windows\SecuredText.txt"
 
 if (![System.IO.File]::Exists($securePwdFile)) {
     Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
@@ -85,7 +85,7 @@ if (![System.IO.File]::Exists($securePwdFile)) {
 }
 
 
-$secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
+$secPwd = Get-Content $securePwdFile | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
 
 $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
@@ -93,7 +93,7 @@ Write-Host "About to execute inventory gathering as user: $env_user"
 
 
 # Load the ScriptBlock $ServerStats:
-. ".\server_stats.ps1"
+. "C:\machine_stats\windows\server_stats.ps1"
 
 # Get server inventory:
 $server_list = Get-Content $ServersPath
