@@ -81,9 +81,8 @@ $ServerStats = {
         Start-Sleep -Seconds $CpuUtilizationTimeout
         $perf += getPerf
 
-        # Convert start and end timestamps from LDAP time
-        $CPUUtilization_StartTimeStamp = w32tm.exe /ntte $perf[0].TimeStamp_Sys100NS
-        $CPUUtilization_EndTimeStamp = w32tm.exe /ntte $perf[1].TimeStamp_Sys100NS
+        # Convert timestamp from LDAP time
+        $CPUUtilization_TimeStamp = w32tm.exe /ntte $perf[0].TimeStamp_Sys100NS
 
         $pptDiff = $perf[1].PercentProcessorTime - $perf[0].PercentProcessorTime
         $tsDiff = $perf[1].TimeStamp_Sys100NS - $perf[0].TimeStamp_Sys100NS
@@ -152,8 +151,7 @@ $ServerStats = {
 
     if ($CpuUtilizationOnlyValue) {
         $custom_fields | Add-Member -NotePropertyName cpu_utilization -NotePropertyValue $CPUUtilization
-        $custom_fields | Add-Member -NotePropertyName cpu_utilization_start_timestamp -NotePropertyValue $CPUUtilization_StartTimestamp
-        $custom_fields | Add-Member -NotePropertyName cpu_utilization_end_timestamp -NotePropertyValue $CPUUtilization_EndTimestamp
+        $custom_fields | Add-Member -NotePropertyName cpu_utilization_timestamp -NotePropertyValue $CPUUtilization_Timestamp
     } else {
         if (!$remote) {
             $custom_fields | Add-Member -NotePropertyName cpu_average -NotePropertyValue $CPUUtilization.Average
