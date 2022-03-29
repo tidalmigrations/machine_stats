@@ -1,0 +1,39 @@
+name: "Prechecks"
+
+on:
+  push:
+    branches: [ master, pranav/ps-lint ]
+    paths-ignore:
+      - "*.md"
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - "*.md"
+
+jobs:
+  windows:
+    name: Windows prechecks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Find more information on the PSScriptAnalyzer at
+      # https://github.com/PowerShell/PSScriptAnalyzer
+      - name: Install PSScriptAnalyzer module
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -ErrorAction Stop
+      
+      - name: Lint with PSScriptAnalyzer
+        working-directory: windows
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -Outvariable issues
+          $errors   = $issues.Where({$_.Severity -eq 'Error'})
+          $warnings = $issues.Where({$_.Severity -eq 'Warning'})
+          if ($errors) {
+              Write-Error "There were $($errors.Count) errors and $($warnings.Count) warnings total." -ErrorAction Stop
+          } else {
+              Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
+          }
