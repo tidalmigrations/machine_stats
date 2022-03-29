@@ -2,7 +2,7 @@ name: "Prechecks"
 
 on:
   push:
-    branches: [ master, pranav/ps-lint ]
+    branches: [ master ]
     paths-ignore:
       - "*.md"
   pull_request:
