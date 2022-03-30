@@ -2,7 +2,7 @@ name: "Prechecks"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, pranav/unix-lint ]
     paths-ignore:
       - "*.md"
   pull_request:
@@ -11,6 +11,24 @@ on:
       - "*.md"
 
 jobs:
+  unix:
+    name: Unix prechecks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Run flake8 linter
+        working-directory: unix
+        run: /opt/hostedtoolcache/Python/3.9.10/x64/bin/flake8 ./src --config ./setup.cfg
+
+
   windows:
     name: Windows prechecks
     runs-on: ubuntu-latest
@@ -37,3 +55,4 @@ jobs:
           } else {
               Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
           }
+
