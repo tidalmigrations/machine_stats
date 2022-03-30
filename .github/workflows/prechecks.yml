@@ -30,7 +30,7 @@ jobs:
 
       - name: Run flake8 linter
         working-directory: unix
-        run: /opt/hostedtoolcache/Python/3.9.10/x64/bin/flake8 ./src --config ./setup.cfg
+        run: flake8 ./src --config ./setup.cfg
 
 
   windows:
