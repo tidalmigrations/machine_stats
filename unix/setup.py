@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
 setup(
     name="machine_stats",
     version="2.5.1",
-    author="Petr Razumov",
-    author_email="petr.razumov@tidalmigrations.com",
+    author="Tidal Migrations",
+    author_email="support@tidalmigrations.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,7 +16,7 @@ setup(
     package_data={"": ["modules/*", "plugins/*"]},
     url="https://github.com/tidalmigrations/machine_stats",
     install_requires=[
-        "ansible<2.10",
+        "ansible==5.5.0",
         "pluginbase==1.0.1",
     ],
     entry_points={
