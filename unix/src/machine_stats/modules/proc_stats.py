@@ -94,7 +94,7 @@ def parse_status(process_path):
         for line in proc_status:
             result = line.split(":")
             name = result[0].lower().strip()
-            value = result[1].strip()
+            stats[name] = result[1].strip()
 
             status[name] = value
 
