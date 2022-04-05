@@ -96,8 +96,6 @@ def parse_status(process_path):
             name = result[0].lower().strip()
             stats[name] = result[1].strip()
 
-            status[name] = value
-
     # Parse error will throw to parent function
     if status.get("pid"):
         stats["pid"] = int(status["pid"])
