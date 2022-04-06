@@ -1,0 +1,61 @@
+name: "Prechecks"
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - "*.md"
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - "*.md"
+
+jobs:
+  unix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+    name: Unix prechecks - Python ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Run flake8 linter
+        working-directory: unix
+        run: flake8 ./src --config ./setup.cfg
+
+
+  windows:
+    name: Windows prechecks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Find more information on the PSScriptAnalyzer at
+      # https://github.com/PowerShell/PSScriptAnalyzer
+      - name: Install PSScriptAnalyzer module
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -ErrorAction Stop
+      
+      - name: Lint with PSScriptAnalyzer
+        working-directory: windows
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -Outvariable issues
+          $errors   = $issues.Where({$_.Severity -eq 'Error'})
+          $warnings = $issues.Where({$_.Severity -eq 'Warning'})
+          if ($errors) {
+              Write-Error "There were $($errors.Count) errors and $($warnings.Count) warnings total." -ErrorAction Stop
+          } else {
+              Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
+          }

@@ -92,9 +92,9 @@ def parse_status(process_path):
     status = dict()
     with open(process_path + "/status") as proc_status:
         for line in proc_status:
-            name, value = line.split(":")
-            name = name.lower().strip()
-            status[name] = value.strip()
+            result = line.split(":")
+            name = result[0].lower().strip()
+            status[name] = result[1].strip()
 
     # Parse error will throw to parent function
     if status.get("pid"):

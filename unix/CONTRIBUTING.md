@@ -4,8 +4,7 @@ Welcome! Happy to see you willing to make the project better.
 
 ## We're standing on the shoulders of giants
 
-Under the hood Machine Stats relies on the awesome [Ansible
-SDK](https://docs.ansible.com/ansible/latest/dev_guide/index.html).
+Under the hood Machine Stats relies on the awesome [Ansible SDK](https://docs.ansible.com/ansible/latest/dev_guide/index.html).
 
 ## Technicalities
 
