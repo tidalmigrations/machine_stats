@@ -80,7 +80,7 @@ param (
 
     [Parameter()]
     [switch]
-    $CpuUtilizationOnlyValue    
+    $CpuUtilizationOnlyValue
 )
 
 if (![System.IO.File]::Exists($SecurePwdFilePath)) {
