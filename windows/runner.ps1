@@ -59,6 +59,14 @@ param (
     $ServersPath = (Join-Path -Path $PWD -ChildPath "servers.txt"),
 
     [Parameter()]
+    [string]
+    $SecurePwdFilePath = (Join-Path -Path $PWD -ChildPath "SecuredText.txt"),
+
+    [Parameter()]
+    [string]
+    $ServerStatsPath = (Join-Path -Path $PWD -ChildPath "server_stats.ps1"),
+
+    [Parameter()]
     [switch]
     $NoWinRM,
 
@@ -72,28 +80,24 @@ param (
 
     [Parameter()]
     [switch]
-    $CpuUtilizationOnlyValue
+    $CpuUtilizationOnlyValue    
 )
 
-$securePwdFile = Join-Path -Path $PWD -ChildPath "SecuredText.txt"
-
-if (![System.IO.File]::Exists($securePwdFile)) {
-    Write-Error "$securePwdFile does not exist. Be sure to run save_password.ps1 before trying again."
+if (![System.IO.File]::Exists($SecurePwdFilePath)) {
+    Write-Error "$SecurePwdFilePath does not exist. Be sure to run save_password.ps1 before trying again."
     exit 1
 } else {
-    Write-Host "Reading credential from $securePwdFile"
+    Write-Host "Reading credential from $SecurePwdFilePath"
 }
 
-
-$secPwd = Get-Content "SecuredText.txt" | ConvertTo-SecureString
+$secPwd = Get-Content $SecurePwdFilePath | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
 
 $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
 Write-Host "About to execute inventory gathering as user: $env_user"
 
-
 # Load the ScriptBlock $ServerStats:
-. ".\server_stats.ps1"
+. $ServerStatsPath
 
 # Get server inventory:
 $server_list = Get-Content $ServersPath
@@ -148,7 +152,6 @@ $jobs | Receive-Job | ForEach-Object {
 
 $num_results = $server_stats.Count
 Write-Host "$num_results results received out of $num_servers servers."
-
 
 # Output results
 $results = @{ servers = $server_stats }
