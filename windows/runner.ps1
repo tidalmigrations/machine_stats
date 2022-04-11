@@ -30,6 +30,10 @@ Specifies if capturing process metrics should be enabled (WinRM only).
 Specifies the number of seconds to measure CPU utilization.
 The default value is 30.
 
+.PARAMETER CpuUtilizationOnlyValue
+
+Capture point-in-time CPU utilization value rather than a peak and average over a given time.
+
 .INPUTS
 
 None. You cannot pipe objects to runner.ps1
