@@ -2,7 +2,7 @@ name: "Prechecks Unix"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, pranav/prechecks ]
     paths:
       - unix
     paths-ignore:
