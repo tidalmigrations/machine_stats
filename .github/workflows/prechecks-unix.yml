@@ -2,17 +2,13 @@ name: "Prechecks Unix"
 
 on:
   push:
-    branches: [ master, pranav/prechecks ]
-    paths:
-      - unix
-    paths-ignore:
-      - "*.md"
+    branches: pranav/prechecks
   pull_request:
     branches: [ master ]
-    paths:
-      - unix
     paths-ignore:
       - "*.md"
+      - "windows/**"
+      - "libvirt/**"
 
 jobs:
   unix:

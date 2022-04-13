@@ -1,18 +1,12 @@
 name: "Prechecks Windows"
 
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - windows
-    paths-ignore:
-      - "*.md"
   pull_request:
     branches: [ master ]
-    paths:
-      - windows
     paths-ignore:
       - "*.md"
+      - "unix/**"
+      - "libvirt/**"
 
 jobs:
   windows:
