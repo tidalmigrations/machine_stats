@@ -21,18 +21,23 @@ $ServerStats = {
 
         [Parameter()]
         [bool]
-        $CpuUtilizationOnlyValue=$false
+        $CpuUtilizationOnlyValue=$false,
+
+        [Parameter()]
+        [bool]
+        $NoWinRM
     )
+
     $getWmiObjectParams = @{
         ComputerName  = $ComputerName
         Namespace     = "ROOT\cimv2"
         Impersonation = 3 # Impersonate. Allows objects to use the credentials of the caller.
     }
-    # If $remote is $true, it means that -NoWinRM parameter was set.
-    $remote = $ComputerName -notin ".", "localhost", ([System.Environment]::MachineName)
-    if ($remote) {
+
+    if ($NoWinRM) {
         $getWmiObjectParams | Add-Member -NotePropertyName Credential -NotePropertyValue $Credential
     }
+
     # Helper Functions for aggregating process information
     $memory_used_mb = { [math]::Round(($_.WorkingSet64 / 1MB), 2) }
     $max_memory_used_mb = { [math]::Round(($_.PeakWorkingSet64 / 1MB), 2) }
@@ -47,6 +52,7 @@ $ServerStats = {
     } else {
         $cpu = $CPUInfo
     }
+
     $cpu_count = Get-WmiObject Win32_Processor @getWmiObjectParams |
     Measure-Object -Property NumberOfCores -Sum |
     Select-Object -ExpandProperty Sum
@@ -88,7 +94,7 @@ $ServerStats = {
         $tsDiff = $perf[1].TimeStamp_Sys100NS - $perf[0].TimeStamp_Sys100NS
         $CPUUtilization = (1 - $pptDiff / $tsDiff) * 100
     } else { # Get peak and average
-        if (!$remote) { # CPU utilization requires WinRM
+        if (!$NoWinRM) { # CPU utilization requires WinRM
             $counter_params = @{
                 Counter        = "\Processor(_Total)\% Processor Time"
                 SampleInterval = 1
@@ -102,7 +108,7 @@ $ServerStats = {
     }
 
     $process_stats = $null
-    if ($ProcessStats -and !$remote) {
+    if ($ProcessStats -and !$NoWinRM) {
         # WinRM is required for process stats
         if ($is_admin) {
             # Get Information on current running processes
@@ -153,7 +159,7 @@ $ServerStats = {
         $custom_fields | Add-Member -NotePropertyName cpu_utilization -NotePropertyValue $CPUUtilization
         $custom_fields | Add-Member -NotePropertyName cpu_utilization_timestamp -NotePropertyValue $CPUUtilizationTimestamp
     } else {
-        if (!$remote) {
+        if (!$NoWinRM) {
             $custom_fields | Add-Member -NotePropertyName cpu_average -NotePropertyValue $CPUUtilization.Average
             $custom_fields | Add-Member -NotePropertyName cpu_peak -NotePropertyValue $CPUUtilization.Maximum
             $custom_fields | Add-Member -NotePropertyName cpu_sampling_timeout -NotePropertyValue $CPUUtilization.Count

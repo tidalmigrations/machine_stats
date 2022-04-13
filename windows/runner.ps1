@@ -118,7 +118,7 @@ $server_list | ForEach-Object {
     if ($NoWinRM -eq $tru) {
         $startJobParams = @{
             ScriptBlock  = $ServerStats
-            ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue
+            ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue, $NoWinRM
         }
         $jobs += Start-Job @startJobParams
     } else {
@@ -126,7 +126,7 @@ $server_list | ForEach-Object {
             ComputerName = $_
             Credential   = $cred
             ScriptBlock  = $ServerStats
-            ArgumentList = "localhost", $null, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue
+            ArgumentList = "localhost", $null, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue, $NoWinRM
         }
         $jobs += Invoke-Command @invokeCommandParams -AsJob
     }
