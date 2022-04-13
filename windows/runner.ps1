@@ -115,7 +115,7 @@ $server_stats = @()
 $jobs = @()
 
 $server_list | ForEach-Object {
-    if ($NoWinRM -eq $tru) {
+    if ($NoWinRM) {
         $startJobParams = @{
             ScriptBlock  = $ServerStats
             ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue, $NoWinRM
