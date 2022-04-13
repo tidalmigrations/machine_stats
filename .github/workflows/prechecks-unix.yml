@@ -1,0 +1,44 @@
+name: "Prechecks Unix"
+
+on:
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - "*.md"
+      - "windows/**"
+      - "libvirt/**"
+
+jobs:
+  unix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+    name: Unix prechecks - Python ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - name: Install pipenv
+        run: python -m pip install --upgrade pipenv wheel
+
+      - name: Install flake8
+        run: pip install flake8
+
+      ## Check linting ##
+      - name: Run flake8 linter
+        working-directory: unix
+        run: flake8 ./src --config ./setup.cfg
+
+      ## Check packaging ##
+      - name: Install dependencies
+        working-directory: unix
+        run: pipenv install --deploy
+
+      - name: Run machine stats
+        working-directory: unix
+        run: pipenv run machine-stats -h
