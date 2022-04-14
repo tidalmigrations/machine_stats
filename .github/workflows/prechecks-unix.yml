@@ -55,7 +55,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEPLOYMENT_REGION }}
 
-    name: RHEL7 prechecks - Python ${{ matrix.python-version }}
+    name: RHEL8 prechecks - Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v3
 
@@ -64,7 +64,14 @@ jobs:
 
       - name: Extract branch name
         id: extract_branch
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo ${GITHUB_REF##*}
+          echo ${GITHUB_REF#refs/heads/}
+
+      - run: echo $BRANCH_NAME
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
 
       - name: Run packer builder
         working-directory: unix/prechecks/rhel8
