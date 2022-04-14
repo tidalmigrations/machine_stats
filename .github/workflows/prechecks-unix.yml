@@ -63,9 +63,9 @@ jobs:
         uses: hashicorp-contrib/setup-packer@v1
 
       - name: Run packer builder
-        working-directory: unix/prechecks/rhel7
+        working-directory: unix/prechecks/rhel8
         run: |
-          packer init -upgrade rhel7.pkr.hcl
+          packer init -upgrade rhel8.pkr.hcl
           packer build .
         env:
           PACKER_PYTHON_VERSION: ${{ matrix.python-version }}
