@@ -8,7 +8,8 @@ echo ++ Install git
 sudo yum install -y git
 
 echo ++ Clone machine stats repo
-git clone https://github.com/tidalmigrations/machine_stats.git /home/ec2-user/
+pwd
+git clone https://github.com/tidalmigrations/machine_stats.git /home/ec2-user/machine_stats
 cd /home/ec2-user/machine_stats
 git checkout $BRANCH_NAME
 

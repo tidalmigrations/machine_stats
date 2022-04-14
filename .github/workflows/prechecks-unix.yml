@@ -62,6 +62,10 @@ jobs:
       - name: Install packer
         uses: hashicorp-contrib/setup-packer@v1
 
+      - name: Extract branch name
+        id: extract_branch
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+
       - name: Run packer builder
         working-directory: unix/prechecks/rhel8
         run: |
@@ -69,4 +73,4 @@ jobs:
           packer build .
         env:
           PACKER_PYTHON_VERSION: ${{ matrix.python-version }}
-          CURRENT_BRANCH_NAME: ${GITHUB_REF##*/}
+          CURRENT_BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
