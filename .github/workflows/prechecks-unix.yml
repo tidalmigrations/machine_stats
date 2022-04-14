@@ -1,8 +1,6 @@
 name: "Prechecks Unix"
 
 on:
-  push:
-    branches: [ pranav/prechecks** ]
   pull_request:
     branches: [ master ]
     paths-ignore:
