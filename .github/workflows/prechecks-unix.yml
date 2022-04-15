@@ -9,6 +9,7 @@ on:
       - "*.md"
       - "windows/**"
       - "libvirt/**"
+      - "unix/prechecks/**"
 
 jobs:
   # ubuntu:
@@ -49,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ '3.6' ]
+        python-version: [ '3.6', '3.8' ]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
