@@ -9,12 +9,12 @@ on:
       - "libvirt/**"
 
 jobs:
-  unix:
+  ubuntu:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [ '3.7', '3.8', '3.9', '3.10' ]
-    name: Unix prechecks - Python ${{ matrix.python-version }}
+    name: Ubuntu prechecks - Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v3
 
@@ -42,3 +42,50 @@ jobs:
       - name: Run machine stats
         working-directory: unix
         run: pipenv run machine-stats -h
+
+  rhel:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.6' ]
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEPLOYMENT_REGION }}
+
+    name: RHEL8 prechecks - Python ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install packer
+        uses: hashicorp-contrib/setup-packer@v1
+
+      # Branch name is extracted because it needs to be passed as an environment variable
+      # to the packer builder. Branch name can be derived from the GitHub references.
+      # GitHub references for branches and pull requests are different.
+      # Thus, this steps looks at the workflow trigger and decides the branch ref based on that.
+      # For more information have a look at the `github` context of workflows.
+      # https://docs.github.com/en/github-ae@latest/actions/learn-github-actions/contexts#github-context
+      - name: Extract branch name
+        id: extract_branch
+        run: |
+          BRANCH_REF=${{ github.ref }}
+          TRIMMED_REF=${BRANCH_REF/refs\/heads\//}
+
+          BRANCH_HEAD_REF=${{ github.head_ref }}
+          TRIMMED_HEAD_REF=${BRANCH_HEAD_REF/refs\/heads\//}
+
+          if [[ ${{ github.event_name }} == 'pull_request' ]]; then
+            echo "::set-output name=current_branch::${TRIMMED_HEAD_REF}"
+          else
+            echo "::set-output name=current_branch::${TRIMMED_REF}"
+          fi
+
+      - name: Run packer builder
+        working-directory: unix/prechecks/rhel8
+        run: |
+          packer init -upgrade rhel8.pkr.hcl
+          packer build .
+        env:
+          PACKER_PYTHON_VERSION: ${{ matrix.python-version }}
+          CURRENT_BRANCH_NAME: ${{ steps.extract_branch.outputs.current_branch }}
