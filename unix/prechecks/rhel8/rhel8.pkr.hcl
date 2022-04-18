@@ -35,7 +35,7 @@ variable current_branch_name {
 
 
 source "amazon-ebs" "rhel8" {
-  ami_name      = "machine-stats-prechecls-rhel8"
+  ami_name      = "machine-stats-prechecls-rhel8-python-${var.packer_python_version}"
   instance_type = "t2.micro"
   region        = "${var.aws_region}"
   access_key    = "${var.aws_access_key}"
@@ -51,8 +51,9 @@ source "amazon-ebs" "rhel8" {
     owners      = ["309956199498"]
   }
   ssh_username = "ec2-user"
-  force_deregister      = true
-  force_delete_snapshot = true
+  force_deregister        =  true
+  force_delete_snapshot   =  true
+  skip_save_build_region  =  true
 }
 
 

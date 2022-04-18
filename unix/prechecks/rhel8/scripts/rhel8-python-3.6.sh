@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-echo ++ Install Python36
+echo ++ Install Python3.6 and pip
 sudo yum install -y python36
 sudo pip3 install --upgrade pip
 
