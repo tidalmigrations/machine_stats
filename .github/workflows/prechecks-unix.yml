@@ -1,17 +1,18 @@
-name: "Prechecks Unix"
+name: "Advanced Prechecks Unix"
 
 on:
   pull_request:
     branches: [ master ]
+    types: [ labeled ]
     paths-ignore:
       - "*.md"
-      - "windows/**"
-      - "libvirt/**"
+      - "!unix/**"
       - "unix/prechecks/**"
 
 jobs:
   ubuntu:
     runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'ci' }}
     strategy:
       matrix:
         python-version: [ '3.7', '3.8', '3.9', '3.10' ]
@@ -46,6 +47,7 @@ jobs:
 
   rhel:
     runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'ci' }}
     strategy:
       matrix:
         python-version: [ '3.6', '3.8', '3.9', '3.10' ]
