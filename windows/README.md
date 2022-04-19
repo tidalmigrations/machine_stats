@@ -17,7 +17,7 @@ As of Windows 2008 Server onward [WinRM service starts automatically](https://do
 
 1) Download and install [Tidal Tools](https://get.tidal.sh/)
 
-2) Ensure you are logged in to your Tidal Migrations workspace with
+2) Make sure you are logged in to your Tidal Migration workspace with 👇 . Check out the [guides](https://guides.tidalmg.com/tidal-tools.html#using-tidal-tools) for more information.
 ```
 tidal login
 ```
@@ -26,7 +26,7 @@ tidal login
     - Specify `-UserName` parameter value
     - Store the password securely by running `.\save_password.ps1` script
 
-4) Ensure you have a file that has a list of all the hostnames you want to scan. By default, Machine Stats looks for `servers.txt`, but you can also specify any custom location with `-ServersPath` parameter. The hosts will need to be accessible via your network connection from the machine that you run this from.
+4) Ensure you have a text file (unicode/ascii) that has a list of hosts to be scanned. Hosts can be specified either as IP addresses or as hostnames that resolve via DNS. In either case, the hostnames and IP addresses must be resolvable (private or global DNS) and routable (either locally or over the internet) from the machine that machine-stats is running on. By default, Machine Stats looks for `servers.txt`, but you can also specify any custom location with `-ServersPath` parameter.
 
    You can easily export these with the 'Export' button from your Tidal Migrations account, https://your_domain.tidalmg.com/#/servers
 
@@ -111,3 +111,13 @@ Set-Item WSMan:localhost\client\trustedhosts -value *
 You can confirm this ran successfully with, `get-item WSMan:\localhost\Client\TrustedHosts`, which should list an output with a `*` under the Value column.
 
 After running this command you should be able to try again and successfully connect to the remote hosts to gather data.
+
+### Server name cannot be resolved error
+
+Run ping \<subject-host\>, where `subject-host` is the subject hostname or IP address. If there's no response, you need to take steps to ensure these servers can communicate with each other.
+
+Add the subject machines to the TrustedHosts file of the controller - see [Authentication error](#authentication-error).
+
+Ensure the firewall of the subject machines allows connections from the controller device.
+
+After attempted these solutions you should be able to ping \<subject-hosts\> and see responses from your subject computer.
