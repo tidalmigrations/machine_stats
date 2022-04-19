@@ -104,7 +104,6 @@ try {
     Write-Host "Executing inventory gathering..."
 }
 
-
 # Load the ScriptBlock $ServerStats:
 . $ServerStatsPath
 
