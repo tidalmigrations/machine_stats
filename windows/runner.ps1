@@ -97,8 +97,13 @@ if (![System.IO.File]::Exists($SecurePwdFilePath)) {
 $secPwd = Get-Content $SecurePwdFilePath | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
 
-$env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME }
-Write-Host "About to execute inventory gathering as user: $env_user"
+try {
+    $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME } -ErrorAction Stop 
+    Write-Host "Executing inventory gathering as user: $env_user..."
+} catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
+    Write-Host "Executing inventory gathering..."
+}
+
 
 # Load the ScriptBlock $ServerStats:
 . $ServerStatsPath
