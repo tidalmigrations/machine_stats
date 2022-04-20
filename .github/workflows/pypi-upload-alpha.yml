@@ -3,7 +3,7 @@ name: PyPI Upload MS Alpha
 on:
   push:
     branches:
-      - release-alpha/**
+      - alpha
 
 jobs:
   machine_stats:
