@@ -55,7 +55,7 @@ For example, if the current version in `1.0.0`:
 
 After that all you need to do is to run
 
-```sh
+```console
 git push origin master
 git push origin --tags
 ```
