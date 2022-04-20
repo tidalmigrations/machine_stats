@@ -14,7 +14,7 @@ it's 3.9.  You can use any operating system.
 Install all development dependencies using:
 
 ```console
-$ pipenv install --dev
+pipenv install --dev
 ```
 
 If you haven't used `pipenv` before but are comfortable with virtualenvs, just
@@ -28,9 +28,9 @@ run `pipenv run machine_stats` to run it locally.
 Non `pipenv` install works too:
 
 ```console
-$ pip install -r requirements.txt
-$ pip install -r dev-requirements.txt
-$ pip install -e .
+pip install -r requirements.txt
+pip install -r dev-requirements.txt
+pip install -e .
 ```
 
 ### Tools
@@ -55,7 +55,7 @@ For example, if the current version in `1.0.0`:
 
 After that all you need to do is to run
 
-```
+```console
 git push origin master
 git push origin --tags
 ```
@@ -63,6 +63,14 @@ git push origin --tags
 This will update the version and trigger the PyPI build and deploy.
 
 _Note_: You can verify that the version has been updated after running the `bump2version` command by checking the `config.cfg` file. (current_version)
+
+### Introducing breaking changes?
+
+When you create a PR, the GitHub workflows check for the linting and CodeQL. However, if you think you're introducing breaking changes, then please add the label `ci` with your PR. This will run the Advanced Prechecks workflow that checks Machine Stats' working in the following system environments:
+
+* Ubuntu 20.04 - Python 3.7 to 3.10
+* RHEL 8 - Python 3.6, 3.8 to 3.10
+
 ## Finally
 
 Thanks again for your interest in improving the project! You're taking action
