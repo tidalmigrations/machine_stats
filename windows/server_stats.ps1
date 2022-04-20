@@ -114,21 +114,21 @@ $ServerStats = {
             # Get Information on current running processes
             # IncludeUserName means we need admin priveleges
             $process_stats = Get-Process -IncludeUserName |
-            Select-Object -Property @{Name = ’user’; Expression = { $_.UserName } },
-            @{Name = ’name’; Expression = { $_.ProcessName } },
-            @{Name = ’path’; Expression = { $_.Path } },
-            @{Name = ’pid’; Expression = { $_.Id } },
-            @{Name = ’memory_used_mb’; Expression = $memory_used_mb },
-            @{Name = ’max_memory_used_mb’; Expression = $max_memory_used_mb },
-            @{Name = ’total_alive_time’; Expression = $process_alive_time }
+            Select-Object -Property @{Name = 'user'; Expression = { $_.UserName } },
+            @{Name = 'name'; Expression = { $_.ProcessName } },
+            @{Name = 'path'; Expression = { $_.Path } },
+            @{Name = 'pid'; Expression = { $_.Id } },
+            @{Name = 'memory_used_mb'; Expression = $memory_used_mb },
+            @{Name = 'max_memory_used_mb'; Expression = $max_memory_used_mb },
+            @{Name = 'total_alive_time'; Expression = $process_alive_time }
         } else {
             $process_stats = Get-Process |
-            Select-Object -Property @{Name = ’name’; Expression = { $_.ProcessName } },
-            @{Name = ’path’; Expression = { $_.Path } },
-            @{Name = ’pid’; Expression = { $_.Id } },
-            @{Name = ’memory_used_mb’; Expression = $memory_used_mb },
-            @{Name = ’max_memory_used_mb’; Expression = $max_memory_used_mb },
-            @{Name = ’total_alive_time’; Expression = $process_alive_time }
+            Select-Object -Property @{Name = 'name'; Expression = { $_.ProcessName } },
+            @{Name = 'path'; Expression = { $_.Path } },
+            @{Name = 'pid'; Expression = { $_.Id } },
+            @{Name = 'memory_used_mb'; Expression = $memory_used_mb },
+            @{Name = 'max_memory_used_mb'; Expression = $max_memory_used_mb },
+            @{Name = 'total_alive_time'; Expression = $process_alive_time }
         }
     }
 
