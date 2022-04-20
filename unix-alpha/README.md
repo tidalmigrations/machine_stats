@@ -2,6 +2,9 @@
 
 [![PyPI](https://img.shields.io/pypi/v/machine-stats)](https://pypi.org/project/machine-stats/)
 
+| :exclamation:  Warning: This is not a stable release! The following document can be inaccurate. |
+|-------------------------------------------------------------------------------------------------|
+
 A simple and effective way to gather machine statistics (RAM, Storage, CPU)
 from a server environment as a first layer of a [Tidal Migrations discovery
 process](https://guides.tidalmg.com).

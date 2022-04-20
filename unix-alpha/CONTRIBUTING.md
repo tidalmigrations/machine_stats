@@ -1,5 +1,8 @@
 # Contributing to _Machine Stats_
 
+| :exclamation:  Warning: This is not a stable release! The following document can be inaccurate. |
+|-------------------------------------------------------------------------------------------------|
+
 Welcome! Happy to see you willing to make the project better.
 
 ## We're standing on the shoulders of giants
