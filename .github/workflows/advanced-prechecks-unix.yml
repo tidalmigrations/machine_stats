@@ -2,11 +2,12 @@ name: "Advanced Prechecks Unix"
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ master, alpha ]
     types: [ labeled ]
     paths-ignore:
       - "*.md"
       - "!unix/**"
+      - "!unix-alpha/**"
       - "unix/prechecks/**"
 
 jobs:

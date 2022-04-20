@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pluginbase = "*"
+ansible = "==5.5.0"
+
+[dev-packages]
+black = "==22.1.0"
+flake8 = "*"
+isort = "*"
+pylint = "*"
+setuptools = "*"
+twine = "*"
+wheel = "*"
+build = "*"
+bump2version = "*"
+
+[scripts]
+stats = "machine_stats"
+
+[packages.machine-stats]
+editable = true
+path = "."

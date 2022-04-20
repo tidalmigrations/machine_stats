@@ -2,10 +2,11 @@ name: "Default Prechecks Unix"
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ master, alpha ]
     paths-ignore:
       - "*.md"
       - "!unix/**"
+      - "!unix-alpha/**"
       - "unix/prechecks/**"
 
 jobs:
@@ -29,4 +30,9 @@ jobs:
       ## Check linting ##
       - name: Run flake8 linter
         working-directory: unix
+        run: flake8 ./src --config ./setup.cfg
+      
+      ## Check linting for alpha ##
+      - name: Run flake8 linter
+        working-directory: unix-alpha
         run: flake8 ./src --config ./setup.cfg
