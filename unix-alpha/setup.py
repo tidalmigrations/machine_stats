@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="machine_stats",
-    version="2.5.4",
+    name="machine_stats_alpha",
+    version="1.0.0",
     author="Tidal Migrations",
     author_email="support@tidalmigrations.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment",
@@ -21,8 +21,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "machine_stats=machine_stats:main",
-            "machine-stats=machine_stats:main",
+            "machine_stats_alpha=machine_stats:main",
+            "machine-stats-alpha=machine_stats:main",
         ]
     },
 )
