@@ -4,9 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ansible = "<2.10"
-machine_stats = {editable = true, path = "."}
 pluginbase = "*"
+ansible = "==5.5.0"
 
 [dev-packages]
 black = "==22.1.0"
@@ -21,3 +20,7 @@ bump2version = "*"
 
 [scripts]
 stats = "machine_stats"
+
+[packages.machine-stats]
+editable = true
+path = "."
