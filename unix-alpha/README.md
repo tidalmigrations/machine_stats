@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/machine-stats)](https://pypi.org/project/machine-stats/)
 
-| :exclamation:  Warning: This is not a stable release! The following document can be inaccurate. |
+| :exclamation:  Warning: This is not a stable release! The following documentation is a work in progress and might not be accurate. |
 |-------------------------------------------------------------------------------------------------|
 
 A simple and effective way to gather machine statistics (RAM, Storage, CPU)
