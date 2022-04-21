@@ -4,7 +4,7 @@ with open("alpha-description.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="machine_stats_bojack",
+    name="machine_stats_alpha",
     version="develop",
     author="Tidal Migrations",
     author_email="support@tidalmigrations.com",
@@ -21,8 +21,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "machine_stats_bojack=machine_stats:main",
-            "machine-stats-bojack=machine_stats:main",
+            "machine_stats_alpha=machine_stats:main",
+            "machine-stats-alpha=machine_stats:main",
         ]
     },
 )
