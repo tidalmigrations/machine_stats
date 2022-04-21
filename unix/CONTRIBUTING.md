@@ -45,24 +45,9 @@ We use the following tools:
 
 ### How to bump Machine Stats version
 
-We use [`bump2version`](https://pypi.org/project/bump2version/) to update version numbers.
-
-For example, if the current version in `1.0.0`:
-
-* `pipenv run bump2version patch` will change the version to `1.0.1`
-* `pipenv run bump2version minor` will change the version to `1.1.0`
-* `pipenv run bump2version major` will change the version to `2.0.0`
-
-After that all you need to do is to run
-
-```console
-git push origin master
-git push origin --tags
-```
-
-This will update the version and trigger the PyPI build and deploy.
-
-_Note_: You can verify that the version has been updated after running the `bump2version` command by checking the `config.cfg` file. (current_version)
+We use tags to release a new version of machine stats.
+To make a new release, simply create a tag on the `master` branch and the
+`pypi-upload` GitHub Workflow will take care of the rest.
 
 ### Introducing breaking changes?
 
