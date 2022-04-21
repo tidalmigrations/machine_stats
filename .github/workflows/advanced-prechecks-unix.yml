@@ -6,9 +6,7 @@ on:
     types: [ labeled ]
     paths-ignore:
       - "*.md"
-      - "!unix/**"
       - "!unix-alpha/**"
-      - "unix/prechecks/**"
 
 jobs:
   ubuntu:

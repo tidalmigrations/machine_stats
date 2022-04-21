@@ -5,9 +5,7 @@ on:
     branches: [ master, alpha ]
     paths-ignore:
       - "*.md"
-      - "!unix/**"
       - "!unix-alpha/**"
-      - "unix/prechecks/**"
 
 jobs:
   ubuntu:
@@ -26,11 +24,6 @@ jobs:
 
       - name: Install flake8
         run: pip install flake8
-
-      ## Check linting ##
-      - name: Run flake8 linter
-        working-directory: unix
-        run: flake8 ./src --config ./setup.cfg
       
       ## Check linting for alpha ##
       - name: Run flake8 linter
