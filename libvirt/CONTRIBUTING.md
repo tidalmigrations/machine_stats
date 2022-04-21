@@ -83,6 +83,12 @@ We use the following tools:
        1    debian10   running
       ```
 
+### How to bump libvirt's version
+
+We use tags to release a new version of libvirt.
+To make a new release, simply create a tag on the `master` branch and the
+`pypi-upload` GitHub Workflow will take care of the rest.
+
 ## Finally
 
 Thanks again for your interest in improving the project! You're taking action
