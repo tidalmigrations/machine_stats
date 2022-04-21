@@ -1,11 +1,11 @@
 from distutils.core import setup
 
-with open("README.md", "r") as fh:
+with open("alpha-description.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name="machine_stats_alpha",
-    version="1.0.0",
+    version="1.0.1",
     author="Tidal Migrations",
     author_email="support@tidalmigrations.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment",
