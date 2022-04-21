@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-with open("alpha-description.md.md", "r") as fh:
+with open("alpha-description.md", "r") as fh:
     long_description = fh.read()
 
 setup(
