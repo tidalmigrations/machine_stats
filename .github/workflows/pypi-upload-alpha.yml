@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - alpha
+      - pranav/improve-pypi-release
 
 jobs:
   machine_stats:
@@ -31,6 +32,6 @@ jobs:
 
       - name: Upload to PyPI via Twine
         env:
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN_ALPHA }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN_ALPHA_PRANAV }}
         run: |
           twine upload --verbose -u '__token__' dist/*
