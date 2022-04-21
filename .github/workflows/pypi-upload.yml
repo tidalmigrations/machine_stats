@@ -1,9 +1,9 @@
 name: PyPI Upload
 
-on:
-  push:
-    tags:
-      - '*'
+# on:
+#   push:
+#     tags:
+#       - '*'
 
 jobs:
   machine_stats:
