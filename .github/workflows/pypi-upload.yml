@@ -1,10 +1,8 @@
 name: PyPI Upload
 
 on:
-  push:
-    branches: [ master ]
-    tags:
-      - '*'
+  release:
+    types: [ created ]
 
 jobs:
   machine_stats:
