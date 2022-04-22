@@ -1,6 +1,6 @@
 # Contributing to _Machine Stats_
 
-| :exclamation:  Warning: This is not a stable release! The following document can be inaccurate. |
+| :exclamation:  Warning: This is not a stable release! The following documention is a work in progress and might not be accurate |
 |-------------------------------------------------------------------------------------------------|
 
 Welcome! Happy to see you willing to make the project better.
