@@ -45,9 +45,14 @@ We use the following tools:
 
 ### How to bump Machine Stats version
 
-We use tags to release a new version of machine stats.
-To make a new release, simply create a tag on the `master` branch and the
-`pypi-upload` GitHub Workflow will take care of the rest.
+We use tags to release a new version of machine stats. To make a new release, simply create a tag on the `master` branch and the `pypi-upload` GitHub Workflow will take care of the rest.
+
+To build a new image, you will need to create a release. The steps are pretty simple, You can find Github's instruction [here](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release).
+
+* On the repo page, click on release (right side bar).
+* Create new release.
+* Choose a tag. You should create a new tag for your build. Make sure that you've selected the `master` branch as your target branch.
+* Publish the release.
 
 ### Introducing breaking changes?
 
