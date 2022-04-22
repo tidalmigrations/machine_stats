@@ -1,9 +1,8 @@
 name: PyPI Upload
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [ created ]
 
 jobs:
   machine_stats:
@@ -16,8 +15,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+          architecture: x64
+
+      - name: Autobump version
+        run: |
+          # from refs/tags/v1.2.3 get 1.2.3
+          VERSION=${GITHUB_REF/refs\/tags\//}
+          PLACEHOLDER='version="develop"'
+          VERSION_FILE='setup.py'
+
+          # grep ensures the placeholder is there. If grep doesn't find the placeholder
+          # it exits with exit code 1 and github actions aborts the build. 
+          grep "$PLACEHOLDER" "$VERSION_FILE"
+          
+          sed -i "s/$PLACEHOLDER/version=\"${VERSION}\"/g" "$VERSION_FILE"
 
       - name: Install pypa/build and twine
         run: |
@@ -54,8 +68,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+          architecture: x64
+      
+      - name: Autobump version
+        run: |
+          # from refs/tags/v1.2.3 get 1.2.3
+          VERSION=${GITHUB_REF/refs\/tags\//}
+          PLACEHOLDER='version="develop"'
+          VERSION_FILE='setup.py'
+
+          # grep ensures the placeholder is there. If grep doesn't find the placeholder
+          # it exits with exit code 1 and github actions aborts the build. 
+          grep "$PLACEHOLDER" "$VERSION_FILE"
+          
+          sed -i "s/$PLACEHOLDER/version=\"${VERSION}\"/g" "$VERSION_FILE"
 
       - name: Install pypa/build and twine
         run: |
