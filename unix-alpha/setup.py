@@ -5,7 +5,7 @@ with open("alpha-description.md", "r") as fh:
 
 setup(
     name="machine_stats_alpha",
-    version="1.0.1",
+    version="develop",
     author="Tidal Migrations",
     author_email="support@tidalmigrations.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment",
