@@ -2,4 +2,4 @@ hosts
 .env/
 build/
 dist/
-machine_stats.egg-info
+machine_stats_alpha.egg-info
