@@ -1,21 +1,14 @@
 # Machine Stats for Windows
 
-Machine Stats for Windows uses WinRM to `Invoke-Command` across your servers, creating a JSON file to securely send to your [Tidal Migrations](https://tidalmigrations.com/) instance using the [tidal command](https://tidalmigrations.com/tidal-tools/).
+Machine Stats for Windows uses WinRM to `Invoke-Command` across your servers, creating a JSON file which you can securely send to your [Tidal Migrations](https://tidalmigrations.com/) instance using the [tidal command](https://tidalmigrations.com/tidal-tools/).
 
-The script `runner.ps1` should be customized for each network that you will be scanning.
-
-1) Specify your username (step 1) and a list of hostnames (step 3).
-
-2) If you plan on running this in a scheduled task, you may want to store your credential with the `PsCredential` method. See [this blog post](https://www.interworks.com/blog/trhymer/2013/07/08/powershell-how-encrypt-and-store-credentials-securely-use-automation-scripts) for an example.
-
-> _NB: You do need WinRM enabled across your environment for this._
-> _For a simple guide to do this via GPO, see [here](https://support.auvik.com/hc/en-us/articles/204424994-How-to-enable-WinRM-with-domain-controller-Group-Policy-for-WMI-monitoring)._
-
-As of Windows 2008 Server onward [WinRM service starts automatically](https://docs.microsoft.com/en-us/windows/win32/winrm/installation-and-configuration-for-windows-remote-management#configuration-of-winrm-and-ipmi).
+If WinRM is not the best solution for you, you can use an alternative approach backed by WMI by running the `-NoWinRM` flag. For more information check out the [guide](https://guides.tidalmg.com/machine_stats.html#gather-machine-stats-without-winrm).
 
 ## Usage
 
-1) Download and install [Tidal Tools](https://get.tidal.sh/)
+For detailed information on the different ways to run Machine Stats for Windows, check out the [guide](https://guides.tidalmg.com/machine_stats.html#windows). This README will explain one common use case - where you want to take a single reading of your inventory and then pipe the result straight to the Tidal Migrations platform using Tidal Tools.
+
+1) Download and install [Tidal Tools](https://get.tidal.sh/).
 
 2) Make sure you are logged in to your Tidal Migration workspace with 👇 . Check out the [guides](https://guides.tidalmg.com/tidal-tools.html#using-tidal-tools) for more information.
 ```
@@ -37,7 +30,7 @@ tidal login
 
 You should be able to check your account and see the VMs and their corresponding attributes and metrics. You'll find that at a URL that is something like:
 
-https://your_domain.tidalmg.com/#/servers
+`https://your_domain.tidalmg.com/#/servers`
 
 ## Data captured
 
@@ -55,7 +48,7 @@ Operating System Version
 CPU name
 ```
 
-You can also capture information about processes running on the host machine. This feature is disabled by default, to enable it uncomment lines 50 to 67 and line 96 in [windows/server_stats.ps1.](server_stats.ps1). If you do that, it will gather the following information about a process:
+You can also capture information about processes running on the host machine. This feature is disabled by default, to enable it use the flag `-ProcessStats`. Note that this will only work when using WinRM, and so can't be used alongside the `-NoWinRM` flag. Running this flag will gather the following information about a process:
 ```
 User
 Process Name

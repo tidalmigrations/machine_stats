@@ -14,7 +14,7 @@ it's 3.9.  You can use any operating system.
 Install all development dependencies using:
 
 ```console
-$ pipenv install --dev
+pipenv install --dev
 ```
 
 If you haven't used `pipenv` before but are comfortable with virtualenvs, just
@@ -28,9 +28,9 @@ run `pipenv run machine_stats` to run it locally.
 Non `pipenv` install works too:
 
 ```console
-$ pip install -r requirements.txt
-$ pip install -r dev-requirements.txt
-$ pip install -e .
+pip install -r requirements.txt
+pip install -r dev-requirements.txt
+pip install -e .
 ```
 
 ### Tools
@@ -45,24 +45,22 @@ We use the following tools:
 
 ### How to bump Machine Stats version
 
-We use [`bump2version`](https://pypi.org/project/bump2version/) to update version numbers.
+We use tags to release a new version of machine stats. To make a new release, simply create a tag on the `master` branch and the `pypi-upload` GitHub Workflow will take care of the rest.
 
-For example, if the current version in `1.0.0`:
+To build a new image, you will need to create a release. The steps are pretty simple, You can find Github's instruction [here](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release).
 
-* `pipenv run bump2version patch` will change the version to `1.0.1`
-* `pipenv run bump2version minor` will change the version to `1.1.0`
-* `pipenv run bump2version major` will change the version to `2.0.0`
+* On the repo page, click on release (right side bar).
+* Create new release.
+* Choose a tag. You should create a new tag for your build. Make sure that you've selected the `master` branch as your target branch.
+* Publish the release.
 
-After that all you need to do is to run
+### Introducing breaking changes?
 
-```
-git push origin master
-git push origin --tags
-```
+When you create a PR, the GitHub workflows check for the linting and CodeQL. However, if you think you're introducing breaking changes, then please add the label `ci` with your PR. This will run the Advanced Prechecks workflow that checks Machine Stats' working in the following system environments:
 
-This will update the version and trigger the PyPI build and deploy.
+* Ubuntu 20.04 - Python 3.7 to 3.10
+* RHEL 8 - Python 3.6, 3.8 to 3.10
 
-_Note_: You can verify that the version has been updated after running the `bump2version` command by checking the `config.cfg` file. (current_version)
 ## Finally
 
 Thanks again for your interest in improving the project! You're taking action
