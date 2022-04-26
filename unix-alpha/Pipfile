@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 pluginbase = "*"
-ansible = "==5.5.0"
+ansible = "*"
 
 [dev-packages]
 black = "==22.1.0"
