@@ -14,7 +14,7 @@ jobs:
     if: ${{ github.event.label.name == 'ci' }}
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+        python-version: [ '2.7', '3.6', '3.7', '3.8', '3.9', '3.10' ]
     name: Ubuntu prechecks - Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v3
