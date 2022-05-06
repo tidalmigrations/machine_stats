@@ -5,3 +5,5 @@ def run():
                        host_pattern='all',
                        module='raw',
                        module_args="lsb_release -si")
+
+    # r = ansible_runner.run(private_data_dir='./ansible', playbook='playbook-ubuntu.yml')
