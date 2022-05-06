@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 from functools import partial
+from machine_stats.modules.raw import raw_application
 
 from ansible.utils.path import unfrackpath
 
@@ -474,6 +475,14 @@ def main():
         help="enable measurements",
     )
 
+    extra_args = parser.add_argument_group("no dependencies arguments")
+    extra_args.add_argument(
+        "-np",
+        "--no-python",
+        action="store_true",
+        help="scan a remote host machine without python",
+    )
+
     plugins.add_arguments(parser)
 
     args = parser.parse_args()
@@ -484,9 +493,18 @@ def main():
         except FileNotFoundError:
             pass
 
-    sources = list(map(lambda f: f.name, args.hosts))
-    app = Application(sources=sources, plugins=plugins, args=args)
-    app.run()
+    # The seperation in the below if..else statement is because the 
+    # raw module uses Ansible runner, while the rest of the functionalities
+    # of Machine Stats Alpha uses Ansible Python API.
+    # Ansible Runner: https://ansible-runner.readthedocs.io/en/latest/
+    # Ansible Python API: https://docs.ansible.com/ansible/latest/dev_guide/developing_api.html
+
+    if args.no_python:
+        raw_application.run()
+    else:
+        sources = list(map(lambda f: f.name, args.hosts))
+        app = Application(sources=sources, plugins=plugins, args=args)
+        app.run()
 
 
 if __name__ == "__main__":
