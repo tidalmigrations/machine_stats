@@ -1,0 +1,81 @@
+---
+- name: Master Playbook
+  hosts: all
+
+  tasks:
+  - name: get cpu_name
+    debug:
+      msg: "{{ ansible_processor[3] }}"
+  - name: get cpu_count
+    debug: 
+      msg: "{{ ansible_processor_vcpus }}"
+
+
+  # Custom fields
+  # - name: get cpu_average
+  #   raw: # TODO command to get cpu_average
+  #  - name: get cpu_peak
+  #   raw: # TODO command to get cpu_peak
+  #     when:
+  #       - ansible_facts['distribution'] == "Ubuntu"
+  # - name: get cpu_sampling_timeout
+  # # Put 1 as default
+  - name: get cpu_utilization_timestamp
+    debug: 
+      msg: "{{ ansible_date_time['iso8601'] }}"
+
+
+  - name: get fqdn
+    debug:
+      msg: "{{ ansible_fqdn }}"
+
+  - name: get host_name
+    debug:
+      msg: "{{ ansible_hostname }}"
+
+  # TODO: Merge these 2 lists
+  - name: get ip_addresses_ipv4
+    debug:
+      msg: "{{ ansible_all_ipv4_addresses }}"
+
+  - name: get ip_addresses_ipv6
+    debug: 
+      msg: "{{ansible_all_ipv6_addresses }}"
+
+  - name: get operating_system
+    debug:
+      msg: "{{ ansible_distribution }}"
+
+  - name: get operating_system_version
+    debug:
+      msg: "{{ ansible_distribution_version }}"
+
+  - name: get ram_allocated_mb
+    debug:
+      msg: "{{ ansible_memtotal_mb }}"
+
+  # TODO: Convert to ram used gb
+  - name: get ram_free_mb
+    debug:
+      msg: "{{ ansible_memfree_mb }}"
+  
+  ##
+  # Get storage information
+  ##
+
+  # TODO: This is a list containing multiple devices
+  # Need to look at ['nvme0n1']['size']
+  - name: get storage_allocated_gb
+    debug:
+      msg: "{{ ansible_devices }}"
+
+  # TODO: Divide by 10^9 for GB
+  - name: get storage_allocated_byte
+    debug:
+      msg: "{{ ansible_mounts[0]['size_total'] }}"
+
+  # TODO: Divide by 10^9 for GB
+  # TODO: Convert to storage used gb
+  - name: get storage_free_byte
+    debug:
+      msg: "{{ ansible_mounts[0]['size_available'] }}"
