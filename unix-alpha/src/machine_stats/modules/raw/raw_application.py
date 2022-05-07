@@ -25,14 +25,13 @@ def run():
 
     raw_output_all_servers = filter_data_for_all_servers(app_run_data,servers_list)
 
-    # clear memory
-    app_run_data.clear()
+    print(json.dumps(raw_output_all_servers, sort_keys=True, indent=4))
 
-    unprocessed_output = process_data_for_each_server(raw_output_all_servers, servers_list)
+    # unprocessed_output = process_data_for_each_server(raw_output_all_servers, servers_list)
 
-    # TODO: Pass the unprocessed_output we are getting through a validation layer
+    # # TODO: Pass the unprocessed_output we are getting through a validation layer
     
-    print(json.dumps(unprocessed_output, sort_keys=True, indent=4))
+    # print(json.dumps(unprocessed_output, sort_keys=True, indent=4))
 
 
 def get_servers():
@@ -62,8 +61,12 @@ def filter_data_for_all_servers(app_run_data, servers_list):
     # From all the events for all the servers, 
     for task in app_run_data.events:
         try:
+            # TODO: This can be filtered further.
+            # Instead of adding the whole `task` in the list, only add required fields
+            # of task in the list. i.e., task name, response message
             if(task['event_data']['host'] and task['event_data']['res']['msg']):
                 servers_events[task['event_data']['host']].append(task)
+
         except KeyError:
             # KeyError is passed because playbook_on_task_start event
             # does not contain the `task['event_data']['host']` key
@@ -81,6 +84,7 @@ def process_data_for_each_server(servers_events, servers_list):
       - values of some fields need to be processed before they can be used. i.e., 
         - convert fields from bytes/MB to GB
         - to get storage_used we will subtract storage_free from storage allocated
+      - Field `cpu_name` require refining. Getting `1` for RHELs
     - Add the results in servers_dictionary and return the results
     """
 
