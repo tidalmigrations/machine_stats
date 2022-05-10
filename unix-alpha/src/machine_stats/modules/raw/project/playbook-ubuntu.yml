@@ -1,0 +1,7 @@
+---
+- name: Ubuntu Playbook
+  hosts: all
+
+  tasks:
+  - name: Get the OS name for Ubuntu
+    raw: lsb_release -si
