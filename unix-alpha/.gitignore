@@ -2,4 +2,5 @@ hosts
 .env/
 build/
 dist/
+artifacts
 machine_stats_alpha.egg-info
