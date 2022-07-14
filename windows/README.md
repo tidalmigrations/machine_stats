@@ -46,6 +46,13 @@ CPU Count
 Operating System
 Operating System Version
 CPU name
+CPU_Description
+CPU_Manufacturer
+CPU_L2CacheSize
+CPU_L3CacheSize
+CPU_SocketDesignation
+TotalVisible_Memory_GB
+TotalVirtual_Memory_GB
 ```
 
 You can also capture information about processes running on the host machine. This feature is disabled by default, to enable it use the flag `-ProcessStats`. Note that this will only work when using WinRM, and so can't be used alongside the `-NoWinRM` flag. Running this flag will gather the following information about a process:
@@ -56,18 +63,6 @@ Process Path
 Memory Used (MB)
 Max Memory Used (MB)
 Total Alive Time in Seconds
-```
-
-It is also configured to capture the following values, however in order to see them in Tidal Migrations you must add the following as custom fields for servers. You can do that at a URL that looks like, https://your_domain.tidalmg.com/#/admin/servers
-
-```
-CPU_Description
-CPU_Manufacturer
-CPU_L2CacheSize
-CPU_L3CacheSize
-CPU_SocketDesignation
-TotalVisible_Memory_GB
-TotalVirtual_Memory_GB
 ```
 
 *NB: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in [windows/server_stats.ps1](windows/server_stats.ps1)*
