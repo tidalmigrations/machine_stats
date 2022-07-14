@@ -45,14 +45,14 @@ Storage Used (GB)
 CPU Count
 Operating System
 Operating System Version
-CPU name
-CPU_Description
-CPU_Manufacturer
-CPU_L2CacheSize
-CPU_L3CacheSize
-CPU_SocketDesignation
-TotalVisible_Memory_GB
-TotalVirtual_Memory_GB
+CPU Name
+CPU Description
+CPU Manufacturer
+CPU L2 Cache Size
+CPU L3 Cache Size
+CPU Socket Designation
+Total Visible Memory (GB)
+Total Virtual Memory (GB)
 ```
 
 You can also capture information about processes running on the host machine. This feature is disabled by default, to enable it use the flag `-ProcessStats`. Note that this will only work when using WinRM, and so can't be used alongside the `-NoWinRM` flag. Running this flag will gather the following information about a process:
