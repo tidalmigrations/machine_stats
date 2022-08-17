@@ -322,6 +322,7 @@ class MeasurementsResultCallback(ResultCallback):
                             server_dict["measurable_type"] = "server"
                             server_dict["field_name"] = custom_field + "_timeseries"
                             server_dict["value"] = server["custom_fields"][custom_field]
+                            server_dict["external_timestamp"] = server["custom_fields"]["cpu_utilization_timestamp"]
                             server_dict["measurable"] = {
                                 "host_name": server["host_name"]
                             }
