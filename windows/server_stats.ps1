@@ -25,7 +25,11 @@ $ServerStats = {
 
         [Parameter()]
         [bool]
-        $NoWinRM
+        $NoWinRM=$false,
+
+        [Parameter()]
+        [bool]
+        $Measurements=$false
     )
 
     $getWmiObjectParams = @{
@@ -133,42 +137,60 @@ $ServerStats = {
     }
 
     # Create an object to return, convert this to JSON or CSV as you need:
-    $server_info = New-Object -TypeName psobject -Property @{
-        host_name                = $cpu.SystemName
-        ram_allocated_gb         = $PhysicalMemory 
-        ram_used_gb              = $OSUsedMemory 
-        storage_allocated_gb     = $Total_DriveSpaceGB 
-        storage_used_gb          = $Total_UsedDriveSpaceGB 
-        cpu_count                = $cpu_count
-        operating_system         = $OSInfo.Caption 
-        operating_system_version = $OSInfo.Version 
-        cpu_name                 = $cpu.Name 
-    }
 
-    $custom_fields = New-Object -TypeName psobject -Property @{
-        CPU_Description        = $cpu.Description 
-        CPU_Manufacturer       = $cpu.Manufacturer 
-        CPU_L2CacheSize        = $cpu.L2CacheSize 
-        CPU_L3CacheSize        = $cpu.L3CacheSize 
-        CPU_SocketDesignation  = $cpu.SocketDesignation 
-        TotalVisible_Memory_GB = $OSTotalVisibleMemory
-        TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
-    }
-
-    if ($CpuUtilizationOnlyValue) {
-        $custom_fields | Add-Member -NotePropertyName cpu_utilization -NotePropertyValue $CPUUtilization
-        $custom_fields | Add-Member -NotePropertyName cpu_utilization_timestamp -NotePropertyValue $CPUUtilizationTimestamp
+    # When running with the -Measurements flag, the output will match TMP API /measurements expected data structure
+    if ($Measurements) {
+        $server_info = New-Object -TypeName psobject -Property @{
+            field_name         = "cpu_utilization_timeseries"
+            measurable_type    = "server"
+            value              = $CPUUtilization
+            external_timestamp = $CPUUtilizationTimestamp
+            measurable       = New-Object -TypeName psobject -Property @{
+                host_name = $cpu.SystemName
+            }
+        }
+    # When running without the -Measurements flag, the output will match 'tidal sync servers' expected data structure
     } else {
-        if (!$NoWinRM) {
-            $custom_fields | Add-Member -NotePropertyName cpu_average -NotePropertyValue $CPUUtilization.Average
-            $custom_fields | Add-Member -NotePropertyName cpu_peak -NotePropertyValue $CPUUtilization.Maximum
-            $custom_fields | Add-Member -NotePropertyName cpu_sampling_timeout -NotePropertyValue $CPUUtilization.Count
+        $server_info = New-Object -TypeName psobject -Property @{
+            host_name                = $cpu.SystemName
+            ram_allocated_gb         = $PhysicalMemory 
+            ram_used_gb              = $OSUsedMemory 
+            storage_allocated_gb     = $Total_DriveSpaceGB 
+            storage_used_gb          = $Total_UsedDriveSpaceGB 
+            cpu_count                = $cpu_count
+            operating_system         = $OSInfo.Caption 
+            operating_system_version = $OSInfo.Version 
+            cpu_name                 = $cpu.Name 
+        }
+
+        $custom_fields = New-Object -TypeName psobject -Property @{
+            CPU_Description        = $cpu.Description 
+            CPU_Manufacturer       = $cpu.Manufacturer 
+            CPU_L2CacheSize        = $cpu.L2CacheSize 
+            CPU_L3CacheSize        = $cpu.L3CacheSize 
+            CPU_SocketDesignation  = $cpu.SocketDesignation 
+            TotalVisible_Memory_GB = $OSTotalVisibleMemory
+            TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
+        }
+
+        if ($CpuUtilizationOnlyValue) {
+            $custom_fields | Add-Member -NotePropertyName cpu_utilization -NotePropertyValue $CPUUtilization
+            $custom_fields | Add-Member -NotePropertyName cpu_utilization_timestamp -NotePropertyValue $CPUUtilizationTimestamp
+        } else {
+            if (!$NoWinRM) {
+                $custom_fields | Add-Member -NotePropertyName cpu_average -NotePropertyValue $CPUUtilization.Average
+                $custom_fields | Add-Member -NotePropertyName cpu_peak -NotePropertyValue $CPUUtilization.Maximum
+                $custom_fields | Add-Member -NotePropertyName cpu_sampling_timeout -NotePropertyValue $CPUUtilization.Count
+            }
+        }
+
+        Add-Member -InputObject $server_info -MemberType NoteProperty -Name "custom_fields" -Value $custom_fields
+
+        if ($process_stats) {
+            Add-Member -InputObject $server_info -MemberType NoteProperty -Name "process_stats" -Value $process_stats
         }
     }
 
-    Add-Member -InputObject $server_info -MemberType NoteProperty -Name "custom_fields" -Value $custom_fields
-    if ($process_stats) {
-        Add-Member -InputObject $server_info -MemberType NoteProperty -Name "process_stats" -Value $process_stats
-    }
+    # Return the object
     $server_info
 }

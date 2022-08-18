@@ -34,14 +34,20 @@ The default value is 30.
 
 Capture point-in-time CPU utilization value rather than a peak and average over a given time.
 
+.PARAMETER Measurements
+
+Specifies if the data should be output in a structure that matches the TMP /measurements endpoint. 
+This is intended to capture point-in-time CPU Utilization.
+
 .INPUTS
 
 None. You cannot pipe objects to runner.ps1
 
 .OUTPUTS
 
-runner.ps1 generates a JSON output with all the gathered data suitable to be
-used with Tidal Tools or Tidal Migrations API.
+Default behaviour will output JSON which is suitable to pipe to the Tidal Tools command "tidal sync servers".
+
+Adding the -Measurements flag will output JSON which is suitable to pipe to the Tidal Migrations Platform /measurements API endpoint.
 
 .EXAMPLE
 
@@ -50,6 +56,8 @@ used with Tidal Tools or Tidal Migrations API.
 .EXAMPLE
 
 .\runner.ps1 -UserName myuser
+
+.\runner.ps1 -UserName myuser -Measurements
 
 #>
 [CmdletBinding()]
@@ -84,8 +92,18 @@ param (
 
     [Parameter()]
     [switch]
-    $CpuUtilizationOnlyValue
+    $CpuUtilizationOnlyValue,
+
+    [Parameter()]
+    [switch]
+    $Measurements
 )
+
+# If the -Measurements flag is used, set -CPUUtilizationOnlyValue and -CPUUtilizationTimeout 1
+if ($Measurements) {
+    $CpuUtilizationOnlyValue = $true
+    $CpuUtilizationTimeout = 1
+}
 
 if (![System.IO.File]::Exists($SecurePwdFilePath)) {
     Write-Error "$SecurePwdFilePath does not exist. Be sure to run save_password.ps1 before trying again."
@@ -98,7 +116,7 @@ $secPwd = Get-Content $SecurePwdFilePath | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
 
 try {
-    $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME } -ErrorAction Stop 
+    $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME } -ErrorAction Stop
     Write-Host "Executing inventory gathering as user: $env_user..."
 } catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
     Write-Host "Executing inventory gathering..."
@@ -122,7 +140,7 @@ $server_list | ForEach-Object {
     if ($NoWinRM) {
         $startJobParams = @{
             ScriptBlock  = $ServerStats
-            ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue, $NoWinRM
+            ArgumentList = $_, $cred, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue, $NoWinRM, $Measurements
         }
         $jobs += Start-Job @startJobParams
     } else {
@@ -130,7 +148,7 @@ $server_list | ForEach-Object {
             ComputerName = $_
             Credential   = $cred
             ScriptBlock  = $ServerStats
-            ArgumentList = "localhost", $null, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue, $NoWinRM
+            ArgumentList = "localhost", $null, $ProcessStats, $CpuUtilizationTimeout, $CpuUtilizationOnlyValue, $NoWinRM, $Measurements
         }
         $jobs += Invoke-Command @invokeCommandParams -AsJob
     }
@@ -155,14 +173,22 @@ Do {
 } Until (($jobs | Get-Job | Where-Object { (($_.State -eq "Running") -or ($_.state -eq "NotStarted")) }).count -eq 0)
 
 $jobs | Receive-Job | ForEach-Object {
-    $server_stats += $_
+    $server_stats += $_ | Select -Property * -ExcludeProperty PSComputerName,RunSpaceID,PSShowComputerName
 }
 
 $num_results = $server_stats.Count
 Write-Host "$num_results results received out of $num_servers servers."
 
-# Output results
-$results = @{ servers = $server_stats }
+## Build result
+
+# Set root object key
+$root_object_key = "servers"
+if ($Measurements) {
+    $root_object_key = "measurements"
+}
+
+# output result
+$results = @{ $root_object_key = $server_stats }
 $json = $results | ConvertTo-Json -Depth 99
 Write-Output $json
 
