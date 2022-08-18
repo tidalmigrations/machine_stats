@@ -36,7 +36,7 @@ Capture point-in-time CPU utilization value rather than a peak and average over 
 
 .PARAMETER Measurements
 
-Specifies if the data should be output in a structure that matches the TMP /measurements endpoint.
+Specifies if the data should be output in a structure that matches the TMP /measurements endpoint. This is intended to capture CPU Utilization
 
 .INPUTS
 
