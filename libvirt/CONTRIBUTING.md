@@ -83,16 +83,17 @@ We use the following tools:
        1    debian10   running
       ```
 
-### How to bump libvirt's version
+### How to release a new virt-stats version
 
-We use tags to release a new version of libvirt. To make a new release, simply create a tag on the `master` branch and the `pypi-upload` GitHub Workflow will take care of the rest.
+To deploy a new version of Virt Stats, you will need to create a release. The steps are pretty simple, You can find Github's instruction [here](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release).
 
-To build a new image, you will need to create a release. The steps are pretty simple, You can find Github's instruction [here](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release).
-
-* On the repo page, click on release (right side bar).
-* Create new release.
-* Choose a tag. You should create a new tag for your build. Make sure that you've selected the `master` branch as your target branch.
-* Publish the release.
+* On the main repo page, click on [Releases](https://github.com/tidalmigrations/machine_stats/releases) (right side bar)
+* Create a new release on the `master` branch.
+* Choose a tag. The Tag that you create will be used as the new Tidal Tools version. Please follow this convention
+  * Minor/Patch release: `v2.5.6` → `v2.5.7`
+  * Major release: `v2.5.10` → `v2.6.0`
+  * Version release: `v2.6.7` → `v3.0.0`
+* **Note:** [machine stats](https://pypi.org/project/machine-stats/) also have the same version number as Virt Stats.
 
 ## Finally
 
