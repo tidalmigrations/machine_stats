@@ -113,7 +113,7 @@ $secPwd = Get-Content $SecurePwdFilePath | ConvertTo-SecureString
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secPwd
 
 try {
-    $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME } -ErrorAction Stop 
+    $env_user = Invoke-Command -ComputerName ([Environment]::MachineName) -Credential $cred -ScriptBlock { $env:USERNAME } -ErrorAction Stop
     Write-Host "Executing inventory gathering as user: $env_user..."
 } catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
     Write-Host "Executing inventory gathering..."
@@ -170,7 +170,7 @@ Do {
 } Until (($jobs | Get-Job | Where-Object { (($_.State -eq "Running") -or ($_.state -eq "NotStarted")) }).count -eq 0)
 
 $jobs | Receive-Job | ForEach-Object {
-    $server_stats += $_
+    $server_stats += $_ | Select -Property * -ExcludeProperty PSComputerName,RunSpaceID,PSShowComputerName
 }
 
 $num_results = $server_stats.Count
