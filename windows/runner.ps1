@@ -36,7 +36,8 @@ Capture point-in-time CPU utilization value rather than a peak and average over 
 
 .PARAMETER Measurements
 
-Specifies if the data should be output in a structure that matches the TMP /measurements endpoint. This is intended to capture CPU Utilization
+Specifies if the data should be output in a structure that matches the TMP /measurements endpoint. 
+This is intended to capture point-in-time CPU Utilization.
 
 .INPUTS
 
@@ -55,6 +56,8 @@ Adding the -Measurements flag will output JSON which is suitable to pipe to the 
 .EXAMPLE
 
 .\runner.ps1 -UserName myuser
+
+.\runner.ps1 -UserName myuser -Measurements
 
 #>
 [CmdletBinding()]
