@@ -145,7 +145,7 @@ $ServerStats = {
             measurable_type    = "server"
             value              = $CPUUtilization
             external_timestamp = $CPUUtilizationTimestamp
-            measureable        = New-Object -TypeName psobject -Property @{
+            measurable       = New-Object -TypeName psobject -Property @{
                 host_name = $cpu.SystemName
             }
         }
