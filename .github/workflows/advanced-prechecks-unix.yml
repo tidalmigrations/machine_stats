@@ -1,6 +1,8 @@
 name: "Advanced Prechecks Unix"
 
 on:
+  push:
+    branches: [ pranav/update-docs ]
   pull_request:
     branches: [ master ]
     types: [ labeled ]
@@ -12,7 +14,7 @@ on:
 jobs:
   ubuntu:
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name == 'ci' }}
+    # if: ${{ github.event.label.name == 'ci' }}
     strategy:
       matrix:
         python-version: [ '3.7', '3.8', '3.9', '3.10' ]
@@ -39,7 +41,7 @@ jobs:
 
   rhel:
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name == 'ci' }}
+    # if: ${{ github.event.label.name == 'ci' }}
     strategy:
       matrix:
         python-version: [ '3.6', '3.8', '3.9', '3.10' ]

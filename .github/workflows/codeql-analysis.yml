@@ -16,7 +16,7 @@ on:
     branches: [ master ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ master ]
+    branches: []
   # This runs the scan weekly, in the event no changes to the code are made. GitHub may update the rules used for
   # code scanning with newly identified rules to flag.
   # More here:

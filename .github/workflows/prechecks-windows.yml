@@ -2,7 +2,7 @@ name: "Prechecks Windows"
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: []
     paths-ignore:
       - "*.md"
       - "!windows/**"
