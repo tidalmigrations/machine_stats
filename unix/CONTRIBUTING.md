@@ -57,13 +57,6 @@ To deploy a new version of Machine Stats, you will need to create a release. The
   * Make sure to change the target branch to your dev branch and choose the `Set as a pre-release` option.
 * **Note:** [virt-stats](https://pypi.org/project/virt-stats/) also have the same version number as Machine Stats.
 
-### Introducing breaking changes?
-
-When you create a PR, the GitHub workflows check for the linting and CodeQL. However, if you think you're introducing breaking changes, then please add the label `ci` with your PR. This will run the Advanced Prechecks workflow that checks Machine Stats' working in the following system environments:
-
-* Ubuntu 20.04 - Python 3.7 to 3.10
-* RHEL 8 - Python 3.6, 3.8 to 3.10
-
 ## Finally
 
 Thanks again for your interest in improving the project! You're taking action
