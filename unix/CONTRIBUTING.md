@@ -43,7 +43,7 @@ We use the following tools:
   src/machine_stats/*` or `pipenv run pylint src`)
 * `bump2version` for version bumps (`pipenv run bump2version`)
 
-### How to release a new Machine Stats version
+### Release a new Machine Stats version
 
 To deploy a new version of Machine Stats, you will need to create a release. The steps are pretty simple, You can find Github's instruction [here](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release).
 
@@ -53,6 +53,8 @@ To deploy a new version of Machine Stats, you will need to create a release. The
   * Minor/Patch release: `v2.5.6` → `v2.5.7`
   * Major release: `v2.5.10` → `v2.6.0`
   * Version release: `v2.6.7` → `v3.0.0`
+* Similarly, you can release a `pre-release` version.
+  * Make sure to change the target branch to your dev branch and choose the `Set as a pre-release` option.
 * **Note:** [virt-stats](https://pypi.org/project/virt-stats/) also have the same version number as Machine Stats.
 
 ### Introducing breaking changes?
