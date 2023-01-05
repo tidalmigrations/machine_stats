@@ -5,6 +5,7 @@
 #    pipenv lock --requirements
 #
 
+-i https://pypi.org/simple
 -e .
 ansible==2.9.20
 cffi==1.15.1
