@@ -9,7 +9,7 @@
 -e .
 ansible==2.9.20
 cffi==1.15.1
-cryptography==38.0.4
+cryptography==39.0.1
 jinja2==3.1.2
 markupsafe==2.1.1
 pluginbase==1.0.1
