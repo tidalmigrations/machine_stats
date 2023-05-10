@@ -47,7 +47,7 @@ None. You cannot pipe objects to runner.ps1
 
 Default behaviour will output JSON which is suitable to pipe to the Tidal Tools command "tidal sync servers".
 
-Adding the -Measurements flag will output JSON which is suitable to pipe to the Tidal Migrations Platform /measurements API endpoint.
+Adding the -Measurements flag will output JSON which is suitable to pipe to the Tidal Accelerator Platform /measurements API endpoint.
 
 .EXAMPLE
 

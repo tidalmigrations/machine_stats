@@ -1,13 +1,13 @@
 # Machine Stats
 
 A simple and effective way to gather machine statistics (RAM, Storage, CPU)
-from a server environment as a first layer of a [Tidal Migrations discovery
-process](https://guides.tidalmg.com).
+from a server environment as a first layer of a [Tidal Cloud's discovery
+process](https://guides.tidal.cloud/).
 
 Supports Windows and Unix-like platforms.
 
 > _NB: For other platforms or custom integrations, see [the guides
-> here](https://guides.tidalmg.com/sync-servers.html)._
+> here](https://guides.tidal.cloud/sync-servers.html)._
 
 ## Overview
 
@@ -24,20 +24,21 @@ trickery of thin-provisioning from SAN tools.  This allows you to confidently
 plan data replication time, or other migration metrics on an app-by-app basis.
 
 ```
-┌ Machine Stats ─────────────┐                           ╔═ T I D A L   M I G R A T I O N S  ════╗
-│                            │                           ║                                       ║
-│  CPU, RAM, Storage etc.    │                           ║  - Single Source of Truth             ║
-│                            │   `tidal sync servers`    ║  - Server, Database, and              ║
-│                            │──────────────────────────>║    Application Inventory              ║
-│                            │                           ║                                       ║
-│                            │                           ║                                       ║
-└────────────────────────────┘                           ╚═══════════════════════════════════════╝
+┌ Machine Stats ─────────────┐                           ╔═════════ TIDAL CLOUD ═════════╗
+│                            │                           ║                               ║
+│  CPU, RAM, Storage etc.    │                           ║  - Single Source of Truth     ║
+│                            │   `tidal sync servers`    ║  - Server, Database, and      ║
+│                            │──────────────────────────>║    Application Inventory      ║
+│                            │                           ║                               ║
+│                            │                           ║                               ║
+└────────────────────────────┘                           ╚═══════════════════════════════╝
 ```
 
 As your cloud migration will likely take place over many months or years, it's
 important to have current resource requirements throughout your journey. To
 accomplish this, setup `machine_stats` in a cron job or Scheduled Task and
-synchronize your data on a _daily_ basis to Tidal Migrations.
+synchronize your data on a _daily_ basis to Tidal. You can find more information
+about it [here](https://guides.tidal.cloud/machine_stats.html#run-machine-stats-on-a-cron-job).
 
 ## Table of Contents
 
