@@ -1,6 +1,6 @@
 # Machine Stats for Hypervisors (Virt-Stats)
 
-A simple and effective way to gather guest VM statistics (hostname, IP addresses) from a [libvirt](https://libvirt.org/)-based environment as a first layer of a [Tidal Migrations discovery process](https://guides.tidalmg.com/). A common use case is to use this to integrate your KVM-based virtual machine inventory into the Tidal Migrations Platform.
+A simple and effective way to gather guest VM statistics (hostname, IP addresses) from a [libvirt](https://libvirt.org/)-based environment as a first layer of a [Tidal's discovery process](https://guides.tidal.cloud/). A common use case is to use this to integrate your KVM-based virtual machine inventory into the [Tidal Accelerator](https://www.tidalcloud.com/accelerator/) Platform.
 
 ## Prerequisutes
 
