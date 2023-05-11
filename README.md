@@ -1,8 +1,7 @@
 # Machine Stats
 
 A simple and effective way to gather machine statistics (RAM, Storage, CPU)
-from a server environment as a first layer of a [Tidal Cloud's discovery
-process](https://guides.tidal.cloud/).
+from a server environment as a first layer of a [Tidal discovery process](https://guides.tidal.cloud/).
 
 Supports Windows and Unix-like platforms.
 

@@ -6,7 +6,7 @@ If WinRM is not the best solution for you, you can use an alternative approach b
 
 ## Usage
 
-For detailed information on the different ways to run Machine Stats for Windows, check out the [guide](https://guides.tidal.cloud/machine_stats.html#windows). This README will explain one common use case - where you want to take a single reading of your inventory and then pipe the result straight to the Tidal Accelerator platform using Tidal Tools.
+For detailed information on the different ways to run Machine Stats for Windows, check out the [guide](https://guides.tidal.cloud/machine_stats.html#windows). This README will explain one common use case - where you want to take a single reading of your inventory and then pipe the result straight to Tidal Accelerator using Tidal Tools.
 
 1. Download and install [Tidal Tools](https://get.tidal.sh/).
 

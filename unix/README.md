@@ -3,15 +3,14 @@
 [![PyPI](https://img.shields.io/pypi/v/machine-stats)](https://pypi.org/project/machine-stats/)
 
 A simple and effective way to gather machine statistics (RAM, Storage, CPU)
-from a server environment as a first layer of a [Tidal Cloud's discovery
-process](https://guides.tidal.cloud/).
+from a server environment as a first layer of a [Tidal discovery process](https://guides.tidal.cloud/).
 
 Machine Stats for Linux/Unix leverages [Ansible](https://www.ansible.com/) to
 gather facts in a cross-platform way.
 
 ## Interactive tutorial
 
-Get familiar with Machine Stats, Tidal Tools and Tidal Cloud Platform!
+Get familiar with Machine Stats, Tidal Tools and Tidal Accelerator!
 
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Ftidalmigrations%2Fmachine-stats-workshop&cloudshell_image=gcr.io%2Ftidal-1529434400027%2Fmachine-stats-workshop&cloudshell_tutorial=machine-stats.md&shellonly=true)
 
