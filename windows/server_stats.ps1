@@ -92,7 +92,7 @@ $ServerStats = {
         $perf += getPerf
 
         $TimestampRaw = $perf[0].TimeStamp_Sys100NS
-        $CPUUtilizationTimestamp = [DateTime]::FromFileTimeUtc($TimestampRaw).ToString("yyyy-MM-dd hh:mm:ss")
+        $CPUUtilizationTimestamp = [DateTime]::FromFileTimeUtc($TimestampRaw).ToString("yyyy-MM-dd HH:mm:ss")
 
         $pptDiff = $perf[1].PercentProcessorTime - $perf[0].PercentProcessorTime
         $tsDiff = $perf[1].TimeStamp_Sys100NS - $perf[0].TimeStamp_Sys100NS
