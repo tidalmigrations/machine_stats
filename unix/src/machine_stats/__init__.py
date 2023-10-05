@@ -155,6 +155,10 @@ def cpu_name(proc):
         return proc[2]
     return "Unknown"
 
+def ip_addresses(facts):
+    """Return IP addresses formatted for the tidal API"""
+    return list(map(lambda ip: {"address": ip},
+                    facts["ansible_all_ipv4_addresses"] + facts["ansible_all_ipv6_addresses"]))
 
 class ResultCallback(CallbackBase):
     """A sample callback plugin used for performing an action as results come in
