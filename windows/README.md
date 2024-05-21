@@ -57,6 +57,71 @@ Total Visible Memory (GB)
 Total Virtual Memory (GB)
 ```
 
+Here is an example of the output:
+
+```
+{
+    "servers": [
+        {
+            "operating_system": "Microsoft Windows Server 2019 Datacenter",
+            "storage_used_gb": 20,
+            "ram_used_gb": 0.79,
+            "operating_system_version": "10.0.17763",
+            "cpu_name": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+            "storage_allocated_gb": 30,
+            "cpu_count": 1,
+            "host_name": "EC2AMAZ-9G7PBLG",
+            "ram_allocated_gb": 1,
+            "custom_fields": {
+                "CPU_SocketDesignation": "CPU 0",
+                "CPU_Manufacturer": "GenuineIntel",
+                "CPU_Description": "Intel64 Family 6 Model 85 Stepping 7",
+                "CPU_L3CacheSize": 36608,
+                "CPU_L2CacheSize": 24576,
+                "TotalVirtual_Memory_GB": 1.97,
+                "TotalVisible_Memory_GB": 0.97,
+                "cpu_average": 61.58534415260111,
+                "cpu_peak": 99.230730450115985,
+                "cpu_sampling_timeout": 30
+            }
+        }
+    ]
+}
+```
+
+It's also possible to capture point-in-time CPU utilization using the flags `-CPUUtilizationOnlyValue` and `-CPUUtilizationTimeout`.
+
+Here's an example of the output of running `./runner.ps1 -CPUUtilizationOnlyValue -CPUUtilizationTimeout 1`:
+
+```
+{
+    "servers": [
+        {
+            "operating_system": "Microsoft Windows Server 2019 Datacenter",
+            "storage_used_gb": 20,
+            "ram_used_gb": 0.69,
+            "operating_system_version": "10.0.17763",
+            "cpu_name": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+            "storage_allocated_gb": 30,
+            "cpu_count": 1,
+            "host_name": "EC2AMAZ-9G7PBLG",
+            "ram_allocated_gb": 1,
+            "custom_fields": {
+                "CPU_SocketDesignation": "CPU 0",
+                "CPU_Manufacturer": "GenuineIntel",
+                "CPU_Description": "Intel64 Family 6 Model 85 Stepping 7",
+                "CPU_L3CacheSize": 36608,
+                "CPU_L2CacheSize": 24576,
+                "TotalVirtual_Memory_GB": 1.97,
+                "TotalVisible_Memory_GB": 0.97,
+                "cpu_utilization": 3.029071205656042,
+                "cpu_utilization_timestamp": "2024-05-21 05:17:19"
+            }
+        }
+    ]
+}
+```
+
 You can also capture information about processes running on the host machine. This feature is disabled by default, to enable it use the flag `-ProcessStats`. Note that this will only work when using WinRM, and so can't be used alongside the `-NoWinRM` flag. Running this flag will gather the following information about a process:
 
 ```text
@@ -66,6 +131,49 @@ Process Path
 Memory Used (MB)
 Max Memory Used (MB)
 Total Alive Time in Seconds
+```
+
+Here's an example of the output:
+
+```
+{
+    "servers": [
+        {
+            "operating_system": "Microsoft Windows Server 2019 Datacenter",
+            "storage_used_gb": 20,
+            "ram_used_gb": 0.86,
+            "operating_system_version": "10.0.17763",
+            "cpu_name": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+            "storage_allocated_gb": 30,
+            "cpu_count": 1,
+            "host_name": "EC2AMAZ-9G7PBLG",
+            "ram_allocated_gb": 1,
+            "custom_fields": {
+                "CPU_SocketDesignation": "CPU 0",
+                "CPU_Manufacturer": "GenuineIntel",
+                "CPU_Description": "Intel64 Family 6 Model 85 Stepping 7",
+                "CPU_L3CacheSize": 36608,
+                "CPU_L2CacheSize": 24576,
+                "TotalVirtual_Memory_GB": 1.97,
+                "TotalVisible_Memory_GB": 0.97,
+                "cpu_average": 69.767332954700024,
+                "cpu_peak": 82.032417892836961,
+                "cpu_sampling_timeout": 30
+            },
+            "process_stats": [
+                {
+                    "user": "NT AUTHORITY\\SYSTEM",
+                    "name": "AM_Delta",
+                    "path": "C:\\Windows\\SoftwareDistribution\\Download\\Install\\AM_Delta.exe",
+                    "pid": 3280,
+                    "memory_used_mb": 2.88,
+                    "max_memory_used_mb": 2.99,
+                    "total_alive_time": 295
+                }
+            ]
+        }
+    ]
+}
 ```
 
 *NB: The names must match the names above exactly. If you wish to change these or add other values you can do so at the end of the file in [windows/server_stats.ps1](windows/server_stats.ps1)*
