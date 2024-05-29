@@ -122,6 +122,71 @@ from the resources and sent and stored in Tidal Accelerator:
 - Operating System Version
 - CPU name
 
+Here is an example of the output of `machine-stats`:
+
+```
+{
+    "servers": [
+        {
+            "cpu_count": 2,
+            "cpu_name": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+            "custom_fields": {
+                "cpu_average": 0.9314873092946548,
+                "cpu_peak": 20.46949490073019,
+                "cpu_sampling_timeout": 30,
+                "cpu_utilization_timestamp": "2024-05-17 11:54:19"
+            },
+            "fqdn": "ip-172-31-9-62.ca-central-1.compute.internal",
+            "host_name": "ip-172-31-9-62",
+            "ip_addresses": [
+                "172.31.9.62",
+                "172.17.0.1",
+                "fe80::4ee:9cff:fe97:418f"
+            ],
+            "operating_system": "Ubuntu",
+            "operating_system_version": "18.04",
+            "ram_allocated_gb": 0.9267578125,
+            "ram_used_gb": 0.7001953125,
+            "storage_allocated_gb": 7.80632209777832,
+            "storage_used_gb": 2.61613130569458
+        }
+    ]
+}
+```
+
+It's also possible to capture point-in-time CPU utilization using the flags `--cpu-utilization-only-value` and `--cpu-utilization-timeout`.
+
+Here's an example of the output of running `machine-stats hosts --cpu-utilization-only-value --cpu-utilization-timeout 1`:
+
+```
+{
+    "servers": [
+        {
+            "cpu_count": 2,
+            "cpu_name": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+            "custom_fields": {
+                "cpu_sampling_timeout": 1,
+                "cpu_utilization": 0.497512437810943,
+                "cpu_utilization_timestamp": "2024-05-17 11:59:54"
+            },
+            "fqdn": "ip-172-31-9-62.ca-central-1.compute.internal",
+            "host_name": "ip-172-31-9-62",
+            "ip_addresses": [
+                "172.31.9.62",
+                "172.17.0.1",
+                "fe80::4ee:9cff:fe97:418f"
+            ],
+            "operating_system": "Ubuntu",
+            "operating_system_version": "18.04",
+            "ram_allocated_gb": 0.9267578125,
+            "ram_used_gb": 0.7109375,
+            "storage_allocated_gb": 7.80632209777832,
+            "storage_used_gb": 2.6161465644836426
+        }
+    ]
+}
+```
+
 You also can optionally capture metrics about processes running on the server:
 
 - User
@@ -134,6 +199,46 @@ You also can optionally capture metrics about processes running on the server:
 To enable capturing process metrics add the command-line flag `--process-stats`:
 ```sh
 machine-stats --process-stats
+```
+
+Here is an example of the output of this command:
+
+```
+{
+    "servers": [
+        {
+            "cpu_count": 2,
+            "cpu_name": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+            "custom_fields": {
+                "cpu_average": 0.4973174560230535,
+                "cpu_peak": 13.43191223297967,
+                "cpu_sampling_timeout": 30,
+                "cpu_utilization_timestamp": "2024-05-17 11:56:39"
+            },
+            "fqdn": "ip-172-31-9-62.ca-central-1.compute.internal",
+            "host_name": "ip-172-31-9-62",
+            "ip_addresses": [
+                "172.31.9.62",
+                "172.17.0.1",
+                "fe80::4ee:9cff:fe97:418f"
+            ],
+            "operating_system": "Ubuntu",
+            "operating_system_version": "18.04",
+            "process_stats": [
+                {
+                    "max_memory_used_mb": 283.7890625,
+                    "memory_used_mb": 220.11328125,
+                    "name": "systemd",
+                    "path": "/",
+                    "pid": 1,
+                    "ppid": 0,
+                    "total_alive_time": 420,
+                    "user": "root"
+                }
+            ]
+        }
+    ]
+}
 ```
 
 ## Minimal example
