@@ -137,13 +137,12 @@ def storage_used_gb(facts):
 
 
 def cpu_count(facts):
-    """Return the number of CPUs"""
-    return max(
-        [
-            int(facts.get("ansible_processor_count", 0)),
-            int(facts.get("ansible_processor_vcpus", 0)),
-        ]
-    )
+    """Return the number of CPU cores"""
+    return int(facts.get("ansible_processor_count", 0))
+
+def cpu_logical_processors(facts):
+    """Return the number of CPU logical processors."""
+    return int(facts.get("ansible_processor_vcpus", 0))
 
 
 def cpu_name(proc):
@@ -222,6 +221,9 @@ class ResultCallback(CallbackBase):
                 "storage_allocated_gb": storage_allocated_gb(facts),
                 "storage_used_gb": storage_used_gb(facts),
                 "cpu_count": cpu_count(facts),
+                "custom_fields": {
+                    "CPU_LogicalProcessors": cpu_logical_processors(facts)
+                },
                 "operating_system": facts["ansible_distribution"],
                 "operating_system_version": facts["ansible_distribution_version"],
                 "cpu_name": cpu_name(facts["ansible_processor"]),
