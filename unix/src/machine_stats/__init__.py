@@ -199,8 +199,16 @@ class ResultCallback(CallbackBase):
 
         if host not in self._total_results:
             self._total_results[host] = data
-        else:
+            return
+        
+        # Ensure we append any custom fields, rather than overwriting them
+        if 'custom_fields' in data and 'custom_fields' in self._total_results[host]:
+            combined_custom_fields = {**self._total_results[host]['custom_fields'], **data['custom_fields']}
+            data['custom_fields'].update(combined_custom_fields)
             self._total_results[host].update(data)
+            return
+        
+        self._total_results[host].update(data)
 
     def v2_runner_on_ok(self, result):
         self._plugins.ok_callback(self, result)
