@@ -231,7 +231,7 @@ class ResultCallback(CallbackBase):
                 "storage_used_gb": storage_used_gb(facts),
                 "cpu_count": cpu_count(facts),
                 "custom_fields": {
-                    "CPU_LogicalProcessors": cpu_logical_processors(facts)
+                    "cpu_logical_processors": cpu_logical_processors(facts)
                 },
                 "operating_system": facts["ansible_distribution"],
                 "operating_system_version": facts["ansible_distribution_version"],
