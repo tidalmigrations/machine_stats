@@ -138,7 +138,8 @@ def storage_used_gb(facts):
 
 def cpu_count(facts):
     """Return the number of CPU cores"""
-    return int(facts.get("ansible_processor_count", 0))
+    return max(int(facts.get("ansible_processor_count", 0)),
+               int(facts.get("ansible_processor_cores", 0)))
 
 def cpu_logical_processors(facts):
     """Return the number of CPU logical processors."""
