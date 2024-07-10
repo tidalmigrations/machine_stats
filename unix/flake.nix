@@ -32,6 +32,8 @@
           postVenvCreation = ''
             unset SOURCE_DATE_EPOCH
             pip install -r ./requirements.txt
+            pip install -r dev-requirements.txt
+            pip install -e .
           '';
 
           # Now we can execute any commands within the virtual environment.

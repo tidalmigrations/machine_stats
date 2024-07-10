@@ -137,13 +137,13 @@ def storage_used_gb(facts):
 
 
 def cpu_count(facts):
-    """Return the number of CPUs"""
-    return max(
-        [
-            int(facts.get("ansible_processor_count", 0)),
-            int(facts.get("ansible_processor_vcpus", 0)),
-        ]
-    )
+    """Return the number of CPU cores"""
+    return max(int(facts.get("ansible_processor_count", 0)),
+               int(facts.get("ansible_processor_cores", 0)))
+
+def cpu_logical_processors(facts):
+    """Return the number of CPU logical processors."""
+    return int(facts.get("ansible_processor_vcpus", 0))
 
 
 def cpu_name(proc):
@@ -200,8 +200,16 @@ class ResultCallback(CallbackBase):
 
         if host not in self._total_results:
             self._total_results[host] = data
-        else:
+            return
+        
+        # Ensure we append any custom fields, rather than overwriting them
+        if 'custom_fields' in data and 'custom_fields' in self._total_results[host]:
+            combined_custom_fields = {**self._total_results[host]['custom_fields'], **data['custom_fields']}
+            data['custom_fields'].update(combined_custom_fields)
             self._total_results[host].update(data)
+            return
+        
+        self._total_results[host].update(data)
 
     def v2_runner_on_ok(self, result):
         self._plugins.ok_callback(self, result)
@@ -222,6 +230,9 @@ class ResultCallback(CallbackBase):
                 "storage_allocated_gb": storage_allocated_gb(facts),
                 "storage_used_gb": storage_used_gb(facts),
                 "cpu_count": cpu_count(facts),
+                "custom_fields": {
+                    "cpu_logical_processors": cpu_logical_processors(facts)
+                },
                 "operating_system": facts["ansible_distribution"],
                 "operating_system_version": facts["ansible_distribution_version"],
                 "cpu_name": cpu_name(facts["ansible_processor"]),
