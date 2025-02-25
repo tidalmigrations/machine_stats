@@ -104,27 +104,22 @@ class PluginManager(object):
 
         return method
 
-
 def ram_allocated_gb(facts):
     """Return total memory allocation in GB"""
     return facts["ansible_memtotal_mb"] / 1024
-
 
 def ram_used_gb(facts):
     """Return used memory in GB"""
     return (facts["ansible_memtotal_mb"] - facts["ansible_memfree_mb"]) / 1024
 
-
 def _size(key, mounts):
     return sum([item.get(key, 0) for item in mounts])
-
 
 def storage_allocated_gb(facts):
     """Return total storage allocation in GB"""
     if "ansible_mounts" not in facts:
         return 0
     return _size("size_total", facts["ansible_mounts"]) / 1024 ** 3
-
 
 def storage_used_gb(facts):
     """Return used storage in GB"""
@@ -135,16 +130,9 @@ def storage_used_gb(facts):
         - _size("size_available", facts["ansible_mounts"])
     ) / 1024 ** 3
 
-
-def cpu_count(facts):
-    """Return the number of CPU cores"""
-    return max(int(facts.get("ansible_processor_count", 0)),
-               int(facts.get("ansible_processor_cores", 0)))
-
 def cpu_logical_processors(facts):
     """Return the number of CPU logical processors."""
     return int(facts.get("ansible_processor_vcpus", 0))
-
 
 def cpu_name(proc):
     """Return CPU name"""
@@ -229,10 +217,7 @@ class ResultCallback(CallbackBase):
                 "ram_used_gb": ram_used_gb(facts),
                 "storage_allocated_gb": storage_allocated_gb(facts),
                 "storage_used_gb": storage_used_gb(facts),
-                "cpu_count": cpu_count(facts),
-                "custom_fields": {
-                    "cpu_logical_processors": cpu_logical_processors(facts)
-                },
+                "cpu_count": cpu_logical_processors(facts),
                 "operating_system": facts["ansible_distribution"],
                 "operating_system_version": facts["ansible_distribution_version"],
                 "cpu_name": cpu_name(facts["ansible_processor"]),
