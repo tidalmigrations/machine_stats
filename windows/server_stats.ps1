@@ -57,10 +57,6 @@ $ServerStats = {
         $cpu = $CPUInfo
     }
 
-    $cpu_count = Get-WmiObject Win32_Processor @getWmiObjectParams |
-    Measure-Object -Property NumberOfCores -Sum |
-    Select-Object -ExpandProperty Sum
-
     # Get Memory Information. 
     # The data will be shown in a table as MB, rounded to the nearest second decimal. 
     $OSTotalVirtualMemory = [math]::round($OSInfo.TotalVirtualMemorySize / 1MB, 2) 
@@ -157,7 +153,7 @@ $ServerStats = {
             ram_used_gb              = $OSUsedMemory 
             storage_allocated_gb     = $Total_DriveSpaceGB 
             storage_used_gb          = $Total_UsedDriveSpaceGB 
-            cpu_count                = $cpu_count
+            cpu_count                = $cpu.NumberOfLogicalProcessors
             operating_system         = $OSInfo.Caption 
             operating_system_version = $OSInfo.Version 
             cpu_name                 = $cpu.Name 
@@ -168,7 +164,6 @@ $ServerStats = {
             CPU_Manufacturer       = $cpu.Manufacturer 
             CPU_L2CacheSize        = $cpu.L2CacheSize 
             CPU_L3CacheSize        = $cpu.L3CacheSize
-            cpu_logical_processors = $cpu.NumberOfLogicalProcessors
             CPU_SocketDesignation  = $cpu.SocketDesignation 
             TotalVisible_Memory_GB = $OSTotalVisibleMemory
             TotalVirtual_Memory_GB = $OSTotalVirtualMemory 
