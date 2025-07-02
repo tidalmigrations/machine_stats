@@ -20,7 +20,7 @@ else
 fi
 
 # Verify machine-stats is installed in development mode
-if pip list | grep -q "machine_stats.*dev0.*$(pwd)"; then
+if pip show machine-stats | grep -q "Location: $(pwd)"; then
     echo "✓ machine-stats is installed in development mode"
 else
     echo "⚠ machine-stats not found in development mode. Installing..."
