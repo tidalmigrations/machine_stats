@@ -25,28 +25,19 @@ def run_module():
     # this includes instantiation, a couple of common attr would be the
     # args/params passed to the execution, as well as if the module
     # supports check mode
-    module = AnsibleModule(argument_spec=module_args, supports_check_mode=False)
+    module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
 
-    # if proc-stats isn't defined or false that means that the module
-    # is disabled
-    if not module.params["process_stats"]:
+    # if proc-stats is disabled or we are in check mode, exit early.
+    if not module.params["process_stats"] or module.check_mode:
         module.exit_json(**result)
-
-    # if the user is working with this module in only check mode we do not
-    # want to make any changes to the environment, just return the current
-    # state with no modifications
-    if module.check_mode:
-        module.exit_json(**result)
-
-    # get stats from processes running on server
-    try:
-        stats = process_stats()
-    except Exception as e:
-        module.fail_json(msg=str(e), **result)
-
-    result["ansible_proc_stats"] = stats
-
-    module.exit_json(**result)
+    else:
+        # get stats from processes running on server
+        try:
+            stats = process_stats()
+            result["ansible_proc_stats"] = stats
+            module.exit_json(**result)
+        except Exception as e:
+            module.fail_json(msg=str(e), **result)
 
 
 def _get_process_exe_info(process_path):
