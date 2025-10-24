@@ -1,3 +1,6 @@
+import argparse
+from unittest.mock import MagicMock, patch
+
 import pytest
 from src.machine_stats import (
     ram_allocated_gb,
@@ -7,6 +10,7 @@ from src.machine_stats import (
     cpu_logical_processors,
     cpu_name,
     ip_addresses,
+    main,
 )
 
 
@@ -59,3 +63,28 @@ def test_ip_addresses():
     # The original function returns a list of dicts, but the callback flattens it.
     # For now, we test the direct output of the function.
     assert ip_addresses(facts) == expected_ips
+
+
+@patch('src.machine_stats.argparse.ArgumentParser')
+@patch('src.machine_stats.PluginManager')
+@patch('src.machine_stats.Application')
+def test_main(mock_app_cls, mock_pm_cls, mock_parser_cls):
+    mock_parser = mock_parser_cls.return_value
+    mock_args = argparse.Namespace(hosts=[], measurement=False)
+    mock_parser.parse_args.return_value = mock_args
+
+    # Mock the 'hosts' file
+    with patch('builtins.open') as mock_open:
+        mock_file = MagicMock()
+        mock_file.name = "hosts"
+        # When 'open("hosts", "r")' is called inside main(), it will return our mock_file.
+        # MagicMock correctly handles being used as a context manager.
+        mock_open.return_value = mock_file
+
+        main()
+
+    # Verify Application was called correctly
+    mock_app_cls.assert_called_once_with(
+        sources=['hosts'], plugins=mock_pm_cls.return_value, args=mock_args
+    )
+    mock_app_cls.return_value.run.assert_called_once()
