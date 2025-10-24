@@ -61,7 +61,6 @@ def parse_status(process_path):
     # Note : This call requires root level access to be able to follow
     # all symlinks. Otherwise some processes will be identified as
     # /proc/2138/exe
-
     try:
         path, name = str(Path(process_path + "/exe").resolve()).rsplit("/", 1)
     except:
@@ -130,6 +129,7 @@ def parse_status(process_path):
             user_entry = getpwuid(
                 uid
             )  # KeyError is raised if the entry asked for cannot be found.
+            print(user_entry)
         except KeyError:
             stats["user"] = str(uid)  # Fallback to UID
         else:

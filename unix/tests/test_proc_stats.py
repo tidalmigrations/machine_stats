@@ -50,13 +50,14 @@ def test_parse_status_getpwuid_fails():
     """
     status_file_content = 'Pid:\t1\nPPid:\t0\nUid:\t1001\t1001\t1001\t1001\n'
     with patch('src.machine_stats.modules.proc_stats.os.stat'), \
-         patch('src.machine_stats.modules.proc_stats.Path.resolve'), \
+         patch('pathlib.Path.resolve'), \
+         patch('pathlib.Path.resolve'), \
          patch('builtins.open', mock_open(read_data=status_file_content)), \
          patch('src.machine_stats.modules.proc_stats.time'), \
-         patch('src.machine_stats.modules.proc_stats.getpwuid', side_effect=KeyError):
+         patch('src.machine_stats.modules.proc_stats.getpwuid', side_effect=Exception(KeyError)):
 
         stats = parse_status('/proc/1')
-
+        print(stats)
     assert stats['user'] == '1001'
 
 def test_parse_status_missing_fields():
@@ -159,4 +160,3 @@ def test_run_module_fail(mock_ansible_module, mock_process_stats):
     run_module()
 
     mock_module.fail_json.assert_called_with(msg=error_message, changed=False, ansible_proc_stats=None)
-
