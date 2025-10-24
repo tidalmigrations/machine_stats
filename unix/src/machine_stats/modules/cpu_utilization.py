@@ -28,32 +28,37 @@ def run_module():
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
 
     # if timeout is specified to 0, that means that the module is disabled
-    if module.params["timeout"] == 0:
-        module.exit_json(**result)
-
+    # or
     # if the user is working with this module in only check mode we do not
     # want to make any changes to the environment, just return the current
     # state with no modifications
-    if module.check_mode:
-        module.exit_json(**result)
+    if module.params["timeout"] == 0 or  module.check_mode:
+        return module.exit_json(**result)
 
     # get CPU utilization values
     try:
         if module.params["only_value"]:
             value, rtc_date, rtc_time = cpu_utilization_value(module.params["timeout"])
         else:
-            average, peak, rtc_date, rtc_time = cpu_utilization(module.params["timeout"])
+            average, peak, rtc_date, rtc_time = cpu_utilization(
+                module.params["timeout"]
+            )
     except Exception as e:
         module.fail_json(msg=str(e), **result)
 
     # manipulate or modify the state as needed
     result["timeout"] = module.params["timeout"]
     if module.params["only_value"]:
-        result["ansible_cpu_utilization"] = dict(value=value, rtc_date=rtc_date, rtc_time=rtc_time)
+        result["ansible_cpu_utilization"] = dict(
+            value=value, rtc_date=rtc_date, rtc_time=rtc_time
+        )
     else:
-        result["ansible_cpu_utilization"] = dict(average=average, peak=peak , rtc_date=rtc_date, rtc_time=rtc_time)
+        result["ansible_cpu_utilization"] = dict(
+            average=average, peak=peak, rtc_date=rtc_date, rtc_time=rtc_time
+        )
 
     module.exit_json(**result)
+
 
 def get_perf():
     with open("/proc/stat") as f:
@@ -61,14 +66,15 @@ def get_perf():
         idle, total = fields[3], sum(fields)
         return idle, total
 
+
 def get_date_time():
     with open("/proc/driver/rtc") as t:
         rtc_time_line = t.readline().strip().split()
         rtc_date_line = t.readline().strip().split()
-    
+
         rtc_time = rtc_time_line[2]
         rtc_date = rtc_date_line[2]
-        
+
         return rtc_date, rtc_time
 
 

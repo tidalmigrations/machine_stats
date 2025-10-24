@@ -106,7 +106,7 @@ def test_cpu_utilization_value_zero_delta(mock_get_perf, mock_get_date_time):
 @patch("src.machine_stats.modules.cpu_utilization.AnsibleModule")
 def test_run_module_disabled(mock_ansible_module):
     mock_module = MagicMock()
-    mock_module.params = {"timeout": 0}
+    mock_module.params = {"timeout": 0, "only_value": False}
     mock_ansible_module.return_value = mock_module
     run_module()
     mock_module.exit_json.assert_called_with(
