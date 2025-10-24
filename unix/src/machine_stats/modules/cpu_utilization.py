@@ -79,7 +79,10 @@ def cpu_utilization(timeout):
         idle, total = get_perf()
         idle_delta, total_delta = idle - last_idle, total - last_total
         last_idle, last_total = idle, total
-        utilisation = 100.0 * (1.0 - idle_delta / total_delta)
+        if total_delta == 0:
+            utilisation = 0.0
+        else:
+            utilisation = 100.0 * (1.0 - idle_delta / total_delta)
         cpu_stats.append(utilisation)
         total_runs += 1
         sleep(1)
@@ -99,7 +102,10 @@ def cpu_utilization_value(timeout):
     sleep(timeout)
     idle, total = get_perf()
     idle_delta, total_delta = idle - last_idle, total - last_total
-    utilization = 100.0 * (1.0 - idle_delta / total_delta)
+    if total_delta == 0:
+        utilization = 0.0
+    else:
+        utilization = 100.0 * (1.0 - idle_delta / total_delta)
 
     return utilization, rtc_date, rtc_time
 
