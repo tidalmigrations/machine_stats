@@ -71,17 +71,25 @@ def get_date_time():
         
         return rtc_date, rtc_time
 
-def cpu_utilization(timeout):
+
+def cpu_utilization(timeout=1):
     """
     Calculate CPU utilization over a given timeout period.
     :param timeout: Duration in seconds to monitor CPU utilization.
     :return: Tuple containing average utilization, peak utilization,
                 RTC date, and RTC time.
+
+    The default value is 1, which causes the function to run 1 time.
+    So if timeout is less than 1, return zeros.
+
     """
     last_idle = last_total = total_runs = 0
     cpu_stats = []
 
-    while total_runs <= timeout:
+    if timeout < 1:
+        return 0, 0, 0, 0
+
+    while total_runs < timeout:
         idle, total = get_perf()
         idle_delta, total_delta = idle - last_idle, total - last_total
         last_idle, last_total = idle, total
@@ -102,6 +110,11 @@ def cpu_utilization(timeout):
 
 
 def cpu_utilization_value(timeout):
+    """
+    Calculate CPU utilization over a given timeout period.
+    :param timeout: Duration in seconds to monitor CPU utilization.
+    :return: Tuple containing utilization, RTC date, and RTC time.
+    """
     last_idle, last_total = get_perf()
     rtc_date, rtc_time = get_date_time()
 
