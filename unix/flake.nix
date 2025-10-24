@@ -15,6 +15,8 @@
             # A Python interpreter including the 'venv' module is required to bootstrap
             # the environment.
             python3Packages.python
+            python3Packages.pytest
+            python3Packages.pluggy
 
             # This execute some shell code to initialize a venv in $venvDir before
             # dropping into the shell
