@@ -49,34 +49,22 @@ def run_module():
     module.exit_json(**result)
 
 
-def parse_status(process_path):
-    """Takes in a string value of a process path, returns a dictionary containing the
-    following attributes ['path', 'name', 'total_alive_time', 'pid', 'ppid',
-    'max_memory_used_mb', 'memory_used_mb']"""
-
-    stats = dict()
-    # Follow the symlink for the exe file to get the path and name of
-    # the executable
-    #
-    # Note : This call requires root level access to be able to follow
-    # all symlinks. Otherwise some processes will be identified as
-    # /proc/2138/exe
+def _get_process_exe_info(process_path):
+    """
+    Resolves the executable path for a process to get its path and name.
+    Returns a tuple of (path, name) or None on failure.
+    """
     try:
         path, name = str(Path(process_path + "/exe").resolve()).rsplit("/", 1)
-    except:
-        return stats
+        return path, name
+    except Exception:
+        return None
 
-    stats["path"] = path
-    stats["name"] = name
 
-    # Use the folder create time for the process as an indicator for
-    # the start time.
-    #
-    # There is a caveat that on Linux, st_ctime tracks the last time
-    # the metadata for a folder changed. So we're making an assumption
-    # that the folder metadata has not changed since creation
-    stats["total_alive_time"] = round(time() - os.stat(process_path).st_ctime)
-
+def _parse_proc_status_file(process_path):
+    """
+    Parses the /proc/<pid>/status file and returns a dictionary of its contents.
+    """
     # This algorithm expects all status files to be formatted like:
     # ```
     # Name:	init
@@ -88,12 +76,51 @@ def parse_status(process_path):
     # PPid:	0
     # ...
     # ```
-    status = dict()
+    status = {}
     with open(process_path + "/status") as proc_status:
         for line in proc_status:
             result = line.split(":")
-            name = result[0].lower().strip()
-            status[name] = result[1].strip()
+            key = result[0].lower().strip()
+            value = result[1].strip()
+            status[key] = value
+    return status
+
+
+def _get_username_from_uid(uid_str):
+    """
+    Takes a UID string from a proc status file and returns the username.
+    Falls back to the UID if the username cannot be found.
+    """
+    uid = int(uid_str.split()[0])
+    try:
+        user_entry = getpwuid(uid)
+        return user_entry.pw_name
+    except KeyError:
+        return str(uid)  # Fallback to UID
+
+
+def parse_status(process_path):
+    """Takes in a string value of a process path, returns a dictionary containing the
+    following attributes ['path', 'name', 'total_alive_time', 'pid', 'ppid',
+    'max_memory_used_mb', 'memory_used_mb']"""
+
+    stats = {}
+
+    exe_info = _get_process_exe_info(process_path)
+    if not exe_info:
+        return stats
+
+    stats["path"], stats["name"] = exe_info
+
+    # Use the folder create time for the process as an indicator for
+    # the start time.
+    #
+    # There is a caveat that on Linux, st_ctime tracks the last time
+    # the metadata for a folder changed. So we're making an assumption
+    # that the folder metadata has not changed since creation
+    stats["total_alive_time"] = round(time() - os.stat(process_path).st_ctime)
+
+    status = _parse_proc_status_file(process_path)
 
     # Parse error will throw to parent function
     if status.get("pid"):
@@ -124,16 +151,7 @@ def parse_status(process_path):
 
     # Finally, let's see if we can read the username
     if status.get("uid"):
-        uid = int(status["uid"].split()[0])
-        try:
-            user_entry = getpwuid(
-                uid
-            )  # KeyError is raised if the entry asked for cannot be found.
-            print(user_entry)
-        except KeyError:
-            stats["user"] = str(uid)  # Fallback to UID
-        else:
-            stats["user"] = user_entry.pw_name
+        stats["user"] = _get_username_from_uid(status["uid"])
 
     return stats
 
