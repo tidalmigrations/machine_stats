@@ -39,23 +39,21 @@ def run_module():
     try:
         if module.params["only_value"]:
             value, rtc_date, rtc_time = cpu_utilization_value(module.params["timeout"])
+            result["ansible_cpu_utilization"] = dict(
+                value=value, rtc_date=rtc_date, rtc_time=rtc_time
+            )
         else:
             average, peak, rtc_date, rtc_time = cpu_utilization(
                 module.params["timeout"]
+            )
+            result["ansible_cpu_utilization"] = dict(
+                average=average, peak=peak, rtc_date=rtc_date, rtc_time=rtc_time
             )
     except Exception as e:
         module.fail_json(msg=str(e), **result)
 
     # manipulate or modify the state as needed
     result["timeout"] = module.params["timeout"]
-    if module.params["only_value"]:
-        result["ansible_cpu_utilization"] = dict(
-            value=value, rtc_date=rtc_date, rtc_time=rtc_time
-        )
-    else:
-        result["ansible_cpu_utilization"] = dict(
-            average=average, peak=peak, rtc_date=rtc_date, rtc_time=rtc_time
-        )
 
     module.exit_json(**result)
 
