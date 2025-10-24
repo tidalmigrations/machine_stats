@@ -1,29 +1,63 @@
 import pytest
 from unittest.mock import patch, mock_open, MagicMock
-from src.machine_stats.modules.proc_stats import parse_status, process_stats, run_module
+from src.machine_stats.modules.proc_stats import parse_status, process_stats, run_module, _get_process_exe_info, _parse_proc_status_file, _get_username_from_uid
 
-def test_parse_status():
+@patch('src.machine_stats.modules.proc_stats.Path')
+def test__get_process_exe_info_success(mock_path):
+    mock_path.return_value.resolve.return_value = '/usr/sbin/nginx'
+    path, name = _get_process_exe_info('/proc/1')
+    assert path == '/usr/sbin'
+    assert name == 'nginx'
+
+@patch('src.machine_stats.modules.proc_stats.Path.resolve', side_effect=Exception("Permission denied"))
+def test__get_process_exe_info_fails(mock_resolve):
+    result = _get_process_exe_info('/proc/1')
+    assert result is None
+
+def test__parse_proc_status_file():
+    status_file_content = 'Name:\tnginx\nPid:\t1\n'
+    with patch('builtins.open', mock_open(read_data=status_file_content)):
+        status = _parse_proc_status_file('/proc/1')
+    assert status == {'name': 'nginx', 'pid': '1'}
+
+@patch('src.machine_stats.modules.proc_stats.getpwuid')
+def test__get_username_from_uid_success(mock_getpwuid):
+    mock_getpwuid.return_value.pw_name = 'root'
+    username = _get_username_from_uid('0\t0\t0\t0')
+    assert username == 'root'
+    mock_getpwuid.assert_called_with(0)
+
+@patch('src.machine_stats.modules.proc_stats.getpwuid', side_effect=KeyError)
+def test__get_username_from_uid_fails(mock_getpwuid):
+    username = _get_username_from_uid('1001\t1001\t1001\t1001')
+    assert username == '1001'
+    mock_getpwuid.assert_called_with(1001)
+
+
+@patch('src.machine_stats.modules.proc_stats._get_username_from_uid')
+@patch('src.machine_stats.modules.proc_stats._parse_proc_status_file')
+@patch('src.machine_stats.modules.proc_stats.os.stat')
+@patch('src.machine_stats.modules.proc_stats.time')
+@patch('src.machine_stats.modules.proc_stats._get_process_exe_info')
+def test_parse_status(mock_get_exe_info, mock_time, mock_stat, mock_parse_status_file, mock_get_username):
     """
-    Test the parse_status function with mocked data.
+    Test the parse_status function with mocked helpers.
     """
-    status_file_content = 'Name:\tnginx\nUmask:\t0000\nState:\tS (sleeping)\nTgid:\t1\nNgid:\t0\nPid:\t1\nPPid:\t0\nUid:\t0\t0\t0\t0\nVmPeak:\t168 kB\nVmSize:\t168 kB\n'
-    with patch('src.machine_stats.modules.proc_stats.os.stat') as mock_stat, \
-         patch('src.machine_stats.modules.proc_stats.Path.resolve') as mock_resolve, \
-         patch('builtins.open', mock_open(read_data=status_file_content)), \
-         patch('src.machine_stats.modules.proc_stats.time') as mock_time, \
-         patch('src.machine_stats.modules.proc_stats.getpwuid') as mock_getpwuid:
+    # Mock helpers
+    mock_get_exe_info.return_value = ('/usr/sbin', 'nginx')
+    mock_time.return_value = 1672531260 # 60 seconds later
+    mock_stat.return_value.st_ctime = 1672531200  # 2023-01-01 00:00:00 UTC
+    mock_parse_status_file.return_value = {
+        'name': 'nginx',
+        'pid': '1',
+        'ppid': '0',
+        'uid': '0\t0\t0\t0',
+        'vmpeak': '168 kB',
+        'vmsize': '168 kB'
+    }
+    mock_get_username.return_value = 'root'
 
-        # Mock the return value of os.stat
-        mock_stat.return_value.st_ctime = 1672531200  # 2023-01-01 00:00:00 UTC
-
-        # Mock the return value of time.time
-        mock_time.return_value = 1672531260 # 60 seconds later
-
-        # Mock the return value of Path.resolve
-        mock_resolve.return_value = '/usr/sbin/nginx'
-        mock_getpwuid.return_value.pw_name = 'root'
-
-        stats = parse_status('/proc/1')
+    stats = parse_status('/proc/1')
 
     # Assert the results
     assert stats['name'] == 'nginx'
@@ -34,43 +68,40 @@ def test_parse_status():
     assert stats['memory_used_mb'] == 168 / 1024
     assert stats['max_memory_used_mb'] == 168 / 1024
     assert stats['user'] == 'root'
+    mock_get_exe_info.assert_called_with('/proc/1')
+    mock_stat.assert_called_with('/proc/1')
+    mock_parse_status_file.assert_called_with('/proc/1')
+    mock_get_username.assert_called_with('0\t0\t0\t0')
 
 
-def test_parse_status_resolve_fails():
+@patch('src.machine_stats.modules.proc_stats._get_process_exe_info', return_value=None)
+def test_parse_status_exe_info_fails(mock_get_exe_info):
     """
-    Test parse_status when Path.resolve() fails.
+    Test parse_status returns empty dict when exe info can't be resolved.
     """
-    with patch('src.machine_stats.modules.proc_stats.Path.resolve', side_effect=Exception("Permission denied")):
-        stats = parse_status('/proc/1')
+    stats = parse_status('/proc/1')
     assert stats == {}
+    mock_get_exe_info.assert_called_once_with('/proc/1')
 
-def test_parse_status_getpwuid_fails():
-    """
-    Test parse_status when getpwuid fails and it falls back to UID.
-    """
-    status_file_content = 'Pid:\t1\nPPid:\t0\nUid:\t1001\t1001\t1001\t1001\n'
-    with patch('src.machine_stats.modules.proc_stats.os.stat'), \
-         patch('pathlib.Path.resolve'), \
-         patch('pathlib.Path.resolve'), \
-         patch('builtins.open', mock_open(read_data=status_file_content)), \
-         patch('src.machine_stats.modules.proc_stats.time'), \
-         patch('src.machine_stats.modules.proc_stats.getpwuid', side_effect=Exception(KeyError)):
 
-        stats = parse_status('/proc/1')
-        print(stats)
-    assert stats['user'] == '1001'
-
-def test_parse_status_missing_fields():
+@patch('src.machine_stats.modules.proc_stats._get_username_from_uid')
+@patch('src.machine_stats.modules.proc_stats._parse_proc_status_file')
+@patch('src.machine_stats.modules.proc_stats.os.stat')
+@patch('src.machine_stats.modules.proc_stats.time')
+@patch('src.machine_stats.modules.proc_stats._get_process_exe_info')
+def test_parse_status_missing_fields(mock_get_exe_info, mock_time, mock_stat, mock_parse_status_file, mock_get_username):
     """
     Test parse_status with a status file missing memory fields.
     """
-    status_file_content = 'Name:\tnginx\nPid:\t1\nPPid:\t0\nUid:\t0\n'
-    with patch('src.machine_stats.modules.proc_stats.os.stat'), \
-        patch('src.machine_stats.modules.proc_stats.Path.resolve'), \
-        patch('builtins.open', mock_open(read_data=status_file_content)), \
-        patch('src.machine_stats.modules.proc_stats.time'), \
-        patch('src.machine_stats.modules.proc_stats.getpwuid'):
-        stats = parse_status('/proc/1')
+    mock_get_exe_info.return_value = ('/', 'nginx')
+    mock_time.return_value = 1
+    mock_stat.return_value.st_ctime = 0
+    mock_parse_status_file.return_value = {
+        'name': 'nginx', 'pid': '1', 'ppid': '0', 'uid': '0\t0\t0\t0'
+    }
+    mock_get_username.return_value = 'root'
+
+    stats = parse_status('/proc/1')
 
     assert 'memory_used_mb' not in stats
     assert 'max_memory_used_mb' not in stats
@@ -84,10 +115,10 @@ def test_process_stats(mock_scandir, mock_parse_status):
     """
     # Mock directory entries
     proc_dir = '/proc'
-    p1 = type('MockDirEntry', (object,), {'is_dir': lambda: True, 'name': '1', 'path': f'{proc_dir}/1'})()
-    p2 = type('MockDirEntry', (object,), {'is_dir': lambda: True, 'name': '2', 'path': f'{proc_dir}/2'})()
-    not_a_proc = type('MockDirEntry', (object,), {'is_dir': lambda: True, 'name': 'self', 'path': f'{proc_dir}/self'})()
-    not_a_dir = type('MockDirEntry', (object,), {'is_dir': lambda: False, 'name': 'version', 'path': f'{proc_dir}/version'})()
+    p1 = type('MockDirEntry', (object,), {'is_dir': lambda self: True, 'name': '1', 'path': f'{proc_dir}/1'})()
+    p2 = type('MockDirEntry', (object,), {'is_dir': lambda self: True, 'name': '2', 'path': f'{proc_dir}/2'})()
+    not_a_proc = type('MockDirEntry', (object,), {'is_dir': lambda self: True, 'name': 'self', 'path': f'{proc_dir}/self'})()
+    not_a_dir = type('MockDirEntry', (object,), {'is_dir': lambda self: False, 'name': 'version', 'path': f'{proc_dir}/version'})()
 
     mock_scandir.return_value = [p1, p2, not_a_proc, not_a_dir]
 
