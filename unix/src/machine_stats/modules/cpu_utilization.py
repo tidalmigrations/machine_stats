@@ -32,7 +32,7 @@ def run_module():
     # if the user is working with this module in only check mode we do not
     # want to make any changes to the environment, just return the current
     # state with no modifications
-    if module.params["timeout"] == 0 or  module.check_mode:
+    if module.params["timeout"] == 0 or module.check_mode:
         return module.exit_json(**result)
 
     # get CPU utilization values
