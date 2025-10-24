@@ -77,11 +77,15 @@ def test_main(mock_app_cls, mock_pm_cls, mock_parser_cls):
     with patch('builtins.open') as mock_open:
         mock_file = MagicMock()
         mock_file.name = "hosts"
-        # When 'open("hosts", "r")' is called inside main(), it will return our mock_file.
-        # MagicMock correctly handles being used as a context manager.
-        mock_open.return_value = mock_file
+        # Configure the mock for the 'with open(...) as f:' context manager.
+        # open() returns a context manager object. The result of that
+        # object's __enter__() method is what's assigned to 'f'.
+        mock_open.return_value.__enter__.return_value = mock_file
 
         main()
+
+    # Check that the fallback to open 'hosts' was triggered
+    mock_open.assert_called_once_with('hosts', 'r')
 
     # Verify Application was called correctly
     mock_app_cls.assert_called_once_with(
