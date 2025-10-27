@@ -38,6 +38,7 @@
                     python310Packages.pluggy
                     python310Packages.wheel
                     python310Packages.setuptools
+                    pipenv
                     libvirt
                   ];
 
