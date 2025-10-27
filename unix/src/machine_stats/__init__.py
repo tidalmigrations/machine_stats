@@ -18,6 +18,7 @@ default_config = {
 for k, v in default_config.items():
     os.environ[k] = v
 
+
 # Loading config file must be prior to importing most of the ansible.* packages
 def find_config_file():
     """Find configuration file"""
@@ -104,22 +105,27 @@ class PluginManager(object):
 
         return method
 
+
 def ram_allocated_gb(facts):
     """Return total memory allocation in GB"""
     return facts["ansible_memtotal_mb"] / 1024
+
 
 def ram_used_gb(facts):
     """Return used memory in GB"""
     return (facts["ansible_memtotal_mb"] - facts["ansible_memfree_mb"]) / 1024
 
+
 def _size(key, mounts):
     return sum([item.get(key, 0) for item in mounts])
+
 
 def storage_allocated_gb(facts):
     """Return total storage allocation in GB"""
     if "ansible_mounts" not in facts:
         return 0
-    return _size("size_total", facts["ansible_mounts"]) / 1024 ** 3
+    return _size("size_total", facts["ansible_mounts"]) / 1024**3
+
 
 def storage_used_gb(facts):
     """Return used storage in GB"""
@@ -128,11 +134,13 @@ def storage_used_gb(facts):
     return (
         _size("size_total", facts["ansible_mounts"])
         - _size("size_available", facts["ansible_mounts"])
-    ) / 1024 ** 3
+    ) / 1024**3
+
 
 def cpu_logical_processors(facts):
     """Return the number of CPU logical processors."""
     return int(facts.get("ansible_processor_vcpus", 0))
+
 
 def cpu_name(proc):
     """Return CPU name"""
@@ -143,10 +151,16 @@ def cpu_name(proc):
         return proc[2]
     return "Unknown"
 
+
 def ip_addresses(facts):
     """Return IP addresses formatted for the tidal API"""
-    return list(map(lambda ip: {"address": ip},
-                    facts["ansible_all_ipv4_addresses"] + facts["ansible_all_ipv6_addresses"]))
+    return list(
+        map(
+            lambda ip: {"address": ip},
+            facts["ansible_all_ipv4_addresses"] + facts["ansible_all_ipv6_addresses"],
+        )
+    )
+
 
 class ResultCallback(CallbackBase):
     """A sample callback plugin used for performing an action as results come in
@@ -189,14 +203,17 @@ class ResultCallback(CallbackBase):
         if host not in self._total_results:
             self._total_results[host] = data
             return
-        
+
         # Ensure we append any custom fields, rather than overwriting them
-        if 'custom_fields' in data and 'custom_fields' in self._total_results[host]:
-            combined_custom_fields = {**self._total_results[host]['custom_fields'], **data['custom_fields']}
-            data['custom_fields'].update(combined_custom_fields)
+        if "custom_fields" in data and "custom_fields" in self._total_results[host]:
+            combined_custom_fields = {
+                **self._total_results[host]["custom_fields"],
+                **data["custom_fields"],
+            }
+            data["custom_fields"].update(combined_custom_fields)
             self._total_results[host].update(data)
             return
-        
+
         self._total_results[host].update(data)
 
     def v2_runner_on_ok(self, result):
@@ -241,37 +258,37 @@ class ResultCallback(CallbackBase):
             t = stats.summarize(h)  # pylint: disable=invalid-name
 
             self._display.display(
-                u"%s : %s %s %s %s %s %s %s"
+                "%s : %s %s %s %s %s %s %s"
                 % (
                     hostcolor(h, t),
-                    colorize(u"ok", t["ok"], C.COLOR_OK),  # pylint: disable=no-member
+                    colorize("ok", t["ok"], C.COLOR_OK),  # pylint: disable=no-member
                     colorize(
-                        u"changed",
+                        "changed",
                         t["changed"],
                         C.COLOR_CHANGED,  # pylint: disable=no-member
                     ),
                     colorize(
-                        u"unreachable",
+                        "unreachable",
                         t["unreachable"],
                         C.COLOR_UNREACHABLE,  # pylint: disable=no-member
                     ),
                     colorize(
-                        u"failed",
+                        "failed",
                         t["failures"],
                         C.COLOR_ERROR,  # pylint: disable=no-member
                     ),
                     colorize(
-                        u"skipped",
+                        "skipped",
                         t["skipped"],
                         C.COLOR_SKIP,  # pylint: disable=no-member
                     ),
                     colorize(
-                        u"rescued",
+                        "rescued",
                         t["rescued"],
                         C.COLOR_OK,  # pylint: disable=no-member
                     ),
                     colorize(
-                        u"ignored",
+                        "ignored",
                         t["ignored"],
                         C.COLOR_WARN,  # pylint: disable=no-member
                     ),
@@ -322,7 +339,9 @@ class MeasurementsResultCallback(ResultCallback):
                             server_dict["measurable_type"] = "server"
                             server_dict["field_name"] = custom_field + "_timeseries"
                             server_dict["value"] = server["custom_fields"][custom_field]
-                            server_dict["external_timestamp"] = server["custom_fields"]["cpu_utilization_timestamp"]
+                            server_dict["external_timestamp"] = server["custom_fields"][
+                                "cpu_utilization_timestamp"
+                            ]
                             server_dict["measurable"] = {
                                 "host_name": server["host_name"]
                             }

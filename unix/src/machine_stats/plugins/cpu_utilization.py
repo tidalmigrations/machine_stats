@@ -43,7 +43,9 @@ def ok_callback(parent, result):
                     "custom_fields": {
                         "cpu_sampling_timeout": cpu_sampling_timeout,
                         "cpu_utilization": cpu_util["value"],
-                        "cpu_utilization_timestamp": cpu_util["rtc_date"] + " " + cpu_util["rtc_time"]
+                        "cpu_utilization_timestamp": cpu_util["rtc_date"]
+                        + " "
+                        + cpu_util["rtc_time"],
                     }
                 },
             )
@@ -55,7 +57,9 @@ def ok_callback(parent, result):
                         "cpu_sampling_timeout": cpu_sampling_timeout,
                         "cpu_average": cpu_util["average"],
                         "cpu_peak": cpu_util["peak"],
-                        "cpu_utilization_timestamp": cpu_util["rtc_date"] + " " + cpu_util["rtc_time"]
+                        "cpu_utilization_timestamp": cpu_util["rtc_date"]
+                        + " "
+                        + cpu_util["rtc_time"],
                     }
                 },
             )
