@@ -18,6 +18,8 @@ twine = "*"
 wheel = "*"
 build = "*"
 bump2version = "*"
+pytest = "*"
+pytest-mock = "*"
 
 [scripts]
 stats = "machine_stats"

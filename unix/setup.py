@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="machine_stats",
-    version="develop",
+    version="0.1.1",
     author="Tidal SW",
     author_email="support@tidalcloud.com",
     description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment",

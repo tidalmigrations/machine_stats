@@ -43,6 +43,22 @@ We use the following tools:
   src/machine_stats/*` or `pipenv run pylint src`)
 * `bump2version` for version bumps (`pipenv run bump2version`)
 
+### Testing
+
+We use `pytest` for testing. Test files are located in the `tests/` directory and should be named with a `test_` prefix (e.g., `test_my_feature.py`).
+
+To run the tests, use the following command:
+
+```console
+pytest
+```
+
+or
+
+```console
+pipenv run pytest
+```
+
 ### How to release a new Machine Stats version
 
 To deploy a new version of Machine Stats, you will need to create a release. The steps are pretty simple, You can find Github's instruction [here](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release).
