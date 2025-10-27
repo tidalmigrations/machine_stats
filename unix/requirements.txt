@@ -14,4 +14,4 @@ jinja2==3.1.2
 markupsafe==2.1.1
 pluginbase==1.0.1
 pycparser==2.21
-pyyaml==6.0
+pyyaml==6.0.3
