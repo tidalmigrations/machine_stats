@@ -1,48 +1,56 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs = {
+    nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
+    systems.url = "github:nix-systems/default";
+    devenv.url = "github:cachix/devenv";
+    devenv.inputs.nixpkgs.follows = "nixpkgs";
+  };
 
-  outputs = { self, nixpkgs }:
+  nixConfig = {
+    extra-trusted-public-keys = " devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= ";
+    extra-substituters = " https://devenv.cachix.org ";
+  };
+
+  outputs = { self, nixpkgs, devenv, systems, ... } @ inputs:
     let
-      supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-      pkgs = forAllSystems (system: nixpkgs.legacyPackages.${system});
+      forEachSystem = nixpkgs.lib.genAttrs (import systems);
     in
     {
-      devShells = forAllSystems (system: {
-        default = pkgs.${system}.mkShellNoCC {
-          venvDir = "./.venv";
-          buildInputs = with pkgs.${system}; [
-            # A Python interpreter including the 'venv' module is required to bootstrap
-            # the environment.
-            python3Packages.python
+      devShells = forEachSystem
+        (system:
+          let
+            pkgs = nixpkgs.legacyPackages.${system};
+          in
+          {
+            default = devenv.lib.mkShell {
+              inherit inputs pkgs;
+              modules = [
+                ({ pkgs, config, ... }: {
+                  languages.python = {
+                    enable = true;
+                    package = pkgs.python310;
+                    venv.enable = true;
+                  };
+                  # This is your devenv configuration
+                  packages = with pkgs; [
+                    python310Packages.venvShellHook
+                    # python310Packages.python-lsp-server
+                    python310Packages.pluggy
+                    python310Packages.wheel
+                    python310Packages.setuptools
+                    libvirt
+                  ];
 
-            # This execute some shell code to initialize a venv in $venvDir before
-            # dropping into the shell
-            python3Packages.venvShellHook
-            python3Packages.python-lsp-server
-            # In this particular example, in order to compile any binary extensions they may
-            # require, the Python modules listed in the hypothetical requirements.txt need
-            # the following packages to be installed locally:
-            python3Packages.wheel
-            python3Packages.setuptools
-            libvirt
-          ];
-
-          # Run this command, only after creating the virtual environment
-          postVenvCreation = ''
-            unset SOURCE_DATE_EPOCH
-            pip install -r ./requirements.txt
-            pip install -r dev-requirements.txt
-            pip install -e .
-          '';
-
-          # Now we can execute any commands within the virtual environment.
-          # This is optional and can be left out to run pip manually.
-          postShellHook = ''
-            # allow pip to install wheels
-            unset SOURCE_DATE_EPOCH
-          '';
-        };
-      });
+                  enterShell = ''
+                    unset SOURCE_DATE_EPOCH
+                    pip install -r ./requirements.txt
+                    pip install -r dev-requirements.txt
+                    pip install -e .
+                    python --version
+                  '';
+                })
+              ];
+            };
+          });
     };
 }
