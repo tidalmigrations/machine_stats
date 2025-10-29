@@ -16,7 +16,7 @@ setup(
     package_data={"": ["modules/*", "plugins/*"]},
     url="https://github.com/tidalmigrations/machine_stats",
     install_requires=[
-        "ansible<2.10",
+        "ansible<5,>4",
         "pluginbase==1.0.1",
     ],
     entry_points={

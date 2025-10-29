@@ -1,11 +1,14 @@
 -i https://pypi.org/simple
-ansible==2.9.27
+ansible==4.10.0
+ansible-core==2.11.12
 cffi==2.0.0
 cryptography==46.0.3
 jinja2==3.1.6
 -e .
 markupsafe==3.0.3
+packaging==25.0
 pluginbase==1.0.1
 pycparser==2.23
 pyyaml==6.0.3
+resolvelib==0.5.4
 typing-extensions==4.15.0
