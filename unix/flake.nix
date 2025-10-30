@@ -34,7 +34,7 @@
                   # This is your devenv configuration
                   packages = with pkgs; [
                     python310Packages.venvShellHook
-                    # python310Packages.python-lsp-server
+                    python3Packages.python-lsp-server
                     python310Packages.pluggy
                     python310Packages.wheel
                     python310Packages.setuptools

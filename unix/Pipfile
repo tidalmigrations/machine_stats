@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ansible = "<6"
+ansible-core = "==2.12"
 machine_stats = {editable = true, path = "."}
 pluginbase = "*"
 
