@@ -8,8 +8,6 @@ import os
 import shutil
 from functools import partial
 
-from ansible.utils.path import unfrackpath
-
 # Setting default configuration parameters
 default_config = {
     "ANSIBLE_HOST_KEY_CHECKING": "False",
@@ -28,6 +26,7 @@ def find_config_file():
         "machine_stats.cfg",
         "machine-stats.cfg",
         "machinestats.cfg",
+        "ansible.cfg",
     ]
 
     # Look for config file in the current working directory
@@ -42,7 +41,7 @@ def find_config_file():
 
     # Per user location
     for cfg_file in cfg_files:
-        potential_paths.append(unfrackpath("~/." + cfg_file, follow=False))
+        potential_paths.append(os.path.expanduser("~/." + cfg_file))
 
     for path in potential_paths:
         if os.path.exists(path) and os.access(path, os.R_OK):
@@ -61,17 +60,12 @@ else:
     if cfg_file is not None:
         os.environ["ANSIBLE_CONFIG"] = cfg_file
 
+import tempfile
+import ansible_runner
 import ansible.constants as C
-from ansible import context
-from ansible.executor.task_queue_manager import TaskQueueManager
-from ansible.inventory.manager import InventoryManager
-from ansible.module_utils.common.collections import ImmutableDict
-from ansible.parsing.dataloader import DataLoader
-from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
 from ansible.utils.color import colorize, hostcolor
 from ansible.utils.display import Display
-from ansible.vars.manager import VariableManager
 from pluginbase import PluginBase
 
 # For easier usage calculate the path relative to here.
@@ -81,7 +75,11 @@ get_path = partial(os.path.join, here)
 display = Display()
 
 
-class PluginManager(object):
+class PluginManager:
+    """
+    Plugin manager for machine_stats
+    """
+
     def __init__(self):
         # Setup a plugin base for "machine_stats.plugins" and make sure to load
         # all the default built-in plugins from the plugins folder.
@@ -99,7 +97,7 @@ class PluginManager(object):
                     display.warning(
                         "no method '%s' for plugin '%s'" % (fn, plugin_name)
                     )
-                    return None
+                    break
                 # calling a function of a module by using its name (a string)
                 getattr(plugin, fn)(*args, **kwargs)
 
@@ -160,6 +158,25 @@ def ip_addresses(facts):
             facts["ansible_all_ipv4_addresses"] + facts["ansible_all_ipv6_addresses"],
         )
     )
+
+
+class ShimHost:
+    """Shim for ansible.inventory.host.Host"""
+
+    def __init__(self, name):
+        self._name = name
+
+    def get_name(self):
+        """Return host name"""
+        return self._name
+
+
+class ShimResult:
+    """Shim for ansible.executor.task_result.TaskResult"""
+
+    def __init__(self, event):
+        self._result = event["event_data"].get("res", {})
+        self._host = ShimHost(event["event_data"]["host"])
 
 
 class ResultCallback(CallbackBase):
@@ -241,6 +258,47 @@ class ResultCallback(CallbackBase):
             },
         )
 
+    def _display_results(self, host, result):
+        self._display.display(
+            "%s : %s %s %s %s %s %s %s"
+            % (
+                hostcolor(host, result),
+                colorize("ok", result["ok"], C.COLOR_OK),  # pylint: disable=no-member
+                colorize(
+                    "changed",
+                    result["changed"],
+                    C.COLOR_CHANGED,  # pylint: disable=no-member
+                ),
+                colorize(
+                    "unreachable",
+                    result["unreachable"],
+                    C.COLOR_UNREACHABLE,  # pylint: disable=no-member
+                ),
+                colorize(
+                    "failed",
+                    result["failures"],
+                    C.COLOR_ERROR,  # pylint: disable=no-member
+                ),
+                colorize(
+                    "skipped",
+                    result["skipped"],
+                    C.COLOR_SKIP,  # pylint: disable=no-member
+                ),
+                colorize(
+                    "rescued",
+                    result["rescued"],
+                    C.COLOR_OK,  # pylint: disable=no-member
+                ),
+                colorize(
+                    "ignored",
+                    result["ignored"],
+                    C.COLOR_WARN,  # pylint: disable=no-member
+                ),
+            ),
+            screen_only=True,
+            stderr=True,
+        )
+
     def v2_playbook_on_stats(self, stats):
         if self._total_results is not None:
             print(
@@ -253,100 +311,73 @@ class ResultCallback(CallbackBase):
 
         self._display.display("MACHINE STATS RECAP", stderr=True)
 
-        hosts = sorted(stats.processed.keys())
-        for h in hosts:  # pylint: disable=invalid-name
-            t = stats.summarize(h)  # pylint: disable=invalid-name
-
-            self._display.display(
-                "%s : %s %s %s %s %s %s %s"
-                % (
-                    hostcolor(h, t),
-                    colorize("ok", t["ok"], C.COLOR_OK),  # pylint: disable=no-member
-                    colorize(
-                        "changed",
-                        t["changed"],
-                        C.COLOR_CHANGED,  # pylint: disable=no-member
-                    ),
-                    colorize(
-                        "unreachable",
-                        t["unreachable"],
-                        C.COLOR_UNREACHABLE,  # pylint: disable=no-member
-                    ),
-                    colorize(
-                        "failed",
-                        t["failures"],
-                        C.COLOR_ERROR,  # pylint: disable=no-member
-                    ),
-                    colorize(
-                        "skipped",
-                        t["skipped"],
-                        C.COLOR_SKIP,  # pylint: disable=no-member
-                    ),
-                    colorize(
-                        "rescued",
-                        t["rescued"],
-                        C.COLOR_OK,  # pylint: disable=no-member
-                    ),
-                    colorize(
-                        "ignored",
-                        t["ignored"],
-                        C.COLOR_WARN,  # pylint: disable=no-member
-                    ),
-                ),
-                screen_only=True,
-                stderr=True,
-            )
+        hosts = sorted(stats.get("processed", {}).keys())
+        for host in hosts:  # pylint: disable=invalid-name
+            result = {
+                "ok": stats.get("ok", {}).get(host, 0),
+                "changed": stats.get("changed", {}).get(host, 0),
+                "unreachable": stats.get("dark", {}).get(host, 0),
+                "failures": stats.get("failures", {}).get(host, 0),
+                "skipped": stats.get("skipped", {}).get(host, 0),
+                "rescued": stats.get("rescued", {}).get(host, 0),
+                "ignored": stats.get("ignored", {}).get(host, 0),
+            }
+            self._display_results(host, result)
 
         self._display.display("", screen_only=True, stderr=True)
 
 
 class MeasurementsResultCallback(ResultCallback):
-    def v2_playbook_on_stats(self, stats):
-        """How to measure fields
+    """
+    How to measure fields
 
-        The fields that need to be tracked can be added in the fields_to_measure list.
-        If it's a custom field, please add it to the custom_fields_to_measure list.
+    The fields that need to be tracked can be added in the fields_to_measure list.
+    If it's a custom field, please add it to the custom_fields_to_measure list.
+    """
+
+    def v2_playbook_on_stats(self, stats):
+        """Process JSON payload
+
+        Go through each server in the results, and for the fields mentioned in the
+        `fields_to_measure` or `custom_fields_to_measure`, add its measurements to the
+        transformed data.
         """
 
         fields_to_measure = []
         custom_fields_to_measure = ["cpu_average", "cpu_peak", "cpu_utilization"]
 
-        """Process JSON payload
-
-        Go through each server in the results, and for the fields mentioned in the 
-        `fields_to_measure` or `custom_fields_to_measure`, add its measurements to the
-        transformed data.
-        """
-
         transformed_json_payload = []
-        for server in list(self._total_results.values()):
-            for field in server:
-                # Add data (ram_used_gb) from fields_to_measure list to the transformed_json_payload list
-                if field in fields_to_measure:
-                    server_dict = {}
-                    server_dict["measurable_type"] = "server"
-                    server_dict["field_name"] = field + "_timeseries"
-                    server_dict["value"] = server[field]
-                    server_dict["measurable"] = {"host_name": server["host_name"]}
+        if self._total_results:
+            for server in list(self._total_results.values()):
+                for field in server:
+                    # Add data (ram_used_gb) from fields_to_measure list to the transformed_json_payload list
+                    if field in fields_to_measure:
+                        server_dict = {}
+                        server_dict["measurable_type"] = "server"
+                        server_dict["field_name"] = field + "_timeseries"
+                        server_dict["value"] = server[field]
+                        server_dict["measurable"] = {"host_name": server["host_name"]}
 
-                    transformed_json_payload.append(server_dict)
+                        transformed_json_payload.append(server_dict)
 
-                # Add custom fields data (cpu_average) from custom_fields_to_measure list to the transformed_json_payload list
-                elif field == "custom_fields":
-                    for custom_field in server["custom_fields"]:
-                        if custom_field in custom_fields_to_measure:
-                            server_dict = {}
-                            server_dict["measurable_type"] = "server"
-                            server_dict["field_name"] = custom_field + "_timeseries"
-                            server_dict["value"] = server["custom_fields"][custom_field]
-                            server_dict["external_timestamp"] = server["custom_fields"][
-                                "cpu_utilization_timestamp"
-                            ]
-                            server_dict["measurable"] = {
-                                "host_name": server["host_name"]
-                            }
+                    # Add custom fields data (cpu_average) from custom_fields_to_measure list to the transformed_json_payload list
+                    elif field == "custom_fields":
+                        for custom_field in server["custom_fields"]:
+                            if custom_field in custom_fields_to_measure:
+                                server_dict = {}
+                                server_dict["measurable_type"] = "server"
+                                server_dict["field_name"] = custom_field + "_timeseries"
+                                server_dict["value"] = server["custom_fields"][
+                                    custom_field
+                                ]
+                                server_dict["external_timestamp"] = server[
+                                    "custom_fields"
+                                ]["cpu_utilization_timestamp"]
+                                server_dict["measurable"] = {
+                                    "host_name": server["host_name"]
+                                }
 
-                            transformed_json_payload.append(server_dict)
+                                transformed_json_payload.append(server_dict)
 
         if self._total_results is not None:
             print(
@@ -365,7 +396,7 @@ class Application:  # pylint: disable=too-few-public-methods
         self, *, sources: list = None, plugins: PluginManager, args: argparse.Namespace
     ):
         if sources is None:
-            sources = list()
+            sources = []
         self._sources = sources
         self._plugins = plugins
         self.args = args
@@ -386,58 +417,42 @@ class Application:  # pylint: disable=too-few-public-methods
             return None
         return self._playbook_tasks
 
-    def run(self):
-        """Run the Application"""
-
-        # Since the API is constructed for CLI it expects certain options to
-        # always be set in the context object
-        context.CLIARGS = ImmutableDict(
-            connection="smart",
-            module_path=[get_path("./modules"), "/usr/share/ansible"],
+    def _run_ansible(self, play_source, private_data_dir, passwords):
+        """Run Ansible playbook and process events."""
+        runner = ansible_runner.run(
+            private_data_dir=private_data_dir,
+            playbook=[play_source],
+            passwords=passwords,
             forks=10,
-            become=None,
-            become_method=None,
-            become_user=None,
-            check=False,
-            diff=False,
             verbosity=3,
+            quiet=True,
         )
 
-        # Initialize needed objects
-        loader = DataLoader()  # Takes care of finding and reading yaml, json and
-        # ini files
-        passwords = dict(vault_pass="secret")
-
-        # Instantiate our ResultCallback for handling results as they come in
         if self.args.measurement:
             results_callback = MeasurementsResultCallback(plugins=self._plugins)
         else:
             results_callback = ResultCallback(plugins=self._plugins)
 
-        # Create inventory, use path to host config file as source or hosts in a
-        # comma separated string
-        inventory = InventoryManager(loader=loader, sources=self._sources)
+        for event in runner.events:
+            if event["event"] == "runner_on_ok":
+                results_callback.v2_runner_on_ok(ShimResult(event))
+            elif event["event"] == "runner_on_unreachable":
+                results_callback.v2_runner_on_unreachable(ShimResult(event))
+            elif event["event"] == "runner_on_failed":
+                results_callback.v2_runner_on_failed(ShimResult(event))
 
-        # Variable manager takes care of merging all the different sources to give
-        # you a unified view of variables available in each context
-        variable_manager = VariableManager(loader=loader, inventory=inventory)
+        results_callback.v2_playbook_on_stats(runner.stats)
 
-        # Instantiate task queue manager, which takes care of forking and setting
-        # up all objects to iterate over host list and tasks
-        # IMPORTANT: This also adds library dirs paths to the module loader
-        # IMPORTANT: and so it must be initialized before calling `Play.load()`.
-        tqm = TaskQueueManager(
-            inventory=inventory,
-            variable_manager=variable_manager,
-            loader=loader,
-            passwords=passwords,
-            stdout_callback=results_callback,  # Use our custom callback instead of
-            # the ``default`` callback plugin,
-            # which prints to stdout
-        )
+    def _copy_inventory_files(self, private_data_dir):
+        # for each source in self._sources: copy it to private_data_dir/inventory
+        for index, source in enumerate(self._sources):
+            inventory_dir = os.path.join(private_data_dir, "inventory")
+            os.makedirs(inventory_dir, exist_ok=True)
+            dest_file = os.path.join(inventory_dir, f"hosts_{index}")
+            shutil.copy(source, dest_file)
 
-        # Create data structure that represents our play, including tasks, this is
-        # basically what our YAML loader does internally.
+    def run(self):
+        """Run the Application"""
         play_source = dict(
             name="Ansible Play",
             hosts="all",
@@ -445,33 +460,16 @@ class Application:  # pylint: disable=too-few-public-methods
             tasks=self.playbook_tasks(),
         )
 
-        # Create play object, playbook objects use .load instead of init or new
-        # methods, this will also automatically create the task objects from the
-        # info provided in play_source
-        play = Play().load(
-            play_source, variable_manager=variable_manager, loader=loader
-        )
+        private_data_dir = tempfile.mkdtemp()
+        passwords = dict(vault_pass="secret")
+        os.environ["ANSIBLE_LIBRARY"] = get_path("modules")
 
-        # Actually run it
-        try:
-            tqm.load_callbacks()
-            tqm.run(play)
-            tqm.send_callback(
-                "v2_playbook_on_stats",
-                tqm._stats,  # pylint: disable=protected-access
-            )
-        finally:
-            # We always need to cleanup child procs and the structures we use to
-            # communicate with them
-            tqm.cleanup()
-            if loader:
-                loader.cleanup_all_tmp_files()
+        self._copy_inventory_files(private_data_dir)
 
-            # Remove ansible tmpdir
-            shutil.rmtree(C.DEFAULT_LOCAL_TMP, True)  # pylint: disable=no-member
+        self._run_ansible(play_source, private_data_dir, passwords)
 
-            if tqm is not None:
-                tqm.cleanup()
+        # Remove ansible tmpdir
+        shutil.rmtree(private_data_dir)
 
 
 def main():
@@ -500,11 +498,13 @@ def main():
     if not args.hosts:
         try:
             with open("hosts", "r") as f:  # pylint: disable=invalid-name
+                # append the fully qualified path
                 args.hosts.append(f)
         except FileNotFoundError:
             pass
 
     sources = list(map(lambda f: f.name, args.hosts))
+
     app = Application(sources=sources, plugins=plugins, args=args)
     app.run()
 

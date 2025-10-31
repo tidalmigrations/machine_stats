@@ -1,12 +1,10 @@
 -i https://pypi.org/simple
-ansible-core==2.12.0
-cffi==2.0.0
-cryptography==46.0.3
-jinja2==3.1.6
-markupsafe==3.0.3
+ansible-runner==2.4.2
+lockfile==0.12.2
+-e .
 packaging==25.0
+pexpect==4.9.0
 pluginbase==1.0.1
-pycparser==2.23
+ptyprocess==0.7.0
+python-daemon==3.1.2
 pyyaml==6.0.3
-resolvelib==0.5.4
-typing-extensions==4.15.0
