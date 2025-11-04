@@ -7,6 +7,14 @@ import json
 import os
 import shutil
 from functools import partial
+from machine_stats.config import load_config
+import tempfile
+import ansible_runner
+import ansible.constants as C
+from ansible.plugins.callback import CallbackBase
+from ansible.utils.color import colorize, hostcolor
+from ansible.utils.display import Display
+from pluginbase import PluginBase
 
 # Setting default configuration parameters
 default_config = {
@@ -15,58 +23,6 @@ default_config = {
 }
 for k, v in default_config.items():
     os.environ[k] = v
-
-
-# Loading config file must be prior to importing most of the ansible.* packages
-def find_config_file():
-    """Find configuration file"""
-
-    potential_paths = []
-    cfg_files = [
-        "machine_stats.cfg",
-        "machine-stats.cfg",
-        "machinestats.cfg",
-        "ansible.cfg",
-    ]
-
-    # Look for config file in the current working directory
-    try:
-        cwd = os.getcwd()
-        for cfg_file in cfg_files:
-            cwd_cfg = os.path.join(cwd, cfg_file)
-            potential_paths.append(cwd_cfg)
-    except OSError:
-        # If we can't access cwd, we'll simply skip it as a possible config source
-        pass
-
-    # Per user location
-    for cfg_file in cfg_files:
-        potential_paths.append(os.path.expanduser("~/." + cfg_file))
-
-    for path in potential_paths:
-        if os.path.exists(path) and os.access(path, os.R_OK):
-            break
-    else:
-        path = None
-
-    return path
-
-
-# Do nothing if ANSIBLE_CONFIG environment variable was already set.
-if "ANSIBLE_CONFIG" in os.environ:
-    pass
-else:
-    cfg_file = find_config_file()
-    if cfg_file is not None:
-        os.environ["ANSIBLE_CONFIG"] = cfg_file
-
-import tempfile
-import ansible_runner
-import ansible.constants as C
-from ansible.plugins.callback import CallbackBase
-from ansible.utils.color import colorize, hostcolor
-from ansible.utils.display import Display
-from pluginbase import PluginBase
 
 # For easier usage calculate the path relative to here.
 here = os.path.abspath(os.path.dirname(__file__))
@@ -474,6 +430,7 @@ class Application:  # pylint: disable=too-few-public-methods
 
 def main():
     """Main"""
+    load_config()
     plugins = PluginManager()
     parser = argparse.ArgumentParser(prog="machine_stats")
     parser.add_argument(
