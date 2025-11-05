@@ -3,6 +3,7 @@ Configuration loader for machine_stats
 """
 
 import os
+import sys
 
 
 def find_config_file():
@@ -32,9 +33,11 @@ def find_config_file():
 
     for path in potential_paths:
         if os.path.exists(path) and os.access(path, os.R_OK):
+            sys.stderr.write("Using configuration file: %s\n" % path)
             break
     else:
         path = None
+
     return path
 
 
