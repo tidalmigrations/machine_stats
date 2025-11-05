@@ -14,6 +14,7 @@ setup(
     packages=["machine_stats"],
     package_dir={"": "src"},
     package_data={"": ["modules/*", "plugins/*"]},
+    exclude_package_data={"": ["tests/*"]},
     url="https://github.com/tidalmigrations/machine_stats",
     install_requires=[
         "ansible-runner==2.4.2",
@@ -25,4 +26,19 @@ setup(
             "machine-stats=machine_stats:main",
         ]
     },
+    python_requires=">=3.10,<=3.14",
+    classifiers=[
+        "Intended Audience :: System Administrators",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: Unix",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
+        "Topic :: System :: Systems Administration",
+        "Topic :: System :: Monitoring",
+    ],
 )
