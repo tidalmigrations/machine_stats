@@ -20,6 +20,7 @@ from pluginbase import PluginBase
 default_config = {
     "ANSIBLE_HOST_KEY_CHECKING": "False",
     "ANSIBLE_GATHER_TIMEOUT": "180",
+    "ANSIBLE_SSH_ARGS": "-o ServerAliveInterval=10",
 }
 for k, v in default_config.items():
     os.environ[k] = v
