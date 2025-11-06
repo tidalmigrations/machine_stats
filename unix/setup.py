@@ -1,6 +1,7 @@
 from distutils.core import setup
 import re
 
+
 def read_version():
     """Read the version string from the _version.py file and validate its format.
     The version string must follow semantic versioning (x.y.z).
@@ -12,18 +13,23 @@ def read_version():
     with open("src/machine_stats/_version.py") as handle:
         version_string = handle.read()
 
-        if '=' not in version_string:
-            raise ValueError("Version string is not in the correct format in _version.py")
+        if "=" not in version_string:
+            raise ValueError(
+                "Version string is not in the correct format in _version.py"
+            )
 
-        version = version_string.split('=')[1].strip().strip('"')
+        version = version_string.split("=")[1].strip().strip('"')
 
         if not version:
             raise ValueError("Version string is empty in _version.py")
 
-        semver_regex = r'^\d+\.\d+\.\d+$'
+        semver_regex = r"^v\d+\.\d+\.\d+$"
         if not re.match(semver_regex, version):
-            raise ValueError("Version string is not in semantic versioning format x.y.z in _version.py")
+            raise ValueError(
+                "Version string is not in semantic versioning format x.y.z in _version.py"
+            )
         return version
+
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
