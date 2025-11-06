@@ -15,7 +15,7 @@ from ansible.plugins.callback import CallbackBase
 from ansible.utils.color import colorize, hostcolor
 from ansible.utils.display import Display
 from pluginbase import PluginBase
-
+from machine_stats._version import __version__
 # Setting default configuration parameters
 default_config = {
     "ANSIBLE_HOST_KEY_CHECKING": "False",
@@ -442,6 +442,12 @@ def main():
         nargs="*",
     )
 
+    parser.add_argument(
+        "-v",
+        "--version",
+        help="print the machine stats version",
+        action="store_true",)
+
     measurement_args = parser.add_argument_group("measurements arguments")
     measurement_args.add_argument(
         "-m",
@@ -453,6 +459,11 @@ def main():
     plugins.add_arguments(parser)
 
     args = parser.parse_args()
+
+    if args.version:
+        print(f"machine_stats, version {__version__}")
+        return
+
     if not args.hosts:
         try:
             with open("hosts", "r") as f:  # pylint: disable=invalid-name
