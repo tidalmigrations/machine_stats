@@ -24,14 +24,14 @@ jobs:
         run: |
           # from refs/tags/v1.2.3 get 1.2.3
           VERSION=${GITHUB_REF/refs\/tags\//}
-          PLACEHOLDER='version="0.0.1-dev"'
-          VERSION_FILE='setup.py'
+          PLACEHOLDER='version = "0.1.0"'
+          VERSION_FILE='src/machine_stats/_version.py'
 
           # grep ensures the placeholder is there. If grep doesn't find the placeholder
           # it exits with exit code 1 and github actions aborts the build.
           grep "$PLACEHOLDER" "$VERSION_FILE"
 
-          sed -i "s/$PLACEHOLDER/version=\"${VERSION}\"/g" "$VERSION_FILE"
+          sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\"/g" "$VERSION_FILE"
 
       - name: Install pypa/build and twine
         run: |

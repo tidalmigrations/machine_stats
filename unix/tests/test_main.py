@@ -70,7 +70,7 @@ def test_ip_addresses():
 @patch('src.machine_stats.Application')
 def test_main(mock_app_cls, mock_pm_cls, mock_parser_cls):
     mock_parser = mock_parser_cls.return_value
-    mock_args = argparse.Namespace(hosts=[], measurement=False)
+    mock_args = argparse.Namespace(hosts=[], measurement=False, version=False)
     mock_parser.parse_args.return_value = mock_args
 
     # Mock the 'hosts' file

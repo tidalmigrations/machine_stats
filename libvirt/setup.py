@@ -8,7 +8,7 @@ setup(
     version="develop",
     author="Tidal",
     author_email="support@tidalcloud.com",
-    description="A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from virtual environment",
+    description="This program is now deprecated.\n\nA simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from virtual environment",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=["virt_stats"],

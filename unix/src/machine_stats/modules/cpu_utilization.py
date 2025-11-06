@@ -4,7 +4,7 @@ ANSIBLE_METADATA = {"metadata_version": "1.1"}
 
 from time import sleep
 
-from ansible.module_utils.basic import MODE_OPERATOR_RE, AnsibleModule
+from ansible.module_utils.basic import AnsibleModule
 
 
 def run_module():
@@ -32,6 +32,7 @@ def run_module():
     # if the user is working with this module in only check mode we do not
     # want to make any changes to the environment, just return the current
     # state with no modifications
+
     if module.params["timeout"] == 0 or module.check_mode:
         return module.exit_json(**result)
 
@@ -50,12 +51,12 @@ def run_module():
                 average=average, peak=peak, rtc_date=rtc_date, rtc_time=rtc_time
             )
     except Exception as e:
-        module.fail_json(msg=str(e), **result)
+        return module.fail_json(msg=str(e), **result)
 
     # manipulate or modify the state as needed
     result["timeout"] = module.params["timeout"]
 
-    module.exit_json(**result)
+    return module.exit_json(**result)
 
 
 def get_perf():

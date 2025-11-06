@@ -28,16 +28,16 @@
                 ({ pkgs, config, ... }: {
                   languages.python = {
                     enable = true;
-                    package = pkgs.python310;
+                    package = pkgs.python314;
                     venv.enable = true;
                   };
                   # This is your devenv configuration
                   packages = with pkgs; [
-                    python310Packages.venvShellHook
-                    # python310Packages.python-lsp-server
-                    python310Packages.pluggy
-                    python310Packages.wheel
-                    python310Packages.setuptools
+                    python3Packages.venvShellHook
+                    python3Packages.python-lsp-server
+                    python3Packages.pluggy
+                    python3Packages.wheel
+                    python3Packages.setuptools
                     pipenv
                     libvirt
                   ];
