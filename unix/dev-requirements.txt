@@ -39,7 +39,7 @@ pyflakes==3.4.0
 pygments==2.19.2
 pylint==4.0.2
 pyproject-hooks==1.2.0
-pytest==8.4.2
+pytest==9.0.0
 pytest-mock==3.15.1
 pytokens==0.2.0
 readme-renderer==44.0
