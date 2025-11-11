@@ -9,6 +9,20 @@ dependencies = [
     "ansible>=2.12",
     "pluginbase",
 ]
+classifiers = [
+        "Intended Audience :: System Administrators",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: Unix",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
+        "Topic :: System :: Systems Administration",
+        "Topic :: System :: Monitoring",
+]
 
 [project.scripts]
 machine_stats = "machine_stats:main"
