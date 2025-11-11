@@ -29,24 +29,15 @@
                   languages.python = {
                     enable = true;
                     package = pkgs.python314;
-                    venv.enable = true;
+                    uv.enable = true;
                   };
                   # This is your devenv configuration
                   packages = with pkgs; [
-                    python3Packages.venvShellHook
                     python3Packages.python-lsp-server
-                    python3Packages.pluggy
-                    python3Packages.wheel
-                    python3Packages.setuptools
-                    pipenv
-                    libvirt
                   ];
 
                   enterShell = ''
                     unset SOURCE_DATE_EPOCH
-                    pip install -r ./requirements.txt
-                    pip install -r dev-requirements.txt
-                    pip install -e .
                     python --version
                   '';
                 })
