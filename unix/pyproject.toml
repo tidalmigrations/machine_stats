@@ -1,14 +1,18 @@
 [project]
 name = "machine_stats"
 dynamic = ["version"]
+author = "Tidal SW"
+author_email = "support@tidalcloud.com"
+homepage = "https://github.com/tidalmigrations/machine_stats"
 description = "A simple and effective way to gather machine statistics (RAM, Storage, CPU, etc.) from server environment"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10,<=3.14"
 dependencies = [
     "ansible-runner==2.4.2",
     "ansible>=2.12",
     "pluginbase",
 ]
+
 classifiers = [
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: MIT License",
