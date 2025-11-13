@@ -9,7 +9,7 @@ readme = "README.md"
 requires-python = ">=3.10,<=3.14"
 dependencies = [
     "ansible-runner==2.4.2",
-    "ansible>=2.12",
+    "ansible-core>=2.12",
     "pluginbase",
 ]
 
@@ -41,7 +41,7 @@ build-backend = "hatchling.build"
 source = "uv-dynamic-versioning"
 
 [tool.hatch.build.targets.wheel]
-only-include = ["src/machine_stats", "src/machine_stats/plugins", "src/machine_stats/modules"]
+only-include = ["src/machine_stats"]
 ignore = ["flake.*"]
 
 [tool.hatch.build.targets.wheel.sources]
