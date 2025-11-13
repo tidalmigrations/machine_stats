@@ -8,40 +8,27 @@ Under the hood Machine Stats relies on the awesome [Ansible SDK](https://docs.an
 
 ## Technicalities
 
-Development on the latest version of Python is preferred. As of this writing
-it's 3.9.  You can use any operating system.
+Development on the latest version of Python is preferred. As of this
+writing it's 3.14.  You can use any operating system. We use the
+wonder [uv tool](https://docs.astral.sh/uv/) for a modern take on
+python package management. If you don't have it installed follow the
+appropriate instructions for your OS/package manager of choice.
 
 Install all development dependencies using:
 
 ```console
-pipenv install --dev
-```
-
-If you haven't used `pipenv` before but are comfortable with virtualenvs, just
-run `pip install pipenv` in the virtualenv you're already using and invoke the
-command above from the `unix` directory of the cloned _Machine Stats_ repo. It
-will do the correct thing.
-
-Make changes in the source code (e.g in `src/machine_stats/__init__.py`) and
-run `pipenv run machine_stats` to run it locally.
-
-Non `pipenv` install works too:
-
-```console
-pip install -r requirements.txt
-pip install -r dev-requirements.txt
-pip install -e .
+uv sync
 ```
 
 ### Tools
 
 We use the following tools:
 
-* `black` for code formatting (`pipenv run black .`)
-* `isort` to sort imports (`pipenv run isort .`)
-* `flake8` or `pylint` for code linting (`pipenv run flake8
-  src/machine_stats/*` or `pipenv run pylint src`)
-* `bump2version` for version bumps (`pipenv run bump2version`)
+* uv for modern python project management
+* `black` for code formatting (`uv run black .`)
+* `isort` to sort imports (`uv run isort .`)
+* `flake8` or `pylint` for code linting (`uv run flake8
+  src/machine_stats/*` or `uv run pylint src`)
 
 ### Testing
 
@@ -56,7 +43,7 @@ pytest
 or
 
 ```console
-pipenv run pytest
+uv run pytest
 ```
 
 ### How to release a new Machine Stats version
@@ -75,7 +62,7 @@ To deploy a new version of Machine Stats, you will need to create a release. The
 
 When you create a PR, the GitHub workflows check for the linting and CodeQL. However, if you think you're introducing breaking changes, then please add the label `ci` with your PR. This will run the Advanced Prechecks workflow that checks Machine Stats' working in the following system environments:
 
-* Ubuntu 20.04 - Python 3.7 to 3.10
+* Ubuntu 24.04 - Python 3.7 to 3.10
 * RHEL 8 - Python 3.6, 3.8 to 3.10
 
 ## Finally

@@ -102,7 +102,7 @@ _Need to install in an environment without internet access?_ [Checkout how to do
 2. Install `machine-stats`:
     ```sh
     pip install machine-stats
-    ```  
+    ```
 </details>
 
 ## Data captured
@@ -314,31 +314,6 @@ ANSIBLE_CONFIG=/path/to/my/machine_stats.cfg machine_stats /path/to/my/hosts
 **Note:** if `ANSIBLE_CONFIG` value points to a directory, then Machine Stats
 will look for `ansible.cfg` in that directory.
 
-### Getting information about RHEL 5 hosts
-
-Red Hat Enterprise Linux 5 is shipped with Python 2.4 but `machine_stats`
-requires at least Python 2.6. To install Python 2.6 on your RHEL 5 machine
-follow these steps. **NOTE:** this doesn't update the existing Python packages,
-but installs Python 2.6 alongside with system Python packages.
-
-1. Download Python 2.6 package and its dependencies from EPEL repository:
-
-   ```console
-     sudo curl -L -OOO -k \
-       http://download.fedoraproject.org/pub/archive/epel/5/x86_64/{python26-libs-2.6.8-2.el5.x86_64.rpm,libffi-3.0.5-1.el5.x86_64.rpm,python26-2.6.8-2.el5.x86_64.rpm}
-   ```
-
-2. Install the packages:
-
-   ```console
-   sudo rpm -ivh python26*.rpm libffi*.rpm
-   ```
-
-3. Use non-standard Python location in your `hosts` file:
-
-   ```text
-   my-user@rhel5.example.com ansible_python_interpreter=/usr/bin/python2.6
-   ```
 
 ### Offline installation
 
@@ -410,24 +385,4 @@ If running Machine Stats as a CLI failed, try running it as the following:
 
 ```sh
 python3 -m machine_stats
-```
-
-### How to permanently enable the Python 3.8 software collection on RHEL 7
-
-You should always enable the Python software collection before using `pipenv`
-with the following command:
-
-```sh
-scl enable rh-python38 bash
-```
-
-To permanently add Python 3 to your `$PATH`, you can add an `scl_source`
-command to the “dot files” for your specific user. The benefit of this approach
-is that the collection is already enabled at every login.
-
-Using your preferred text editor, add the following line to your `~/.bashrc`:
-
-```sh
-# Add RHSCL Python 3 to my login environment
-source scl_source enable rh-python38
 ```

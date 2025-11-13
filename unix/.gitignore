@@ -3,3 +3,5 @@ hosts
 build/
 dist/
 machine_stats.egg-info
+.devenv/
+.direnv/

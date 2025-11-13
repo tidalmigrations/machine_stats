@@ -15,12 +15,12 @@ jobs:
     if: ${{ github.event.label.name == 'ci' }}
     strategy:
       matrix:
-        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+        python-version: [ '3.10', '3.11', '3.12', '3.13' ]
     name: Ubuntu prechecks - Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
@@ -42,7 +42,7 @@ jobs:
     if: ${{ github.event.label.name == 'ci' }}
     strategy:
       matrix:
-        python-version: [ '3.6', '3.8', '3.9', '3.10' ]
+        python-version: [ '3.10', '3.11', '3.12', '3.13' ]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -50,7 +50,7 @@ jobs:
 
     name: RHEL8 prechecks - Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
       - name: Install packer
         uses: hashicorp-contrib/setup-packer@v1
